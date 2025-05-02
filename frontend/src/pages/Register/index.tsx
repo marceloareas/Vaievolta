@@ -1,140 +1,127 @@
-import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/images/riodejaneiro.jpg';
-// import { EyeOutline, EyeOffOutline } from 'react-ionicons';
-import { useState } from 'react';
-import Swal from 'sweetalert2';
-import api from '../../services/api';
+import { useState } from "react";
+import { IoArrowBack, IoEyeOutline, IoEyeOffOutline, IoRefreshOutline } from "react-icons/io5";
+import { FiMail, FiLock, FiUser } from "react-icons/fi";
 
-const Register = () => {
-  const navigate = useNavigate();
+interface Props {
+  onBack: () => void;
+}
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [cargo, setCargo] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+const Register = ({ onBack }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  const handleRegister = async () => {
-    if (!username || !password || !confirmPassword || !cargo) {
-        Swal.fire({
-          title: 'Campos obrigatórios!',
-          text: 'Por favor, preencha todos os campos.',
-          icon: 'warning',
-        });
-        return;
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-    if (password !== confirmPassword) {
-      setError('As senhas não coincidem!');
-      return;
-    }
-
-    try {
-      await api.post('/register', { username, password, cargo });
-
-      Swal.fire({
-        title: 'Sucesso!',
-        text: 'Usuário registrado com sucesso!',
-        icon: 'success',
-        confirmButtonText: 'Ir para login',
-      });
-
-      navigate('/');
-    } catch (error: any) {
-        Swal.fire({
-            title: 'Erro!',
-            text: error?.response?.data?.detail || 'Erro ao registrar usuário.',
-            icon: 'error',
-        });
-    }
+  const handleRegister = () => {
+    console.log("Cadastrar com:", form);
+    // Aqui você pode chamar sua API
   };
 
   return (
-    <div
-      className="w-screen h-screen bg-cover bg-center flex items-center justify-center"
-      style={{ backgroundImage: `url(${logo})` }}
-    >
-      <div className="bg-white/20 backdrop-blur-sm rounded-lg shadow-lg p-8 flex flex-col items-center justify-center gap-6">
-        <h2 className="text-3xl font-semibold text-white">Registro de Usuário</h2>
+    <div className="min-h-screen bg-[#2c64dd] flex flex-col items-center px-4 pt-6 pb-6">
+      {/* Logo separado no topo */}
+      <div className="mb-4">
+        <img src="/logo_vaievolta.png" alt="Logo" className="h-20" />
+      </div>
 
-        <input
-          type="text"
-          placeholder="Login"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="px-4 py-2 rounded-lg w-64 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 placeholder-white text-white" 
-        />
-
-        <select
-            value={cargo}
-            onChange={(e) => setCargo(e.target.value)}
-            className="px-4 py-2 rounded-lg w-64 border border-gray-300 bg-transparent text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-orange-400"
-        >
-            <option value="" disabled hidden className="text-gray-400 bg-gray-800">Selecione o cargo</option>
-            <option value="admin" className="text-black">Admin</option>
-            <option value="analista" className="text-black">Analista</option>
-            <option value="colaborador" className="text-black">Colaborador</option>
-        </select>
-
-        <div className="relative w-64">
-            <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleRegister()}
-                className="px-4 py-2 pr-10 rounded-lg w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 placeholder-white text-white bg-transparent"
-            />
-            <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
-            >
-                
-            </button>
+      {/* Bloco do formulário com fundo escuro */}
+      {/* <div className="bg-[#2348a1] w-full max-w-md rounded-t-3xl p-6 flex flex-col gap-4 flex-grow"> */}
+      <div className="bg-[#2348a1] w-full max-w-md rounded-t-3xl p-6 flex flex-col gap-4 flex-grow min-h-[calc(100vh-5.5rem)]">
+        {/* Cabeçalho */}
+        <div className="flex items-center justify-center relative mb-4">
+          <button onClick={onBack} className="absolute left-0 text-white text-2xl">
+            <IoArrowBack />
+          </button>
+          <h1 className="text-white text-xl font-bold flex items-center gap-1">
+            Vai & Volta <IoRefreshOutline size={20} />
+          </h1>
         </div>
 
-        <div className="relative w-64">
+        {/* Inputs */}
+        <div className="flex flex-col gap-4">
+          {/* Nome */}
+          <div className="relative mb-4">
+            <FiUser className="absolute top-3 left-3 text-blue-700" />
             <input
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirmar senha"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleRegister()}
-                className="px-4 py-2 pr-10 rounded-lg w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 placeholder-white text-white bg-transparent"
+              name="name"
+              type="text"
+              placeholder="Nome"
+              value={form.name}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 rounded-md border border-white bg-white text-blue-700 placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-white"
+            />
+          </div>
+
+          {/* Email */}
+          <div className="relative mb-4">
+            <FiMail className="absolute top-3 left-3 text-blue-700" />
+            <input
+              name="email"
+              type="email"
+              placeholder="E-mail"
+              value={form.email}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 rounded-md border border-white bg-white text-blue-700 placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-white"
+            />
+          </div>
+
+          {/* Senha */}
+          <div className="relative mb-4">
+            <FiLock className="absolute top-3 left-3 text-blue-700" />
+            <input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Senha"
+              value={form.password}
+              onChange={handleChange}
+              className="w-full pl-10 pr-10 py-2 rounded-md border border-white bg-white text-blue-700 placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-white"
             />
             <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-3 text-blue-700"
             >
-                {/* {showConfirmPassword ? (
-                <EyeOffOutline color={"#fff"} width="20px" height="20px" />
-                ) : (
-                <EyeOutline color={"#fff"} width="20px" height="20px" />
-                )} */}
+              {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
             </button>
+          </div>
+
+          {/* Confirmar Senha */}
+          <div className="relative mb-4">
+            <FiLock className="absolute top-3 left-3 text-blue-700" />
+            <input
+              name="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirme sua senha"
+              value={form.confirmPassword}
+              onChange={handleChange}
+              className="w-full pl-10 pr-10 py-2 rounded-md border border-white bg-white text-blue-700 placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-white"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              className="absolute right-3 top-3 text-blue-700"
+            >
+              {showConfirmPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+            </button>
+          </div>
         </div>
 
-        {error && (
-          <p className="text-red-300 text-sm text-center">{error}</p>
-        )}
-
+        {/* Botão */}
         <button
           onClick={handleRegister}
-          className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition shadow-md"
+          className="mt-4 bg-white text-blue-600 font-bold py-2 rounded-2xl text-center hover:bg-blue-50 transition"
         >
           Cadastrar
         </button>
       </div>
-
-      <footer className="absolute bottom-4">
-        <div className="bg-white/20 backdrop-blur-sm text-white text-sm px-4 py-2 rounded-lg shadow-sm">
-          © Desenvolvido por <strong>CTEC</strong>
-        </div>
-      </footer>
     </div>
   );
 };

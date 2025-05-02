@@ -2,7 +2,11 @@ import { useState } from "react";
 import { IoEyeOutline, IoEyeOffOutline, IoRefreshOutline  } from "react-icons/io5";
 import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
 
-const Login = () => {
+interface Props {
+  onShowRegister: () => void;
+}
+
+const Login = ({ onShowRegister }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -60,9 +64,12 @@ const Login = () => {
         {/* Cadastro */}
         <p className="text-sm text-white mt-6">
           Não possui uma conta?{" "}
-          <a href="#" className="text-white underline font-semibold">
+          <button
+            onClick={onShowRegister}
+            className="text-white underline font-semibold"
+          >
             Cadastre-se
-          </a>
+          </button>
         </p>
       </div>
     </div>

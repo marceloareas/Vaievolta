@@ -30,7 +30,11 @@ O projeto **VaiEVolta** tem como principal objetivo gerenciar objetos emprestado
 
 ![image](https://github.com/user-attachments/assets/6dbaf732-42c7-4a9f-9780-a45d6e25f4f3)
 
-## Diagrama de Entidade e Relacionamento
+## Modelo Lógico de Entidade e Relacionamento
+
+![image](https://github.com/user-attachments/assets/f89fb779-8d9f-490a-91d3-7bff843345a2)
+
+## Modelo Conceitual de Entidade e Relacionamento
 
 ![image](https://github.com/user-attachments/assets/7cd8452e-2b8a-4470-8ab7-ad2b946ae9e4)
 

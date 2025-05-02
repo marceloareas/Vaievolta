@@ -38,4 +38,12 @@ O projeto **VaiEVolta** tem como principal objetivo gerenciar objetos emprestado
 
 ![image](https://github.com/user-attachments/assets/7cd8452e-2b8a-4470-8ab7-ad2b946ae9e4)
 
+## Como rodar projeto (frontend)
+
+```bash
+cd frontend
+npm i
+npm run dev
+```
+
 

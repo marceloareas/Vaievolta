@@ -39,7 +39,7 @@ const Login = ({ onShowRegister }: Props) => {
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute top-3 right-3 text-white"
+            className="absolute top-3 right-3 text-white cursor-pointer"
           >
             {showPassword ? (
               <IoEyeOffOutline size={20} />
@@ -51,13 +51,13 @@ const Login = ({ onShowRegister }: Props) => {
 
         {/* Esqueci a senha */}
         <div className="w-full text-right mb-6">
-          <a href="#" className="text-sm text-white/70 hover:underline">
+          <a href="#" className="text-sm text-white/70 hover:underline cursor-pointer">
             Esqueceu a senha?
           </a>
         </div>
 
         {/* Botão de login */}
-        <button className="w-full bg-white text-blue-600 font-bold py-2 rounded-xl hover:bg-gray-100 transition">
+        <button className="w-full bg-white text-blue-600 font-bold py-2 rounded-xl hover:bg-gray-100 transition cursor-pointer">
           Acessar
         </button>
 
@@ -66,7 +66,7 @@ const Login = ({ onShowRegister }: Props) => {
           Não possui uma conta?{" "}
           <button
             onClick={onShowRegister}
-            className="text-white underline font-semibold"
+            className="text-white hover:underline cursor-pointer font-semibold"
           >
             Cadastre-se
           </button>

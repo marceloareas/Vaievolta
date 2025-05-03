@@ -37,7 +37,7 @@ const Register = ({ onBack }: Props) => {
       <div className="bg-[#2348a1] w-full max-w-md rounded-t-3xl p-6 flex flex-col gap-4 flex-grow min-h-[calc(100vh-5.5rem)]">
         {/* Cabeçalho */}
         <div className="flex items-center justify-center relative mb-4">
-          <button onClick={onBack} className="absolute left-0 text-white text-2xl">
+          <button onClick={onBack} className="absolute left-0 text-white text-2xl cursor-pointer">
             <IoArrowBack />
           </button>
           <h1 className="text-white text-xl font-bold flex items-center gap-1">
@@ -87,7 +87,7 @@ const Register = ({ onBack }: Props) => {
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-3 top-3 text-blue-700"
+              className="absolute right-3 top-3 text-blue-700 cursor-pointer"
             >
               {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
             </button>
@@ -107,7 +107,7 @@ const Register = ({ onBack }: Props) => {
             <button
               type="button"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
-              className="absolute right-3 top-3 text-blue-700"
+              className="absolute right-3 top-3 text-blue-700 cursor-pointer"
             >
               {showConfirmPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
             </button>
@@ -117,7 +117,7 @@ const Register = ({ onBack }: Props) => {
         {/* Botão */}
         <button
           onClick={handleRegister}
-          className="mt-4 bg-white text-blue-600 font-bold py-2 rounded-2xl text-center hover:bg-blue-50 transition"
+          className="mt-4 bg-white text-blue-600 font-bold py-2 rounded-2xl text-center hover:bg-blue-50 transition cursor-pointer"
         >
           Cadastrar
         </button>

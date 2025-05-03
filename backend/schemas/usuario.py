@@ -12,4 +12,4 @@ class UsuarioCreate(UsuarioBase):
 class UsuarioOut(UsuarioBase):
     id: int
     class Config:
-        orm_mode = True
+        from_attributes = True

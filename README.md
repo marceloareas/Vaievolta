@@ -46,4 +46,50 @@ npm i
 npm run dev
 ```
 
+# 🐳 Estrutura Docker do Projeto `vaievolta`
 
+![Captura de tela 2025-05-06 142721](https://github.com/user-attachments/assets/cb86198a-f5d3-4f54-9a33-46b741c85c54)
+
+## 📦 Visão Geral
+
+Este projeto utiliza **Docker Compose** para orquestrar uma aplicação full-stack composta por:
+
+- **Backend**: FastAPI com SQLAlchemy
+- **Frontend**: React
+- **Banco de dados**: PostgreSQL
+- **Adminer**: Interface web para acesso ao banco
+
+---
+
+## 🗂️ Containers e Serviços
+
+| Serviço    | Imagem Base        | Porta | Descrição                                                                 |
+|------------|--------------------|-------|--------------------------------------------------------------------------|
+| `db`       | `postgres:13`      | 5432  | Banco de dados utilizado pelo backend.                                   |
+| `backend`  | `vaievolta-backend`| 8000  | API construída com FastAPI.                                              |
+| `frontend` | `vaievolta-frontend`| 3000 | Interface React.                                                         |
+| `adminer`  | `adminer`          | 8080  | Ferramenta web para gerenciamento do banco PostgreSQL.                   |
+
+---
+
+## 🔗 Acesso aos Serviços
+
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:8000
+- **Adminer**: http://localhost:8080
+
+## 🎛️ Credenciais do Adminer
+
+- **Sistema**: PostgreSQL
+- **Servidor**: db
+- **Usuário**: postgres
+- **Senha**: postgres
+- **Banco de dados**: mydatabase
+
+## 🚀 Como subir o projeto
+
+No terminal, na raiz do projeto, execute:
+
+```bash
+docker compose up --build
+```

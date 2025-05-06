@@ -17,13 +17,16 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
     volumes:
       - ./frontend:/app
       - /app/node_modules
     ports:
-      - "3000:3000"
+      - "5173:5173"
     depends_on:
       - backend
+    environment:
+      - NODE_ENV=development
 
   db:
     image: postgres:13

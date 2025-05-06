@@ -38,19 +38,14 @@ O projeto **VaiEVolta** tem como principal objetivo gerenciar objetos emprestado
 
 ![image](https://github.com/user-attachments/assets/7cd8452e-2b8a-4470-8ab7-ad2b946ae9e4)
 
-## Como rodar projeto (frontend)
 
-```bash
-cd frontend
-npm i
-npm run dev
-```
+# Documentação do projeto
 
-# 🐳 Estrutura Docker do Projeto `vaievolta`
+## 🐳 Estrutura Docker do Projeto `vaievolta`
 
 ![image](https://github.com/user-attachments/assets/94499324-eeff-486b-aa5f-91c2ba39acc6)
 
-## 📦 Visão Geral
+### 📦 Visão Geral
 
 Este projeto utiliza **Docker Compose** para orquestrar uma aplicação full-stack composta por:
 
@@ -61,7 +56,7 @@ Este projeto utiliza **Docker Compose** para orquestrar uma aplicação full-sta
 
 ---
 
-## 🗂️ Containers e Serviços
+### 🗂️ Containers e Serviços
 
 | Serviço    | Imagem Base        | Porta | Descrição                                                                 |
 |------------|--------------------|-------|--------------------------------------------------------------------------|
@@ -72,13 +67,13 @@ Este projeto utiliza **Docker Compose** para orquestrar uma aplicação full-sta
 
 ---
 
-## 🔗 Acesso aos Serviços
+### 🔗 Acesso aos Serviços
 
 - **Frontend**: http://localhost:3000
 - **Backend**: http://localhost:8000
 - **Adminer**: http://localhost:8080
 
-## 🎛️ Credenciais do Adminer
+### 🎛️ Credenciais do Adminer
 
 - **Sistema**: PostgreSQL
 - **Servidor**: db
@@ -86,7 +81,7 @@ Este projeto utiliza **Docker Compose** para orquestrar uma aplicação full-sta
 - **Senha**: postgres
 - **Banco de dados**: mydatabase
 
-## 🚀 Como subir o projeto
+### 🚀 Como subir o projeto
 
 No terminal, na raiz do projeto, execute:
 

@@ -2,14 +2,15 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Login from "../Login";
 import Register from "../Register";
+import ForgotPassword from "../ForgotPassword";
 
 const AuthScreen = () => {
-  const [showRegister, setShowRegister] = useState(false);
+  const [telaAtiva, setTelaAtiva] = useState<"login" | "register" | "forgot">("login");
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden bg-[#2c64dd]">
       <AnimatePresence mode="wait">
-        {!showRegister && (
+        {telaAtiva === "login" && (
           <motion.div
             key="login"
             initial={{ y: 0, opacity: 1 }}
@@ -17,11 +18,11 @@ const AuthScreen = () => {
             transition={{ duration: 0.4 }}
             className="absolute inset-0 z-10"
           >
-            <Login onShowRegister={() => setShowRegister(true)} />
+            <Login onShowRegister={() => setTelaAtiva("register")} onShowForgotPassword={() => setTelaAtiva("forgot")} />
           </motion.div>
         )}
 
-        {showRegister && (
+        {telaAtiva === "register" && (
           <motion.div
             key="register"
             initial={{ y: 100, opacity: 0 }}
@@ -30,7 +31,20 @@ const AuthScreen = () => {
             transition={{ duration: 0.4 }}
             className="absolute inset-0 z-20"
           >
-            <Register onBack={() => setShowRegister(false)} />
+            <Register onBack={() => setTelaAtiva("login")} />
+          </motion.div>
+        )}
+
+        {telaAtiva === "forgot" && (
+          <motion.div
+            key="register"
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="absolute inset-0 z-20"
+          >
+            <ForgotPassword onBack={() => setTelaAtiva("login")} />
           </motion.div>
         )}
       </AnimatePresence>

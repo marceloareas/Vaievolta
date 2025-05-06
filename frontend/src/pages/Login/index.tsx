@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { IoEyeOutline, IoEyeOffOutline, IoRefreshOutline  } from "react-icons/io5";
 import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   onShowRegister: () => void;
+  onShowForgotPassword: () => void;
 }
 
-const Login = ({ onShowRegister }: Props) => {
+const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: '#2c64dd' }}>
@@ -16,7 +20,7 @@ const Login = ({ onShowRegister }: Props) => {
         <h1 className="text-white text-4xl font-bold mb-6 flex items-center gap-2">
           Vai & Volta <FiRefreshCcw size={28} />
         </h1>
-        <img src="/logo_vaievolta.png" alt="Logo" className="h-35 mb-8" />
+        <img src="/logo.png" alt="Logo" className="h-35 mb-8" />
 
         {/* Campo de email */}
         <div className="w-full relative mb-4">
@@ -51,13 +55,13 @@ const Login = ({ onShowRegister }: Props) => {
 
         {/* Esqueci a senha */}
         <div className="w-full text-right mb-6">
-          <a href="#" className="text-sm text-white/70 hover:underline cursor-pointer">
+          <button onClick={onShowForgotPassword} className="text-sm text-white/70 hover:underline cursor-pointer">
             Esqueceu a senha?
-          </a>
+          </button>
         </div>
 
         {/* Botão de login */}
-        <button className="w-full bg-white text-blue-600 font-bold py-2 rounded-xl hover:bg-gray-100 transition cursor-pointer">
+        <button onClick={() => navigate('/home')} className="w-full bg-white text-blue-600 font-bold py-2 rounded-xl hover:bg-gray-100 transition cursor-pointer">
           Acessar
         </button>
 

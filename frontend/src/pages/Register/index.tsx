@@ -29,14 +29,14 @@ const Register = ({ onBack }: Props) => {
     <div className="min-h-screen bg-[#2c64dd] flex flex-col items-center px-4 pt-6 pb-6">
       {/* Logo separado no topo */}
       <div className="mb-4">
-        <img src="/logo_vaievolta.png" alt="Logo" className="h-20" />
+        <img src="/logo.png" alt="Logo" className="h-20" />
       </div>
 
       {/* Bloco do formulário com fundo escuro */}
       {/* <div className="bg-[#2348a1] w-full max-w-md rounded-t-3xl p-6 flex flex-col gap-4 flex-grow"> */}
       <div className="bg-[#2348a1] w-full max-w-md rounded-t-3xl p-6 flex flex-col gap-4 flex-grow min-h-[calc(100vh-5.5rem)]">
         {/* Cabeçalho */}
-        <div className="flex items-center justify-center relative mb-4">
+        <div className="flex items-center justify-center relative mb-8">
           <button onClick={onBack} className="absolute left-0 text-white text-2xl cursor-pointer">
             <IoArrowBack />
           </button>

@@ -48,7 +48,7 @@ npm run dev
 
 # 🐳 Estrutura Docker do Projeto `vaievolta`
 
-![Captura de tela 2025-05-06 142721](https://github.com/user-attachments/assets/cb86198a-f5d3-4f54-9a33-46b741c85c54)
+![image](https://github.com/user-attachments/assets/94499324-eeff-486b-aa5f-91c2ba39acc6)
 
 ## 📦 Visão Geral
 

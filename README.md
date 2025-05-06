@@ -62,7 +62,7 @@ Este projeto utiliza **Docker Compose** para orquestrar uma aplicação full-sta
 |------------|--------------------|-------|--------------------------------------------------------------------------|
 | `db`       | `postgres:13`      | 5432  | Banco de dados utilizado pelo backend.                                   |
 | `backend`  | `vaievolta-backend`| 8000  | API construída com FastAPI.                                              |
-| `frontend` | `vaievolta-frontend`| 3000 | Interface React.                                                         |
+| `frontend` | `vaievolta-frontend`| 5173 | Interface React.                                                         |
 | `adminer`  | `adminer`          | 8080  | Ferramenta web para gerenciamento do banco PostgreSQL.                   |
 
 ---

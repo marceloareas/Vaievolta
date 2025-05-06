@@ -69,7 +69,7 @@ Este projeto utiliza **Docker Compose** para orquestrar uma aplicação full-sta
 
 ### 🔗 Acesso aos Serviços
 
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost:5173
 - **Backend**: http://localhost:8000
 - **Adminer**: http://localhost:8080
 

@@ -50,7 +50,7 @@ O projeto **VaiEVolta** tem como principal objetivo gerenciar objetos emprestado
 Este projeto utiliza **Docker Compose** para orquestrar uma aplicação full-stack composta por:
 
 - **Backend**: FastAPI com SQLAlchemy
-- **Frontend**: React
+- **Frontend**: React usando Vite
 - **Banco de dados**: PostgreSQL
 - **Adminer**: Interface web para acesso ao banco
 

@@ -45,6 +45,8 @@ O projeto **VaiEVolta** tem como principal objetivo gerenciar objetos emprestado
 
 ![image](https://github.com/user-attachments/assets/94499324-eeff-486b-aa5f-91c2ba39acc6)
 
+!! ESTÁ COM PROBLEMA PARA SUBIR O FRONTEND NO DOCKER
+
 ### 📦 Visão Geral
 
 Este projeto utiliza **Docker Compose** para orquestrar uma aplicação full-stack composta por:

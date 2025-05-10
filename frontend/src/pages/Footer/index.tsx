@@ -12,7 +12,7 @@ const Footer = () => {
 
   // TODO: Adicionar lógica para mudar a cor dos icones baseado na rota atual
   // Função para definir a cor do ícone baseado na rota
-  const getIconColor = (path) => {
+  const getIconColor = (path : string) => {
     return location.pathname === path ? "#133E87" : "white"; // Verifica se a rota corresponde ao ícone
   };
 

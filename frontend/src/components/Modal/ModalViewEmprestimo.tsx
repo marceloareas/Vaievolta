@@ -33,10 +33,19 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo }: ModalViewEmpresti
     setModoEdicao(false); // volta ao modo visual sempre que abre
   }, [emprestimo]);
 
-  const handleSalvar = () => {
-    console.log("Atualizar:", { nome, item, tomador, dataDevolucao, descricao, foto });
-    setModoEdicao(false);
+  const handleSalvar = async () => {
+    await Swal.fire({
+      title: "Salvo!",
+      text: "O empréstimo foi salvo com sucesso.",
+      icon: "success",
+      width: "90%",
+      backdrop: true,
+      timer: 1500,
+      timerProgressBar: true
+    })
+
     onFechar();
+    
   };
 
   const handleExcluir = () => {

@@ -2,6 +2,7 @@ import { RouteObject } from "react-router-dom";
 import AuthScreen from "../pages/AuthScreen";
 import Home from "../pages/Home";
 import AdicionarEmprestimo from "../pages/AddEmprestimo";
+import NewPassword from "../pages/ForgotPassword/newPassword";
 
 const routes: RouteObject[] = [
   {
@@ -15,6 +16,10 @@ const routes: RouteObject[] = [
   {
     path: "/adicionar",  // Rota para a página de adicionar empréstimo
     element: <AdicionarEmprestimo />,
+  },
+  {
+    path: "/nova_senha",  // Rota para a página de adicionar empréstimo
+    element: <NewPassword />,
   },
 ];
 

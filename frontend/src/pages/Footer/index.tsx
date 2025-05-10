@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaHome, FaUserAlt } from "react-icons/fa";
 import { SiGooglesheets } from "react-icons/si";
 import { MdOutlineAddBox } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom"; // Importando useLocation para pegar a rota atual
+import ModalEmprestimo from "../../components/Modal/ModalCreateEmprestimo";
 
 const Footer = () => {
   const location = useLocation(); // Hook para pegar a localização (rota atual)
@@ -15,6 +16,8 @@ const Footer = () => {
     return location.pathname === path ? "#133E87" : "white"; // Verifica se a rota corresponde ao ícone
   };
 
+  const [abrirModal, setAbrirModal] = useState(false);
+
   return (
     <footer className="w-full bg-[#3090FF] py-4 fixed bottom-0 left-0 flex justify-around items-center z-50">
       <div className="flex justify-around w-full max-w-[480px] mx-auto">
@@ -25,10 +28,10 @@ const Footer = () => {
           </Link>
         </div>
         <div className="flex flex-col items-center">
-          <Link to="/adicionar" className="flex flex-col items-center">
-            <MdOutlineAddBox size={24} className="text-white" style={{ color: getIconColor("/adicionar") }} />
+          <button onClick={() => setAbrirModal(true)} className="flex flex-col items-center">
+            <MdOutlineAddBox size={24} style={{ color: getIconColor("/adicionar") }} />
             <span className="text-white text-xs">Adicionar</span>
-          </Link>
+          </button>
         </div>
         <div className="flex flex-col items-center">
           <Link to="/relatorio" className="flex flex-col items-center">
@@ -43,6 +46,11 @@ const Footer = () => {
           </Link>
         </div>
       </div>
+
+      {abrirModal && (
+        <ModalEmprestimo aberto={abrirModal} onFechar={() => setAbrirModal(false)} />
+      )}
+
     </footer>
   );
 };

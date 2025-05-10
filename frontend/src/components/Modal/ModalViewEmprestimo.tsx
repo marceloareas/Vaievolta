@@ -66,7 +66,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo }: ModalViewEmpresti
         console.log("Excluído:", { nome, item, tomador, dataDevolucao, descricao, foto });
         await Swal.fire({
           title: "Excluído!",
-          text: "O empréstimo foi excluuído.",
+          text: "O empréstimo foi excluído.",
           icon: "success",
           timer: 1500,
           timerProgressBar: true,

@@ -3,6 +3,7 @@ import AuthScreen from "../pages/AuthScreen";
 import Home from "../pages/Home";
 import AdicionarEmprestimo from "../pages/AddEmprestimo";
 import NewPassword from "../pages/ForgotPassword/newPassword";
+import Profile from "../pages/Profile";
 
 const routes: RouteObject[] = [
   {
@@ -20,6 +21,10 @@ const routes: RouteObject[] = [
   {
     path: "/nova_senha",  // Rota para a página de adicionar empréstimo
     element: <NewPassword />,
+  },
+  {
+    path: "/perfil",  // Rota para a página visualizar perfil
+    element: <Profile />,
   },
 ];
 

@@ -20,7 +20,7 @@ const Home = () => {
 
     const [placeholder, setPlaceholder] = useState("Buscar por empréstimo");
 
-    const emprestimos = [
+    const [emprestimos, setEmprestimos] = useState<Emprestimo[]>([
       {
         nome: "Emprestimo #001",
         item: "Notebook Dell",
@@ -117,7 +117,11 @@ const Home = () => {
         descricao: "Filmagem de workshop",
         foto: null,
       },
-    ];
+    ]);
+
+    const adicionarEmprestimo = (novoEmprestimo: Emprestimo) => {
+      setEmprestimos((prevEmprestimos) => [...prevEmprestimos, novoEmprestimo]);
+    };
 
     // Estado para armazenar a pesquisa
     const [searchTerm, setSearchTerm] = useState("");
@@ -204,7 +208,7 @@ const Home = () => {
             
           {/* Modal de criação */}
           {abrirModal && (
-            <ModalEmprestimo aberto={abrirModal} onFechar={() => setAbrirModal(false)} />
+            <ModalEmprestimo aberto={abrirModal} onFechar={() => setAbrirModal(false)} onAdicionar={adicionarEmprestimo}/>
           )}
 
           {/* Modal de visualização + edição */}

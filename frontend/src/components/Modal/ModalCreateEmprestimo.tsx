@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Emprestimo from "../../types/index"; // Importando o tipo Emprestimo
 
 interface Pessoa {
   id: number;
@@ -8,9 +9,10 @@ interface Pessoa {
 interface ModalEmprestimoProps {
   aberto: boolean;
   onFechar: () => void;
+  onAdicionar: (emprestimo: Emprestimo) => void; // função para adicionar o empréstimo
 }
 
-const ModalEmprestimo = ({ aberto, onFechar }: ModalEmprestimoProps) => {
+const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps) => {
   const [nome, setNome] = useState("");
   const [item, setItem] = useState("");
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);
@@ -30,7 +32,16 @@ const ModalEmprestimo = ({ aberto, onFechar }: ModalEmprestimoProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ nome, item, tomador, dataDevolucao, descricao, foto });
+    const novoEmprestimo = { 
+      nome,
+      item,
+      tomador,
+      dataDevolucao,
+      descricao,
+      foto,
+    };
+
+    onAdicionar(novoEmprestimo); // chama a função de adicionar empréstimo
     onFechar(); // fecha modal após envio
   };
 

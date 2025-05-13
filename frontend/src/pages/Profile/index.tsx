@@ -20,17 +20,29 @@ const Profile = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await Swal.fire({
-      title: "Logout realizado com sucesso!",
-      icon: "success",
+    Swal.fire({
+      title: "Deseja mesmo sair da conta ?",
+      icon: "warning",
       width: "90%",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#808080",
+      confirmButtonText: "Sair",
+      cancelButtonText: "Cancelar",
       backdrop: true,
-      timer: 1200,
-      showConfirmButton: false,
-      timerProgressBar: true
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await Swal.fire({
+          title: "Logout efetuado!",
+          icon: "success",
+          timer: 1500,
+          timerProgressBar: true,
+          showConfirmButton: false
+        });
+      }
+      // TODO: adicionar lógica de logout do backend
+      navigate("/");
     });
-
-    navigate("/");
   };
 
   const handleDeleteAccount = async () => {

@@ -1,4 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+interface Pessoa {
+  id: number;
+  nome: string;
+}
 
 interface ModalEmprestimoProps {
   aberto: boolean;
@@ -8,10 +13,18 @@ interface ModalEmprestimoProps {
 const ModalEmprestimo = ({ aberto, onFechar }: ModalEmprestimoProps) => {
   const [nome, setNome] = useState("");
   const [item, setItem] = useState("");
+  const [pessoas, setPessoas] = useState<Pessoa[]>([]);
   const [tomador, setTomador] = useState("");
   const [dataDevolucao, setDataDevolucao] = useState("");
   const [descricao, setDescricao] = useState("");
   const [foto, setFoto] = useState<File | null>(null);
+
+  useEffect(() => {
+      fetch("http://localhost:8000/pessoas/") // ajuste a URL conforme sua rota
+        .then((res) => res.json())
+        .then((data) => setPessoas(data))
+        .catch((err) => console.error("Erro ao buscar pessoas:", err));
+  }, []);
 
   if (!aberto) return null;
 
@@ -37,7 +50,19 @@ const ModalEmprestimo = ({ aberto, onFechar }: ModalEmprestimoProps) => {
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input type="text" placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
                 <input type="text" placeholder="Item" value={item} onChange={(e) => setItem(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
-                <input type="text" placeholder="Tomador" value={tomador} onChange={(e) => setTomador(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
+                <select
+                  value={tomador}
+                  onChange={(e) => setTomador(e.target.value)}
+                  required
+                  className="w-full p-2 border rounded text-black bg-white max-h-40 overflow-y-auto"
+                >
+                  <option value="" disabled>Selecione um tomador</option>
+                  {pessoas.map((pessoa) => (
+                    <option key={pessoa.id} value={pessoa.id}>
+                      {pessoa.nome}
+                    </option>
+                  ))}
+                </select>
                 <input type="date" value={dataDevolucao} onChange={(e) => setDataDevolucao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
                 <textarea placeholder="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" rows={3} />
                 <input type="file" onChange={(e) => setFoto(e.target.files?.[0] || null)} className="w-full p-2 border rounded text-black placeholder-gray-500" />

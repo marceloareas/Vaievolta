@@ -1,12 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+interface Pessoa {
+  id: number;
+  nome: string;
+}
 
 const AdicionarEmprestimo = () => {
   const [nome, setNome] = useState("");
   const [item, setItem] = useState("");
+  const [pessoas, setPessoas] = useState<Pessoa[]>([]);
   const [tomador, setTomador] = useState("");
   const [dataDevolucao, setDataDevolucao] = useState("");
   const [descricao, setDescricao] = useState("");
   const [foto, setFoto] = useState<File | null>(null);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/pessoas") // ajuste a URL conforme sua rota
+      .then((res) => res.json())
+      .then((data) => setPessoas(data))
+      .catch((err) => console.error("Erro ao buscar pessoas:", err));
+  }, []);
+
 
   // Função para lidar com o envio do formulário
   const handleSubmit = (e: React.FormEvent) => {
@@ -55,14 +69,19 @@ const AdicionarEmprestimo = () => {
 
         <div className="flex flex-col">
           <label className="text-sm font-semibold text-gray-700">Tomador</label>
-          <input
-            type="text"
+          <select
             value={tomador}
             onChange={(e) => setTomador(e.target.value)}
-            className="mt-2 p-2 border rounded-lg border-gray-300"
-            placeholder="Nome do tomador"
             required
-          />
+            className="mt-2 p-2 border rounded-lg border-gray-300 max-h-32 overflow-y-auto"
+          >
+            <option value="" disabled>Selecione um tomador</option>
+            {pessoas.map((pessoa) => (
+              <option key={pessoa.id} value={pessoa.id}>
+                {pessoa.nome}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="flex flex-col">

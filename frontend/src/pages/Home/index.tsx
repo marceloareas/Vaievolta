@@ -18,6 +18,8 @@ const Home = () => {
     const [viewEmprestimoAberto, setViewEmprestimoAberto] = useState(false);
     const [emprestimoSelecionado, setEmprestimoSelecionado] = useState<Emprestimo | null>(null);
 
+    const [placeholder, setPlaceholder] = useState("Buscar por empréstimo");
+
     const emprestimos = [
       {
         nome: "Emprestimo #001",
@@ -149,13 +151,19 @@ const Home = () => {
           {/* Campo de busca */}
           <div className="mb-4">
             <div className="flex items-center bg-white rounded-lg px-3 py-2">
-              <input
-                type="text"
-                placeholder="Buscar por empréstimo"
-                className="flex-1 text-sm text-blue-600 placeholder-blue-600 outline-none font-bold"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)} // Atualiza o estado com o valor da busca
-              />
+            <input
+              type="text"
+              placeholder={placeholder}
+              className="flex-1 text-sm text-blue-600 placeholder-blue-600 outline-none font-bold"
+              value={searchTerm}
+              onFocus={() => setPlaceholder("")} // Limpa ao focar
+              onBlur={() => {
+                if (searchTerm === "") {
+                  setPlaceholder("Buscar por empréstimo"); // Restaura se estiver vazio
+                }
+              }}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
               <FiSearch className="text-blue-600 ml-2 font-bold" />
             </div>
           </div>

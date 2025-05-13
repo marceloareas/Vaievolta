@@ -6,12 +6,15 @@ import { SiGooglesheets } from "react-icons/si";
 import { MdOutlineAddBox } from "react-icons/md";
 import { TbLogout2 } from "react-icons/tb";
 import ModalEmprestimo from "./Modal/ModalCreateEmprestimo";
+import { useNavigate } from "react-router-dom";
 
 const Menu = () => {
   const location = useLocation();
   const [abrirDrawer, setAbrirDrawer] = useState(false);
 
   const getIconColor = (path: string) => location.pathname === path ? "#133E87" : "#444";
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -74,8 +77,9 @@ const Menu = () => {
                 {/* Botão Sair no final */}
                 <button
                   onClick={() => {
-                    // lógica de logout
-                    setAbrirDrawer(false);
+                    // TODO: lógica de logout                  
+                    navigate("/"); 
+                    setAbrirDrawer(false);                 
                   }}
                   className="mt-6 self-start text-red-600 font-semibold hover:text-red-700 transition flex items-center gap-2"
                 >

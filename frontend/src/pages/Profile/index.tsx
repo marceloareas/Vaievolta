@@ -5,6 +5,7 @@ import { IoMdExit } from "react-icons/io";
 import Swal from "sweetalert2";
 import Footer from "../Footer/index";
 import Menu from "../../components/Menu";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [name, setName] = useState("John Doe");
@@ -13,6 +14,10 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [newPassword, setNewPassword] = useState(password);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [endereco, setEndereco] = useState("Rua Exemplo, 123");
+  const [telefone, setTelefone] = useState("(21) 99999-9999");
+
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     await Swal.fire({
@@ -20,9 +25,12 @@ const Profile = () => {
       icon: "success",
       width: "90%",
       backdrop: true,
-      timer: 1000,
+      timer: 1200,
+      showConfirmButton: false,
       timerProgressBar: true
     });
+
+    navigate("/");
   };
 
   const handleDeleteAccount = async () => {
@@ -82,14 +90,14 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#2c64dd] text-white px-4 pt-28 pb-32 flex flex-col">
+    <div className="min-h-screen bg-[#2c64dd] text-white px-4 pt-20 pb-32 flex flex-col">
       {/* Header */}
       <header className="w-full flex items-center justify-center px-6 py-3 fixed top-1 left-0 bg-[#2c64dd] z-40">
         <Menu />
-        <h2 className="text-white text-2xl font-bold flex items-center gap-2 ml-5">
+        <h2 className="text-white text-2xl font-bold flex items-center gap-2 ml-5" onClick={() => navigate("/home")}>
           Meu Perfil
         </h2>
-        <img src="/logo.png" alt="Logo" className="h-10 ml-4" />
+        <img src="/logo.png" onClick={() => navigate("/home")} alt="Logo" className="h-10 ml-4" />
       </header>
 
       {/* Área da Foto de Perfil */}
@@ -118,7 +126,7 @@ const Profile = () => {
 
 
       {/* Formulário de perfil */}
-      <div className="mt-2 space-y-6">
+      <div className="space-y-2">
         <div className="bg-transparent text-white p-6 rounded-lg shadow-none">
         <div className="mb-4">
           <label className="block text-sm text-white">Nome</label>
@@ -177,11 +185,52 @@ const Profile = () => {
               </span>
             </div>
           </div>
+
+          {/* Endereço */}
+          <div className="mb-4">
+            <label className="block text-sm text-white">Endereço Completo</label>
+            <div className="relative">
+              <input
+                type="text"
+                className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
+                value={endereco}
+                readOnly={!editMode}
+                onChange={(e) => setEndereco(e.target.value)}
+              />
+              <span
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
+                onClick={editMode ? handleCancelEdit : () => setEditMode(true)}
+              >
+                {editMode ? <MdCancel /> : <MdModeEdit />}
+              </span>
+            </div>
+          </div>
+
+          
+          {/* Telefone */}
+          <div className="mb-1">
+            <label className="block text-sm text-white">Telefone</label>
+            <div className="relative">
+              <input
+                type="text"
+                className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
+                value={telefone}
+                readOnly={!editMode}
+                onChange={(e) => setTelefone(e.target.value)}
+              />
+              <span
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
+                onClick={editMode ? handleCancelEdit : () => setEditMode(true)}
+              >
+                {editMode ? <MdCancel /> : <MdModeEdit />}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
       {editMode && (
-        <div className="mt-4 flex justify-center">
+        <div className="mt-1 flex justify-center">
           <button
             onClick={handleSaveChanges}
             className="bg-green-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-green-500"
@@ -192,9 +241,9 @@ const Profile = () => {
       )}
 
       {/* Rodapé fixo */}
-      <div className="fixed bottom-4 left-0 w-full bg-[#2c64dd] px-4 py-4">
+      <div className="fixed bottom-2 left-0 w-full bg-[#2c64dd] px-4 py-4">
         <button
-          className="block w-[75%] mx-auto py-2 px-4 bg-white text-blue-600 rounded-lg hover:bg-red-500 font-bold mb-10"
+          className="block w-[75%] mx-auto py-2 px-4 bg-white text-blue-600 rounded-lg hover:bg-red-500 font-bold mb-6"
           onClick={handleLogout}
         >
           <IoMdExit className="inline-block mr-2" />
@@ -206,7 +255,7 @@ const Profile = () => {
             className="text-white hover:underline"
             onClick={handleDeleteAccount}
           >
-            Deseja excluir sua conta? Clique aqui.
+            Deseja excluir sua conta? <span className="underline text-gray-300">Clique aqui.</span>
           </a>
         </div>
       </div>

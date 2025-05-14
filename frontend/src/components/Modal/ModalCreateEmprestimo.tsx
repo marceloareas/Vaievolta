@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { IoMdAddCircleOutline } from "react-icons/io";
 import Emprestimo from "../../types/index"; // Importando o tipo Emprestimo
 
 interface Pessoa {
@@ -61,19 +62,27 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input type="text" placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
                 <input type="text" placeholder="Item" value={item} onChange={(e) => setItem(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
-                <select
-                  value={tomador}
-                  onChange={(e) => setTomador(e.target.value)}
-                  required
-                  className="w-full p-2 border rounded text-black bg-white max-h-40 overflow-y-auto"
-                >
-                  <option value="" disabled>Selecione um tomador</option>
-                  {pessoas.map((pessoa) => (
-                    <option key={pessoa.id} value={pessoa.id}>
-                      {pessoa.nome}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={tomador}
+                    onChange={(e) => setTomador(e.target.value)}
+                    required
+                    className="flex-1 p-2 border rounded text-black bg-white max-h-40 overflow-y-auto"
+                  >
+                    <option value="" disabled>Selecione um tomador</option>
+                    {pessoas.map((pessoa) => (
+                      <option key={pessoa.id} value={pessoa.id}>
+                        {pessoa.nome}
+                      </option>
+                    ))}
+                  </select>
+                    <button
+                      className="bg-[#2c64dd] text-white p-2 rounded-full font-semibold hover:bg-[#0f326f] transition"
+                      title="Clique para adicionar um empréstimo"
+                    >
+                      <IoMdAddCircleOutline size={30} />
+                    </button>
+                </div>
                 <input type="date" value={dataDevolucao} onChange={(e) => setDataDevolucao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
                 <textarea placeholder="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" rows={3} />
                 <input type="file" onChange={(e) => setFoto(e.target.files?.[0] || null)} className="w-full p-2 border rounded text-black placeholder-gray-500" />

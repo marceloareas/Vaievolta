@@ -71,7 +71,6 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
                   <select
                     value={tomador}
                     onChange={(e) => setTomador(e.target.value)}
-                    required
                     className="flex-1 p-2 border rounded text-black bg-white max-h-40 overflow-y-auto"
                   >
                     <option value="" disabled>Selecione um tomador</option>
@@ -81,12 +80,15 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
                       </option>
                     ))}
                   </select>
-                    <button
-                      onClick={() => setAbrirModalPessoa(true)}
-                      className="text-black font-semibold"
-                    >
-                      <IoMdAddCircleOutline size={30} />
-                    </button>
+
+                  <button
+                    type="button" // para nao enviar o form ao apertar para abrir o modal
+                    onClick={() => setAbrirModalPessoa(true)}
+                    className="text-black font-semibold"
+                  >
+                    <IoMdAddCircleOutline size={30} />
+                  </button>
+
                 </div>
                 <input type="date" value={data_devolucao_esperada} onChange={(e) => setDataDevolucao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
                 <textarea placeholder="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" rows={3} />

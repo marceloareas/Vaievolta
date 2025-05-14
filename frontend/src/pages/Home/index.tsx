@@ -157,6 +157,7 @@ const Home = () => {
           aberto={viewEmprestimoAberto}
           onFechar={() => setViewEmprestimoAberto(false)}
           emprestimo={emprestimoSelecionado}
+          carregarEmprestimos={carregarEmprestimos}
         />
       )}
     </div>

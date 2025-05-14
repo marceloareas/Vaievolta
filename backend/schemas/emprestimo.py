@@ -16,6 +16,9 @@ class EmprestimoBase(BaseModel):
 class EmprestimoCreate(EmprestimoBase):
     pass
 
+class EmprestimoDelete(BaseModel):
+    id: int
+
 class EmprestimoOut(EmprestimoBase):
     id: int
     class Config:

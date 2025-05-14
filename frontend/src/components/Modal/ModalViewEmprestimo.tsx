@@ -7,12 +7,14 @@ interface ModalViewEmprestimoProps {
   aberto: boolean;
   onFechar: () => void;
   emprestimo?: Emprestimo;
+  carregarEmprestimos: () => void;
 }
 
-const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo }: ModalViewEmprestimoProps) => {
+const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos }: ModalViewEmprestimoProps) => {
   const [modoEdicao, setModoEdicao] = useState(false);
 
   const [nome, setNome] = useState("");
+  const [id, setId] = useState<number>();
   const [item, setItem] = useState("");
   const [tomador, setTomador] = useState("");
   const [dataDevolucao, setDataDevolucao] = useState("");
@@ -23,6 +25,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo }: ModalViewEmpresti
 
   useEffect(() => {
     if (emprestimo) {
+      setId(emprestimo.id);
       setNome(emprestimo.nome);
       setItem(emprestimo.item);
       setTomador(emprestimo.tomador);
@@ -48,7 +51,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo }: ModalViewEmpresti
     
   };
 
-  const handleExcluir = () => {
+  const handleExcluir = (id: number) => {
     Swal.fire({
       title: "Excluir empréstimo ?",
       text: "Essa ação não poderá ser desfeita.",
@@ -64,19 +67,41 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo }: ModalViewEmpresti
     }).then(async (result) => {
       if (result.isConfirmed) {
         console.log("Excluído:", { nome, item, tomador, dataDevolucao, descricao, foto });
-        await Swal.fire({
-          title: "Excluído!",
-          text: "O empréstimo foi excluído.",
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-          showConfirmButton: false
-        });
       }
 
       // TODO: Adicionar lógica de exclusão no backend
-
+      try {
+        const response = await fetch(`http://localhost:8000/emprestimos/${id}/`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: id,  
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Erro ao excluir o empréstimo");
+        }
+      }
+      catch (error) {
+        console.error("Erro ao excluir o empréstimo:", error);
+        await Swal.fire({
+          icon: "error",
+          title: "Erro ao excluir o empréstimo",
+          text: "Tente novamente mais tarde.",
+        });
+      }
+      await Swal.fire({
+        title: "Excluído!",
+        text: "O empréstimo foi excluído.",
+        icon: "success",
+        timer: 1000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
       onFechar();
+      carregarEmprestimos();
     });
   }
 
@@ -255,7 +280,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo }: ModalViewEmpresti
 
               {/* Linha 2: Excluir botão grande e vermelho */}
               <button
-                onClick={handleExcluir}
+                onClick={() => handleExcluir(id!)}
                 className="w-full px-4 py-2 rounded bg-red-600 text-white font-semibold hover:bg-red-700"
               >
                 Excluir

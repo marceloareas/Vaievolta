@@ -77,7 +77,7 @@ const Menu = () => {
                 {/* Botão Sair no final */}
                 <button
                   onClick={() => {
-                    // TODO: lógica de logout                  
+                    localStorage.removeItem("token");              
                     navigate("/"); 
                     setAbrirDrawer(false);                 
                   }}

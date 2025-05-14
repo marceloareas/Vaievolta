@@ -40,7 +40,7 @@ const Profile = () => {
           showConfirmButton: false
         });
       }
-      // TODO: adicionar lógica de logout do backend
+      localStorage.removeItem("token");
       navigate("/");
     });
   };

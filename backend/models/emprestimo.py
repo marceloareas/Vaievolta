@@ -5,6 +5,7 @@ class Emprestimo(Base):
     __tablename__ = 'emprestimos'
 
     id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String, nullable=False)
     item = Column(String)
     descricao = Column(String)
     data_emprestimo = Column(Date)

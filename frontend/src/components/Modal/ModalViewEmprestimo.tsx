@@ -17,7 +17,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo }: ModalViewEmpresti
   const [tomador, setTomador] = useState("");
   const [dataDevolucao, setDataDevolucao] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [foto, setFoto] = useState<File | null>(null);
+  const [foto, setFoto] = useState('');
 
   const navigate = useNavigate();
 
@@ -26,9 +26,9 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo }: ModalViewEmpresti
       setNome(emprestimo.nome);
       setItem(emprestimo.item);
       setTomador(emprestimo.tomador);
-      setDataDevolucao(emprestimo.dataDevolucao);
+      setDataDevolucao(emprestimo.data_devolucao_esperada);
       setDescricao(emprestimo.descricao);
-      setFoto(emprestimo.foto || null);
+      setFoto(emprestimo.foto_url || '');
     }
     setModoEdicao(false); // volta ao modo visual sempre que abre
   }, [emprestimo]);
@@ -153,7 +153,15 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo }: ModalViewEmpresti
               </div>
 
               <div>
-                <input type="file" className="w-full p-2 border-1 border-blue-600 rounded-lg text-black bg-gray-100 file:mr-2 file:py-1 file:px-3 file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700" onChange={(e) => setFoto(e.target.files?.[0] || null)} />
+                <input
+                  type="file"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setFoto(file.name); // pega apenas o nome do arquivo
+                    }
+                  }}
+                />
               </div>
 
             </>

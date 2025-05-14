@@ -1,14 +1,16 @@
 from pydantic import BaseModel
 from datetime import date
+from typing import Optional
 
 class EmprestimoBase(BaseModel):
+    nome: str
     item: str
     descricao: str
     data_emprestimo: date
     data_devolucao_esperada: date
-    data_devolucao_real: date | None = None
+    data_devolucao_real: Optional[date] = None
     status: str
-    foto_url: str
+    foto_url: Optional[str] = None
     tomador: str
 
 class EmprestimoCreate(EmprestimoBase):

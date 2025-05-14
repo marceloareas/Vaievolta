@@ -5,9 +5,9 @@ from schemas.usuario import UsuarioLogin
 from crud.usuario import autenticar_usuario
 from auth.jwt import criar_token
 
-router = APIRouter()
+router = APIRouter(prefix="/login", tags=["login"])
 
-@router.post("/login")
+@router.post("/")
 def login(usuario: UsuarioLogin, db: Session = Depends(get_db)):
     usuario_autenticado = autenticar_usuario(db, usuario.email, usuario.senha)
     if not usuario_autenticado:

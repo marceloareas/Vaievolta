@@ -2,6 +2,7 @@ import { useState } from "react";
 import { IoEyeOutline, IoEyeOffOutline, IoRefreshOutline  } from "react-icons/io5";
 import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 interface Props {
   onShowRegister: () => void;
@@ -10,8 +11,42 @@ interface Props {
 
 const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
 
   const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, senha })
+      });
+
+      if (!response.ok) {
+        throw new Error("Email ou senha inválidos");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("token", data.access_token); // ✅ salva o token JWT
+      navigate("/home");
+
+    } catch (error) {
+      console.error("Erro no login:", error);
+      await Swal.fire({
+        title: "Erro no login",
+        text: "Email ou senha inválidos",
+        icon: "error",
+        width: "90%",
+        backdrop: true,
+        timer: 1500,
+        timerProgressBar: true
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: '#2c64dd' }}>
@@ -28,6 +63,8 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
           <input
             type="email"
             placeholder="Insira o seu email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full pl-10 pr-4 py-2 rounded-md border border-white bg-transparent text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white"
           />
         </div>
@@ -37,6 +74,8 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
           <FiLock className="absolute top-3 left-3 text-white" />
           <input
             type={showPassword ? "text" : "password"}
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
             placeholder="Insira a sua senha"
             className="w-full pl-10 pr-10 py-2 rounded-md border border-white bg-transparent text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white"
           />
@@ -61,7 +100,7 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
         </div>
 
         {/* Botão de login */}
-        <button onClick={() => navigate('/home')} className="w-full bg-white text-blue-600 font-bold py-2 rounded-xl hover:bg-gray-100 transition cursor-pointer">
+        <button onClick={handleLogin} className="w-full bg-white text-blue-600 font-bold py-2 rounded-xl hover:bg-gray-100 transition cursor-pointer">
           Acessar
         </button>
 

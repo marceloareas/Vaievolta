@@ -76,6 +76,7 @@ const Profile = () => {
   const handleSaveChanges = async () => {
     setPassword(newPassword);
     setEditMode(false);
+    
     await Swal.fire({
       title: "Alterações salvas!",
       icon: "success",
@@ -139,8 +140,8 @@ const Profile = () => {
 
       {/* Formulário de perfil */}
       <div className="space-y-2">
-        <div className="bg-transparent text-white p-6 rounded-lg shadow-none">
-        <div className="mb-4">
+        <div className="bg-transparent text-white pt-6 pl-6 pr-6 pb-3 rounded-lg shadow-none">
+        <div className="mb-2">
           <label className="block text-sm text-white">Nome</label>
           <div className="relative">
             <input
@@ -160,7 +161,7 @@ const Profile = () => {
         </div>
 
           {/* Email */}
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block text-sm text-white">Email</label>
             <div className="relative">
               <input
@@ -179,28 +180,9 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm text-white">Senha</label>
-            <div className="relative">
-              <input
-                type="password"
-                className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
-                value={newPassword}
-                readOnly={!editMode}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-              <span
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
-                onClick={editMode ? handleCancelEdit : () => setEditMode(true)}
-              >
-                {editMode ? <MdCancel /> : <MdModeEdit />}
-              </span>
-            </div>
-          </div>
-
           {/* Endereço */}
-          <div className="mb-4">
-            <label className="block text-sm text-white">Endereço Completo</label>
+          <div className="mb-2">
+            <label className="block text-sm text-white">Endereço</label>
             <div className="relative">
               <input
                 type="text"
@@ -242,7 +224,7 @@ const Profile = () => {
       </div>
 
       {editMode && (
-        <div className="mt-1 flex justify-center">
+        <div className="flex justify-center">
           <button
             onClick={handleSaveChanges}
             className="bg-green-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-green-500"

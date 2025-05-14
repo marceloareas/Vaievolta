@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { IoArrowBack, IoEyeOutline, IoEyeOffOutline, IoRefreshOutline } from "react-icons/io5";
 import { FiMail, FiLock, FiUser } from "react-icons/fi";
+import Swal from "sweetalert2";
 
 interface Props {
   onBack: () => void;
@@ -20,9 +21,63 @@ const Register = ({ onBack }: Props) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = () => {
-    console.log("Cadastrar com:", form);
-    // Aqui você pode chamar sua API
+  const handleRegister = async () => {
+    if (form.password !== form.confirmPassword) {
+      await Swal.fire({
+          title: "As senhas não coincidem!",
+          text: "Por favor, verifique e tente novamente.",  
+          icon: "error",
+          width: "90%",
+          backdrop: true,
+          timer: 1500,
+          timerProgressBar: true
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8000/usuarios/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nome: form.name,
+          email: form.email,
+          senha: form.password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao cadastrar usuário");
+      }
+
+      const data = await response.json();
+      console.log("Usuário cadastrado com sucesso:", data);
+      await Swal.fire({
+        title: "Usuário cadastrado com sucesso!",
+        text: "Você pode fazer login agora.",
+        icon: "success",
+        width: "90%",
+        backdrop: true,
+        timer: 2000,
+        timerProgressBar: true
+      });
+
+      onBack(); // volta para tela anterior, se desejar
+
+    } catch (error) {
+      console.error("Erro:", error);
+      await Swal.fire({
+          title: "Erro ao cadastrar usuário",
+          text: "Por favor, verifique os dados e tente novamente.",
+          icon: "error",
+          width: "90%",
+          backdrop: true,
+          timer: 1500,
+          timerProgressBar: true
+      });
+    }
   };
 
   return (

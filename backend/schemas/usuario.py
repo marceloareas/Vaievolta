@@ -6,10 +6,19 @@ class UsuarioBase(BaseModel):
     endereco: str
     telefone: str
 
-class UsuarioCreate(UsuarioBase):
+class UsuarioLogin(BaseModel):
+    email: str
     senha: str
 
-class UsuarioOut(UsuarioBase):
+class UsuarioCreate(BaseModel):
+    nome: str
+    email: EmailStr
+    senha: str
+
+class UsuarioOut(BaseModel):
     id: int
+    nome: str
+    email: EmailStr
+
     class Config:
         from_attributes = True

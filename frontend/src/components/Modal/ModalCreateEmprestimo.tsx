@@ -84,7 +84,7 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
                   <button
                     type="button" // para nao enviar o form ao apertar para abrir o modal
                     onClick={() => setAbrirModalPessoa(true)}
-                    className="text-black font-semibold"
+                    className="bg-[#2c64dd] text-white p-2 rounded-full font-semibold hover:bg-[#0f326f] transition"
                   >
                     <IoMdAddCircleOutline size={30} />
                   </button>

@@ -30,6 +30,8 @@ O projeto **VaiEVolta** tem como principal objetivo gerenciar objetos emprestado
 
 ![image](https://github.com/user-attachments/assets/6dbaf732-42c7-4a9f-9780-a45d6e25f4f3)
 
+Link para o Figma: https://www.figma.com/design/CFKBBcsuK4RQOKu8qh9ajc/vai-volta?t=2ZUvDD8zBVTZvGUs-1
+
 ## Modelo Lógico de Entidade e Relacionamento
 
 ![image](https://github.com/user-attachments/assets/f89fb779-8d9f-490a-91d3-7bff843345a2)

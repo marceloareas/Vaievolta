@@ -105,7 +105,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
     });
   }
 
-  const handleDevolvido = () => {
+  const handleDevolvido = (id: number) => {
     Swal.fire({
       title: "Marcar como devolvido ?",
       text: "Essa ação não poderá ser desfeita.",
@@ -121,16 +121,40 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
     }).then(async (result) => {
       if (result.isConfirmed) {
         console.log("Devolvido:", { nome, item, tomador, dataDevolucao, descricao, foto });
+      }
+        
+      try {
+        const response = await fetch(`http://localhost:8000/emprestimos/devolver/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: id,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Erro ao marcar como devolvido");
+        }
         await Swal.fire({
-          title: "Confirmado!",
-          text: "O empréstimo foi marcado como devolvido.",
-          icon: "success",
-          showConfirmButton: true,
-          confirmButtonText: "OK",
+        title: "Devolvido!",
+        text: "O empréstimo foi marcado como devolvido.",
+        icon: "success",
+        showConfirmButton: true,
+        confirmButtonText: "OK",
+      });
+      }
+      catch (error) {
+        console.error("Erro ao marcar como devolvido:", error);
+        await Swal.fire({
+          icon: "error",
+          title: "Erro ao marcar como devolvido",
+          text: "Tente novamente mais tarde.",
         });
       }
-
+      
       onFechar();
+      carregarEmprestimos();
     });
   };
 
@@ -270,7 +294,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                   Editar
                 </button>
                 <button
-                  onClick={handleDevolvido}
+                  onClick={() => handleDevolvido(id!)}
                   className="w-full px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700"
                 >
                   Devolvido

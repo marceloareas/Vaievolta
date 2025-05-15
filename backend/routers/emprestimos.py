@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, asc
 from database import get_db
-from schemas.emprestimo import EmprestimoCreate, EmprestimoOut, EmprestimoDelete
+from schemas.emprestimo import EmprestimoCreate, EmprestimoOut, EmprestimoDelete, EmprestimoUpdate
 from models.emprestimo import Emprestimo
+import datetime
 
 router = APIRouter(prefix="/emprestimos", tags=["emprestimos"])
 
@@ -29,6 +30,19 @@ def deletar_emprestimo(emprestimo: EmprestimoDelete, db: Session = Depends(get_d
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=f"Erro ao deletar empréstimo: {str(e)}")
+
+@router.put("/devolver/{emprestimo_id}", response_model=EmprestimoOut)
+def registrar_devolucao(emprestimo: EmprestimoUpdate, db: Session = Depends(get_db)):
+    emprestimo = db.query(Emprestimo).filter(Emprestimo.id == emprestimo.id).first()
+    try:
+        emprestimo.data_devolucao_real = datetime.date.today()
+        emprestimo.status = 'Devolvido'
+        db.commit()
+        db.refresh(emprestimo)
+        return emprestimo
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"Erro ao registrar devolução: {str(e)}")
 
 @router.get("/", response_model=list[EmprestimoOut])
 def listar_emprestimos(db: Session = Depends(get_db)):

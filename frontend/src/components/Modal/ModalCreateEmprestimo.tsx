@@ -53,34 +53,37 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-40 backdrop-blur-sm">
-        <div className="bg-white rounded-2xl shadow-xl w-[90%] max-w-sm max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="bg-white rounded-2xl shadow-xl w-[90%] max-w-sm max-h-[95vh] overflow-hidden flex flex-col">
 
             
             {/* Cabeçalho */}
-            <div className="flex justify-between items-center p-4 border-b">
-            <h2 className="text-xl font-bold text-[#2c64dd]">Adicionar empréstimo</h2>
-            <button onClick={onFechar} className="text-xl text-[#2c64dd] font-bold">×</button>
+            <div className="flex justify-between items-center pt-4 pr-4 pl-4 pb-1 border-b">
+              <h2 className="text-xl font-bold text-[#2c64dd]">Adicionar empréstimo</h2>
+              <button onClick={onFechar} className="text-xl text-[#2c64dd] font-bold">×</button>
             </div>
 
             {/* Conteúdo com scroll */}
             <div className="p-4 overflow-y-auto flex-1 space-y-4">
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <input type="text" placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
-                <input type="text" placeholder="Item" value={item} onChange={(e) => setItem(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
+            <form onSubmit={handleSubmit} className="space-y-2">
+                <p className="text-sm text-gray-500">Nome:</p>
+                <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
+                <p className="text-sm text-gray-500">Item:</p>
+                <input type="text" value={item} onChange={(e) => setItem(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
+                <p className="text-sm text-gray-500">Selecione um tomador:</p>
                 <div className="flex items-center gap-2">
                   <select
                     value={tomador}
                     onChange={(e) => setTomador(e.target.value)}
                     className="flex-1 p-2 border rounded text-black bg-white max-h-40 overflow-y-auto"
                   >
-                    <option value="" disabled>Selecione um tomador</option>
+                    <option value="" disabled>Selecione...</option>
                     {pessoas.map((pessoa) => (
                       <option key={pessoa.id} value={pessoa.id}>
                         {pessoa.nome}
                       </option>
                     ))}
                   </select>
-
+                  
                   <button
                     type="button" // para nao enviar o form ao apertar para abrir o modal
                     onClick={() => setAbrirModalPessoa(true)}
@@ -90,8 +93,11 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
                   </button>
 
                 </div>
+                <p className="text-sm text-gray-500">Data de Devolução:</p>
                 <input type="date" value={data_devolucao_esperada} onChange={(e) => setDataDevolucao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
-                <textarea placeholder="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" rows={3} />
+                <p className="text-sm text-gray-500 mt-2">Descrição:</p>
+                <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" rows={3} />
+                <p className="text-sm text-gray-500">Foto:</p>
                 <input type="file" onChange={(e) => setFoto(e.target.files?.[0] || null)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
             </form>
             </div>

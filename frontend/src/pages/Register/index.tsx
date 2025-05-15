@@ -29,8 +29,8 @@ const Register = ({ onBack }: Props) => {
           icon: "error",
           width: "90%",
           backdrop: true,
-          timer: 1500,
-          timerProgressBar: true
+          showConfirmButton: true,
+          confirmButtonText: "OK",
       });
       return;
     }
@@ -60,8 +60,8 @@ const Register = ({ onBack }: Props) => {
         icon: "success",
         width: "90%",
         backdrop: true,
-        timer: 2000,
-        timerProgressBar: true
+        showConfirmButton: true,
+        confirmButtonText: "OK",
       });
 
       onBack(); // volta para tela anterior, se desejar
@@ -74,8 +74,8 @@ const Register = ({ onBack }: Props) => {
           icon: "error",
           width: "90%",
           backdrop: true,
-          timer: 1500,
-          timerProgressBar: true
+          showConfirmButton: true,
+          confirmButtonText: "OK",
       });
     }
   };

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import desc, asc
 from database import get_db
 from schemas.emprestimo import EmprestimoCreate, EmprestimoOut, EmprestimoDelete
 from models.emprestimo import Emprestimo
@@ -31,4 +32,4 @@ def deletar_emprestimo(emprestimo: EmprestimoDelete, db: Session = Depends(get_d
 
 @router.get("/", response_model=list[EmprestimoOut])
 def listar_emprestimos(db: Session = Depends(get_db)):
-    return db.query(Emprestimo).all()
+    return db.query(Emprestimo).order_by(asc(Emprestimo.data_devolucao_esperada)).all()

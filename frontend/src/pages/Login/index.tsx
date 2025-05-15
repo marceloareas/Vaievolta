@@ -42,8 +42,8 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
         icon: "error",
         width: "90%",
         backdrop: true,
-        timer: 1500,
-        timerProgressBar: true
+        showConfirmButton: true,
+        confirmButtonText: "OK",
       });
     }
   };

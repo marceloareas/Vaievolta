@@ -53,9 +53,8 @@ const Home = () => {
       await Swal.fire({
         icon: "success",
         title: "Empréstimo cadastrado!",
-        showConfirmButton: false,
-        timer: 1500,
-        timerProgressBar: true,
+        showConfirmButton: true,
+        confirmButtonText: "OK",
       });
 
       carregarEmprestimos();

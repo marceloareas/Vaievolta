@@ -35,9 +35,8 @@ const Profile = () => {
         await Swal.fire({
           title: "Logout efetuado!",
           icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-          showConfirmButton: false
+          showConfirmButton: true,
+          confirmButtonText: "OK",
         });
       }
       localStorage.removeItem("token");
@@ -63,9 +62,8 @@ const Profile = () => {
           title: "Excluído!",
           text: "A conta foi excluída.",
           icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-          showConfirmButton: false
+          showConfirmButton: true,
+          confirmButtonText: "OK",
         });
       }
 
@@ -82,8 +80,8 @@ const Profile = () => {
       icon: "success",
       width: "90%",
       backdrop: true,
-      timer: 1500,
-      timerProgressBar: true
+      showConfirmButton: true,
+      confirmButtonText: "OK",
     });
   };
 

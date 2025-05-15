@@ -43,7 +43,8 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
       icon: "success",
       width: "90%",
       backdrop: true,
-      timer: 1500,
+      showConfirmButton: true,
+      confirmButtonText: "OK",
       timerProgressBar: true
     })
 
@@ -96,9 +97,8 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
         title: "Excluído!",
         text: "O empréstimo foi excluído.",
         icon: "success",
-        timer: 1000,
-        timerProgressBar: true,
-        showConfirmButton: false
+        showConfirmButton: true,
+        confirmButtonText: "OK",
       });
       onFechar();
       carregarEmprestimos();
@@ -125,9 +125,8 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
           title: "Confirmado!",
           text: "O empréstimo foi marcado como devolvido.",
           icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-          showConfirmButton: false
+          showConfirmButton: true,
+          confirmButtonText: "OK",
         });
       }
 

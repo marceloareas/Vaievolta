@@ -128,9 +128,9 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
               await Swal.fire({
                 icon: "success",
                 title: "Pessoa criada com sucesso!",
-                showConfirmButton: false,
-                timer: 1500,
-                timerProgressBar: true
+                showConfirmButton: true,
+                confirmButtonText: "OK",
+                backdrop: true,
               });
 
             } catch (err) {
@@ -139,8 +139,8 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
                 text: "Por favor, verifique os dados e tente novamente.",
                 icon: "error",
                 width: "90%",
-                backdrop: true,
-                timer: 1500,
+                showConfirmButton: true,
+                confirmButtonText: "OK",
                 timerProgressBar: true
               });
             }

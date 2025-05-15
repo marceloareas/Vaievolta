@@ -46,4 +46,9 @@ def registrar_devolucao(emprestimo: EmprestimoUpdate, db: Session = Depends(get_
 
 @router.get("/", response_model=list[EmprestimoOut])
 def listar_emprestimos(db: Session = Depends(get_db)):
-    return db.query(Emprestimo).order_by(asc(Emprestimo.data_devolucao_esperada)).all()
+    return (
+        db.query(Emprestimo)
+        .filter(Emprestimo.status != "Devolvido")
+        .order_by(asc(Emprestimo.data_devolucao_esperada))
+        .all()
+    )

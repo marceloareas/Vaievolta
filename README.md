@@ -34,12 +34,7 @@ Link para o Figma: https://www.figma.com/design/CFKBBcsuK4RQOKu8qh9ajc/vai-volta
 
 ## Modelo Lógico de Entidade e Relacionamento
 
-![image](https://github.com/user-attachments/assets/f89fb779-8d9f-490a-91d3-7bff843345a2)
-
-## Modelo Conceitual de Entidade e Relacionamento
-
-![image](https://github.com/user-attachments/assets/7cd8452e-2b8a-4470-8ab7-ad2b946ae9e4)
-
+![Untitled](https://github.com/user-attachments/assets/3f787047-4808-4dc7-b25c-c74943b7432a)
 
 # Documentação do projeto
 

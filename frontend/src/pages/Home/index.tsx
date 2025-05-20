@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { HiOutlineQrcode } from "react-icons/hi";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import Swal from "sweetalert2";
 
 import Menu from "../../components/Menu";
 import ModalEmprestimo from "../../components/Modal/ModalCreateEmprestimo";
@@ -9,7 +10,7 @@ import ModalViewEmprestimo from "../../components/Modal/ModalViewEmprestimo";
 import Emprestimo from "../../types/index";
 
 import { fetchEmprestimos, createEmprestimo } from "../../services/emprestimoService";
-import Swal from "sweetalert2";
+import { getUserFirstName } from "../../services/utils";
 
 const Home = () => {
   const [abrirModal, setAbrirModal] = useState(false);
@@ -42,7 +43,7 @@ const Home = () => {
       await createEmprestimo({
         nome: novoEmprestimo.nome,
         item: novoEmprestimo.item,
-        tomador: novoEmprestimo.tomador,
+        pessoa_id: parseInt(novoEmprestimo.tomador), // <- tomador contém o ID da pessoa
         data_emprestimo: new Date().toISOString().split("T")[0],
         data_devolucao_esperada: novoEmprestimo.data_devolucao_esperada,
         descricao: novoEmprestimo.descricao,
@@ -83,7 +84,7 @@ const Home = () => {
       <header className="w-full flex items-center justify-center px-6 py-3 fixed top-1 left- bg-[#2c64dd] z-40">
         <Menu />
         <h2 className="text-white text-2xl font-bold flex items-center gap-2 ml-5">
-          Bem-vindo, Fulano
+          Bem-vindo, {getUserFirstName() || "User"}
         </h2>
         <img src="/logo.png" alt="Logo" className="h-10 ml-4" />
       </header>

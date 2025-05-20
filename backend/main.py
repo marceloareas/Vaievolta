@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine
-from models import usuario, pessoa, emprestimo, associacoes
+from models import usuario, pessoa, emprestimo
 from routers import usuarios, pessoas, auth, emprestimos
-from seed import populate_emprestimos, populate_pessoas
+from seed import populate_emprestimos, populate_pessoas, populate_usuarios
 
 app = FastAPI()
 
@@ -19,6 +19,7 @@ app.add_middleware(
 # Cria as tabelas
 Base.metadata.create_all(bind=engine)
 
+populate_usuarios()
 populate_pessoas()
 populate_emprestimos()
 

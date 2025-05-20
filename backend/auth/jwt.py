@@ -1,14 +1,16 @@
 from datetime import datetime, timedelta
-from jose import JWTError, jwt
+from jose import jwt
+from models.usuario import Usuario
 
-# Segredo e algoritmos
-SECRET_KEY = "chave_conexao_rural"
+SECRET_KEY = "chave_vai_e_volta"
 ALGORITHM = "HS256"
 EXPIRA_MINUTOS = 30
 
-def criar_token(data: dict):
-    dados = data.copy()
+def criar_token(usuario: Usuario):
     expiracao = datetime.now().astimezone() + timedelta(minutes=EXPIRA_MINUTOS)
-    dados.update({"exp": expiracao})
-    token = jwt.encode(dados, SECRET_KEY, algorithm=ALGORITHM)
-    return token
+    payload = {
+        "sub": str(usuario.id),
+        "nome": usuario.nome,
+        "exp": expiracao
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)

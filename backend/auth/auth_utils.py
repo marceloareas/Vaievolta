@@ -2,11 +2,9 @@
 from fastapi import Depends, HTTPException, status
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer
+from auth.jwt import SECRET_KEY, ALGORITHM
 
-SECRET_KEY = "chave_vai_e_volta"  # Ideal: pegue do seu .env
-ALGORITHM = "HS256"
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 def verificar_token(token: str = Depends(oauth2_scheme)):
     try:

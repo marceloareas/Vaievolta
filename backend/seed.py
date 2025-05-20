@@ -1,17 +1,43 @@
 from models.emprestimo import Emprestimo
-from database import SessionLocal
 from models.pessoa import Pessoa
+from models.usuario import Usuario
+from database import SessionLocal
 from datetime import date
+
+def populate_usuarios():
+    db = SessionLocal()
+    try:
+        if db.query(Usuario).count() == 0:
+            usuario = Usuario(
+                nome="Administrador",
+                email="admin@example.com",
+                senha="senha123",  # Em produção, isso deve ser criptografado
+                endereco="Rua Exemplo, 123",
+                telefone="(00) 00000-0000"
+            )
+            db.add(usuario)
+            db.commit()
+            print("Usuário administrador criado.")
+        else:
+            print("Usuários já cadastrados.")
+    finally:
+        db.close()
+
 
 def populate_pessoas():
     db = SessionLocal()
     try:
+        admin = db.query(Usuario).first()
+        if not admin:
+            print("Crie um usuário antes de cadastrar pessoas.")
+            return
+
         if db.query(Pessoa).count() == 0:
             pessoas = [
-                Pessoa(nome="Maria Silva", email="maria@example.com", telefone="(11) 91234-5678", observacao="Cliente recorrente"),
-                Pessoa(nome="João Souza", email="joao@example.com", telefone="(21) 98765-4321", observacao="Pagou com atraso"),
-                Pessoa(nome="Ana Lima", email="ana@example.com", telefone="(31) 99876-5432", observacao="Prefere contato por WhatsApp"),
-                Pessoa(nome="Carlos Mendes", email="carlos@example.com", telefone="(41) 95555-1234", observacao="Novo cliente"),
+                Pessoa(nome="Maria Silva", email="maria@example.com", telefone="(11) 91234-5678", observacao="Cliente recorrente", usuario_id=admin.id),
+                Pessoa(nome="João Souza", email="joao@example.com", telefone="(21) 98765-4321", observacao="Pagou com atraso", usuario_id=admin.id),
+                Pessoa(nome="Ana Lima", email="ana@example.com", telefone="(31) 99876-5432", observacao="Prefere contato por WhatsApp", usuario_id=admin.id),
+                Pessoa(nome="Carlos Mendes", email="carlos@example.com", telefone="(41) 95555-1234", observacao="Novo cliente", usuario_id=admin.id),
             ]
             db.add_all(pessoas)
             db.commit()
@@ -21,6 +47,7 @@ def populate_pessoas():
     finally:
         db.close()
 
+
 def populate_emprestimos():
     db = SessionLocal()
     try:
@@ -28,22 +55,27 @@ def populate_emprestimos():
             print("Empréstimos já cadastrados.")
             return
 
+        admin = db.query(Usuario).first()
+        if not admin:
+            print("Usuário administrador não encontrado.")
+            return
+
+        pessoas = db.query(Pessoa).all()
+        pessoas_dict = {p.nome: p.id for p in pessoas}
+
         exemplos = [
-            ("Emprestimo #001", "Notebook Dell", "Emprestado para trabalho remoto", "2025-12-13", "João Silva"),
-            ("Emprestimo #002", "Projetor Epson", "Uso em apresentação de TCC", "2026-01-05", "Maria Souza"),
-            ("Emprestimo #003", "Caixa de Som JBL", "Uso em evento social", "2026-06-07", "Carlos Lima"),
-            ("Emprestimo #004", "Tablet Samsung", "Leitura de documentos técnicos", "2026-10-01", "Ana Beatriz"),
-            ("Emprestimo #005", "Impressora HP", "Suporte para impressão de contratos", "2026-11-22", "Ricardo Alves"),
-            ("Emprestimo #006", "Scanner Canon", "Digitalização de arquivos físicos", "2026-12-15", "Laura Mendes"),
-            ("Emprestimo #007", "Câmera Nikon", "Cobertura fotográfica de evento", "2027-01-03", "Fábio Torres"),
-            ("Emprestimo #008", "Monitor LG 27''", "Montagem de estação de trabalho", "2027-04-18", "Juliana Rocha"),
-            ("Emprestimo #009", "Celular de teste", "Testes de app interno", "2027-09-09", "Vinícius Duarte"),
-            ("Emprestimo #010", "Headset Logitech", "Participação em reuniões remotas", "2028-02-21", "Patrícia Gomes"),
-            ("Emprestimo #011", "TV Samsung 50''", "Apresentação institucional", "2028-05-10", "Marcos Ribeiro"),
-            ("Emprestimo #012", "Tripé profissional", "Filmagem de workshop", "2028-07-19", "Fernanda Costa"),
+            ("Emprestimo #001", "Notebook Dell", "Emprestado para trabalho remoto", "2025-12-13", "Maria Silva"),
+            ("Emprestimo #002", "Projetor Epson", "Uso em apresentação de TCC", "2026-01-05", "João Souza"),
+            ("Emprestimo #003", "Caixa de Som JBL", "Uso em evento social", "2026-06-07", "Carlos Mendes"),
+            ("Emprestimo #004", "Tablet Samsung", "Leitura de documentos técnicos", "2026-10-01", "Ana Lima"),
         ]
 
-        for nome, item, descricao, data_devolucao_esperada, tomador in exemplos:
+        for nome, item, descricao, data_devolucao_esperada, nome_tomador in exemplos:
+            pessoa_id = pessoas_dict.get(nome_tomador)
+            if not pessoa_id:
+                print(f"Pessoa '{nome_tomador}' não encontrada.")
+                continue
+
             emprestimo = Emprestimo(
                 nome=nome,
                 item=item,
@@ -53,7 +85,8 @@ def populate_emprestimos():
                 data_devolucao_real=None,
                 status="pendente",
                 foto_url=None,
-                tomador=tomador
+                pessoa_id=pessoa_id,
+                usuario_id=admin.id
             )
             db.add(emprestimo)
 

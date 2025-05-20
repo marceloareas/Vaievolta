@@ -13,5 +13,5 @@ def login(usuario: UsuarioLogin, db: Session = Depends(get_db)):
     if not usuario_autenticado:
         raise HTTPException(status_code=401, detail="Credenciais inválidas")
     
-    token = criar_token({"sub": usuario_autenticado.email})
+    token = criar_token(usuario_autenticado)
     return {"access_token": token, "token_type": "bearer"}

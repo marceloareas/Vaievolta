@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, asc
+from auth.auth_utils import verificar_token
 from database import get_db
 from schemas.emprestimo import EmprestimoCreate, EmprestimoOut, EmprestimoDelete, EmprestimoUpdate
 from models.emprestimo import Emprestimo
@@ -9,9 +10,16 @@ import datetime
 router = APIRouter(prefix="/emprestimos", tags=["emprestimos"])
 
 @router.post("/", response_model=EmprestimoOut)
-def criar_emprestimo(emprestimo: EmprestimoCreate, db: Session = Depends(get_db)):
+def criar_emprestimo(
+    emprestimo: EmprestimoCreate,
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token)
+):
     try:
-        novo = Emprestimo(**emprestimo.model_dump())  # Pydantic v2 (usa model_dump)
+        novo = Emprestimo(
+            **emprestimo.model_dump(),
+            usuario_id=usuario_id
+        )
         db.add(novo)
         db.commit()
         db.refresh(novo)
@@ -45,10 +53,14 @@ def registrar_devolucao(emprestimo: EmprestimoUpdate, db: Session = Depends(get_
         raise HTTPException(status_code=400, detail=f"Erro ao registrar devolução: {str(e)}")
 
 @router.get("/", response_model=list[EmprestimoOut])
-def listar_emprestimos(db: Session = Depends(get_db)):
+def listar_emprestimos(
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token)
+):
     return (
         db.query(Emprestimo)
+        .filter(Emprestimo.usuario_id == usuario_id)
         .filter(Emprestimo.status != "Devolvido")
-        .order_by(asc(Emprestimo.data_devolucao_esperada))
+        .order_by(Emprestimo.data_devolucao_esperada.asc())
         .all()
     )

@@ -36,6 +36,24 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
 
   if (!aberto) return null;
 
+  const adicionarUmaSemana = () => {
+    
+    const dataBase = data_devolucao_esperada ? new Date(data_devolucao_esperada) : new Date();
+    dataBase.setDate(dataBase.getDate() + 7);
+    const novaData = dataBase.toISOString().split('T')[0];
+
+    setDataDevolucao(novaData);
+  };
+
+  const adicionarUmMes = () => {
+    
+    const dataBase = data_devolucao_esperada ? new Date(data_devolucao_esperada) : new Date();
+    dataBase.setMonth(dataBase.getMonth() + 1);
+    const novaData = dataBase.toISOString().split('T')[0];
+
+    setDataDevolucao(novaData);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const novoEmprestimo = { 
@@ -85,7 +103,7 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
                   </select>
                   
                   <button
-                    type="button" // para nao enviar o form ao apertar para abrir o modal
+                    type="button"
                     onClick={() => setAbrirModalPessoa(true)}
                     className="bg-[#2c64dd] text-white p-2 rounded-full font-semibold hover:bg-[#0f326f] transition"
                   >
@@ -95,6 +113,10 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
                 </div>
                 <p className="text-sm text-gray-500">Data de Devolução:</p>
                 <input type="date" value={data_devolucao_esperada} onChange={(e) => setDataDevolucao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
+                <div className="flex items-center gap-2">
+                  <button type="button" onClick={adicionarUmaSemana} className="w-full bg-[#2c64dd] text-white py-2 rounded font-semibold hover:bg-[#0f326f] transition" >+1 Semana</button>
+                  <button type="button" onClick={adicionarUmMes} className="w-full bg-[#2c64dd] text-white py-2 rounded font-semibold hover:bg-[#0f326f] transition">+1 Mês</button>
+                </div>
                 <p className="text-sm text-gray-500 mt-2">Descrição:</p>
                 <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" rows={3} />
                 <p className="text-sm text-gray-500">Foto:</p>

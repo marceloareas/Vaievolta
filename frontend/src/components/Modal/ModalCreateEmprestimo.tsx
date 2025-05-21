@@ -150,7 +150,7 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
                   onClick={() => {
                     Swal.fire({
                       title: "Dica!",
-                      text: "Se possível, tire uma foto da pessoa com o objeto emprestado.",
+                      text: "Tire uma foto da pessoa com o objeto emprestado.",
                       icon: "info",
                       confirmButtonText: "OK",
                     }).then((result) => {

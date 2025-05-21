@@ -24,6 +24,10 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
   const [data_devolucao_esperada, setDataDevolucao] = useState("");
   const [descricao, setDescricao] = useState("");
   const [foto, setFoto] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const [abrirModalPessoa, setAbrirModalPessoa] = useState(false);
 
@@ -120,7 +124,45 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
                 <p className="text-sm text-gray-500 mt-2">Descrição:</p>
                 <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" rows={3} />
                 <p className="text-sm text-gray-500">Foto:</p>
-                <input type="file" onChange={(e) => setFoto(e.target.files?.[0] || null)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
+
+                {previewUrl && (
+                  <div className="mt-2">
+                    <img
+                      src={previewUrl}
+                      alt="Pre-view da imagem"
+                      className="w-full max-h-64 object-contain border rounded"
+                    />
+                  </div>
+                )}
+                <input type="file" ref={fileInputRef}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setFoto(file);
+
+                    if (file) {
+                      const url = URL.createObjectURL(file);
+                      setPreviewUrl(url);
+                    }
+                  }}
+                  className="hidden"/>
+
+                <button type="button"
+                  onClick={() => {
+                    Swal.fire({
+                      title: "Dica!",
+                      text: "Se possível, tire uma foto da pessoa com o objeto emprestado.",
+                      icon: "info",
+                      confirmButtonText: "OK",
+                    }).then((result) => {
+                      if (result.isConfirmed && fileInputRef.current) {
+                        fileInputRef.current.click();
+                      }
+                    });
+                  }}
+                  className="w-full bg-[#2c64dd] text-white py-2 rounded font-semibold hover:bg-[#0f326f] transition">
+                  Selecionar imagem
+                </button>
+
             </form>
             </div>
 

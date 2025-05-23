@@ -24,6 +24,10 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
   const [data_devolucao_esperada, setDataDevolucao] = useState("");
   const [descricao, setDescricao] = useState("");
   const [foto, setFoto] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const [abrirModalPessoa, setAbrirModalPessoa] = useState(false);
 
@@ -35,6 +39,24 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
   }, []);
 
   if (!aberto) return null;
+
+  const adicionarUmaSemana = () => {
+    
+    const dataBase = data_devolucao_esperada ? new Date(data_devolucao_esperada) : new Date();
+    dataBase.setDate(dataBase.getDate() + 7);
+    const novaData = dataBase.toISOString().split('T')[0];
+
+    setDataDevolucao(novaData);
+  };
+
+  const adicionarUmMes = () => {
+    
+    const dataBase = data_devolucao_esperada ? new Date(data_devolucao_esperada) : new Date();
+    dataBase.setMonth(dataBase.getMonth() + 1);
+    const novaData = dataBase.toISOString().split('T')[0];
+
+    setDataDevolucao(novaData);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,7 +107,7 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
                   </select>
                   
                   <button
-                    type="button" // para nao enviar o form ao apertar para abrir o modal
+                    type="button"
                     onClick={() => setAbrirModalPessoa(true)}
                     className="bg-[#2c64dd] text-white p-2 rounded-full font-semibold hover:bg-[#0f326f] transition"
                   >
@@ -95,10 +117,52 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
                 </div>
                 <p className="text-sm text-gray-500">Data de Devolução:</p>
                 <input type="date" value={data_devolucao_esperada} onChange={(e) => setDataDevolucao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
+                <div className="flex items-center gap-2">
+                  <button type="button" onClick={adicionarUmaSemana} className="w-full bg-[#2c64dd] text-white py-2 rounded font-semibold hover:bg-[#0f326f] transition" >+1 Semana</button>
+                  <button type="button" onClick={adicionarUmMes} className="w-full bg-[#2c64dd] text-white py-2 rounded font-semibold hover:bg-[#0f326f] transition">+1 Mês</button>
+                </div>
                 <p className="text-sm text-gray-500 mt-2">Descrição:</p>
                 <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} className="w-full p-2 border rounded text-black placeholder-gray-500" rows={3} />
                 <p className="text-sm text-gray-500">Foto:</p>
-                <input type="file" onChange={(e) => setFoto(e.target.files?.[0] || null)} className="w-full p-2 border rounded text-black placeholder-gray-500" />
+
+                {previewUrl && (
+                  <div className="mt-2">
+                    <img
+                      src={previewUrl}
+                      alt="Pre-view da imagem"
+                      className="w-full max-h-64 object-contain border rounded"
+                    />
+                  </div>
+                )}
+                <input type="file" ref={fileInputRef}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setFoto(file);
+
+                    if (file) {
+                      const url = URL.createObjectURL(file);
+                      setPreviewUrl(url);
+                    }
+                  }}
+                  className="hidden"/>
+
+                <button type="button"
+                  onClick={() => {
+                    Swal.fire({
+                      title: "Dica!",
+                      text: "Tire uma foto da pessoa com o objeto emprestado.",
+                      icon: "info",
+                      confirmButtonText: "OK",
+                    }).then((result) => {
+                      if (result.isConfirmed && fileInputRef.current) {
+                        fileInputRef.current.click();
+                      }
+                    });
+                  }}
+                  className="w-full bg-[#2c64dd] text-white py-2 rounded font-semibold hover:bg-[#0f326f] transition">
+                  Selecionar imagem
+                </button>
+
             </form>
             </div>
 

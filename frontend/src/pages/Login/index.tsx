@@ -4,6 +4,8 @@ import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
+import { useUser } from "../../contexts/UserContext";
+
 interface Props {
   onShowRegister: () => void;
   onShowForgotPassword: () => void;
@@ -13,6 +15,9 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+
+  
+  const { setUser } = useUser();
 
   const navigate = useNavigate();
 
@@ -31,7 +36,10 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
       }
 
       const data = await response.json();
-      localStorage.setItem("token", data.access_token); // ✅ salva o token JWT
+      const { user, access_token } = data;
+      setUser(user);
+      
+      localStorage.setItem("token", access_token); // ✅ salva o token JWT
       navigate("/home");
 
     } catch (error) {

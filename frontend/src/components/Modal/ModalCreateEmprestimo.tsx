@@ -169,7 +169,7 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
             {/* Rodapé com botão fixo */}
             <div className="p-4 border-t">
             <button type="submit" onClick={handleSubmit} className="w-full bg-[#133E87] text-white py-2 rounded font-semibold hover:bg-[#0f326f] transition">
-                Adicionar
+                Adicionar Empréstimo
             </button>
             </div>
         </div>

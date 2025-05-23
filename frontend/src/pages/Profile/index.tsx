@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
 import { MdModeEdit, MdCancel } from "react-icons/md";
 import { IoMdExit } from "react-icons/io";
@@ -6,18 +6,30 @@ import Swal from "sweetalert2";
 import Footer from "../Footer/index";
 import Menu from "../../components/Menu";
 import { useNavigate } from "react-router-dom";
+import { useUser, User } from "../../contexts/UserContext";
 
 const Profile = () => {
-  const [name, setName] = useState("John Doe");
-  const [email, setEmail] = useState("jh.terencio@gmail.com");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("********");
   const [editMode, setEditMode] = useState(false);
   const [newPassword, setNewPassword] = useState(password);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [endereco, setEndereco] = useState("Rua Exemplo, 123");
-  const [telefone, setTelefone] = useState("(21) 99999-9999");
+  const [endereco, setEndereco] = useState("--------");
+  const [telefone, setTelefone] = useState("--------");
 
   const navigate = useNavigate();
+
+  const { user, setUser } = useUser();
+
+  useEffect
+    (() => {
+      if (user) {
+        setName(user?.nome || "--------");
+        setEmail(user?.email || "--------");
+        setProfileImage(`http://localhost:8000${user?.foto_perfil}`);
+      }
+    }, [user]);
 
   const handleLogout = async () => {
     Swal.fire({
@@ -89,14 +101,48 @@ const Profile = () => {
     setEditMode(false)
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append("file", file);
+  
+      try {
+        const token = localStorage.getItem("token"); // ⬅️ pega o token salvo no login
+        const response = await fetch("http://localhost:8000/upload/imagem", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`, // ⬅️ envia o token no cabeçalho
+          },
+          body: formData,
+        });
+  
+        if (!response.ok) throw new Error("Erro no upload da imagem");
+  
+        const data = await response.json();
+  
+        // Atualiza o User Context com o novo caminho da foto
+        setUser({
+          ...user,
+          foto_perfil: data.url
+        } as User);
+  
+        // Mostra no componente a nova imagem
+        setProfileImage(`http://localhost:8000${data.url}`);
+  
+        Swal.fire({
+          title: "Foto atualizada com sucesso!",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+      } catch (err) {
+        console.error("Erro ao fazer upload da imagem:", err);
+        Swal.fire({
+          title: "Erro ao salvar foto",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
     }
   };
 
@@ -115,7 +161,7 @@ const Profile = () => {
       <div className="flex flex-col items-center">
         <div className="relative w-32 h-32">
           <img
-            src={profileImage || "/icon.png"}
+            src={profileImage || "/loading.png"}
             alt="Foto de Perfil"
             className="w-32 h-32 rounded-full object-cover border-4 border-white"
           />

@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 class UsuarioBase(BaseModel):
@@ -22,3 +23,8 @@ class UsuarioOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+class UsuarioUpdate(BaseModel):
+    nome: Optional[str] = None
+    endereco: Optional[str] = None
+    telefone: Optional[str] = None

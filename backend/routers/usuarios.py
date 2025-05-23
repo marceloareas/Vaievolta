@@ -1,8 +1,10 @@
+from http.client import HTTPException
+from auth.auth_utils import verificar_token
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from models.usuario import Usuario
-from schemas.usuario import UsuarioCreate, UsuarioOut
+from schemas.usuario import UsuarioCreate, UsuarioOut, UsuarioUpdate
 from passlib.context import CryptContext
 
 router = APIRouter(prefix="/usuarios", tags=["usuarios"])
@@ -28,3 +30,27 @@ def criar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(novo)
     return novo
+
+@router.patch("/me")
+def atualizar_usuario(
+    dados: UsuarioUpdate,
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token)
+):
+    usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    if dados.nome is not None:
+        usuario.nome = dados.nome
+    if dados.endereco is not None:
+        usuario.endereco = dados.endereco
+    if dados.telefone is not None:
+        usuario.telefone = dados.telefone
+    if dados.foto_perfil is not None:
+        usuario.foto_perfil = dados.foto_perfil
+
+    db.commit()
+    db.refresh(usuario)
+    return {"msg": "Usuário atualizado com sucesso", "usuario": usuario}
+

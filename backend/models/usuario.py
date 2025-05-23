@@ -10,3 +10,4 @@ class Usuario(Base):
     senha = Column(String)
     endereco = Column(String)
     telefone = Column(String)
+    foto_perfil = Column(String)

@@ -4,6 +4,7 @@ import Home from "../pages/Home";
 // import AdicionarEmprestimo from "../pages/AddEmprestimo";
 import NewPassword from "../pages/ForgotPassword/newPassword";
 import Profile from "../pages/Profile";
+import Relatorio from "../pages/Relatorio";
 
 const routes: RouteObject[] = [
   {
@@ -14,17 +15,17 @@ const routes: RouteObject[] = [
     path: "/home",
     element: <Home />,
   },
-  // {
-  //   path: "/adicionar",  // Rota para a página de adicionar empréstimo
-  //   element: <AdicionarEmprestimo />,
-  // },
   {
-    path: "/nova_senha",  // Rota para a página de adicionar empréstimo
+    path: "/nova_senha",  // Rota para a página de mudar senha
     element: <NewPassword />,
   },
   {
     path: "/perfil",  // Rota para a página visualizar perfil
     element: <Profile />,
+  },
+  {
+    path: "/relatorio",  // Rota para a página de visualizar relatório
+    element: <Relatorio />,
   },
 ];
 

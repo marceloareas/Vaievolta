@@ -83,7 +83,7 @@ def populate_emprestimos():
                 data_emprestimo=date.today(),
                 data_devolucao_esperada=date.fromisoformat(data_devolucao_esperada),
                 data_devolucao_real=None,
-                status="pendente",
+                status="Pendente",
                 foto_url=None,
                 pessoa_id=pessoa_id,
                 usuario_id=admin.id

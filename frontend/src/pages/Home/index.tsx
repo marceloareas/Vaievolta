@@ -48,7 +48,7 @@ const Home = () => {
         data_devolucao_esperada: novoEmprestimo.data_devolucao_esperada,
         descricao: novoEmprestimo.descricao,
         foto_url: "",
-        status: "pendente"
+        status: "Pendente"
       });
 
       await Swal.fire({

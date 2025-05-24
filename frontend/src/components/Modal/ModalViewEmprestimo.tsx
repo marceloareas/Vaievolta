@@ -21,6 +21,8 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
   const [descricao, setDescricao] = useState("");
   const [foto, setFoto] = useState('');
 
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -201,15 +203,22 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
               </div>
 
               <div>
-                <input
-                  type="file"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      setFoto(file.name); // pega apenas o nome do arquivo
-                    }
+                <button type="button"
+                  onClick={() => {
+                    Swal.fire({
+                      title: "Dica!",
+                      text: "Tire uma foto da pessoa com o objeto emprestado.",
+                      icon: "info",
+                      confirmButtonText: "OK",
+                    }).then((result) => {
+                      if (result.isConfirmed && fileInputRef.current) {
+                        fileInputRef.current.click();
+                      }
+                    });
                   }}
-                />
+                  className="w-full bg-[#2c64dd] text-white py-2 rounded font-semibold hover:bg-[#0f326f] transition">
+                  Selecionar imagem
+                </button>
               </div>
 
             </>

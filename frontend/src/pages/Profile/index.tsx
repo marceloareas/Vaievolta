@@ -7,6 +7,7 @@ import Footer from "../Footer/index";
 import Menu from "../../components/Menu";
 import { useNavigate } from "react-router-dom";
 import { useUser, User } from "../../contexts/UserContext";
+import { updateUser } from "../../services/userService";
 
 const Profile = () => {
   const [name, setName] = useState("");
@@ -15,8 +16,8 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [newPassword, setNewPassword] = useState(password);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [endereco, setEndereco] = useState("--------");
-  const [telefone, setTelefone] = useState("--------");
+  const [endereco, setEndereco] = useState("");
+  const [telefone, setTelefone] = useState("");
 
   const navigate = useNavigate();
 
@@ -25,8 +26,8 @@ const Profile = () => {
   useEffect
     (() => {
       if (user) {
-        setName(user?.nome || "--------");
-        setEmail(user?.email || "--------");
+        setName(user?.nome || "");
+        setEmail(user?.email || "");
         setProfileImage(`http://localhost:8000${user?.foto_perfil}`);
       }
     }, [user]);
@@ -83,18 +84,45 @@ const Profile = () => {
     });
   };
 
-  const handleSaveChanges = async () => {
-    setPassword(newPassword);
-    setEditMode(false);
+  // const handleSaveChanges = async () => {
+  //   setPassword(newPassword);
+  //   setEditMode(false);
     
-    await Swal.fire({
-      title: "Alterações salvas!",
-      icon: "success",
-      width: "90%",
-      backdrop: true,
-      showConfirmButton: true,
-      confirmButtonText: "OK",
-    });
+  //   await Swal.fire({
+  //     title: "Alterações salvas!",
+  //     icon: "success",
+  //     width: "90%",
+  //     backdrop: true,
+  //     showConfirmButton: true,
+  //     confirmButtonText: "OK",
+  //   });
+  // };
+
+  const handleSaveChanges = async () => {
+    try {
+      const dadosAtualizados = {
+        nome: name,
+        endereco,
+        telefone,
+      };
+
+      const data = await updateUser(dadosAtualizados);
+      setUser(data.usuario); // atualiza o contexto com os novos dados
+      setEditMode(false);
+
+      await Swal.fire({
+        title: "Alterações salvas!",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+    } catch (error) {
+      console.error("Erro ao salvar alterações:", error);
+      await Swal.fire({
+        title: "Erro ao salvar",
+        text: "Verifique os dados e tente novamente.",
+        icon: "error",
+      });
+    }
   };
 
   const handleCancelEdit = async () => {
@@ -191,6 +219,7 @@ const Profile = () => {
             <input
               type="text"
               className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
+              placeholder="Digite seu nome"
               value={name}
               readOnly={!editMode}
               onChange={(e) => setName(e.target.value)}
@@ -211,6 +240,7 @@ const Profile = () => {
               <input
                 type="email"
                 className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
+                placeholder="Digite seu email"
                 value={email}
                 readOnly={!editMode}
                 onChange={(e) => setEmail(e.target.value)}
@@ -231,6 +261,7 @@ const Profile = () => {
               <input
                 type="text"
                 className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
+                placeholder="Rua, número, bairro"
                 value={endereco}
                 readOnly={!editMode}
                 onChange={(e) => setEndereco(e.target.value)}
@@ -252,6 +283,7 @@ const Profile = () => {
               <input
                 type="text"
                 className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
+                placeholder="(xx) xxxxx-xxxx"
                 value={telefone}
                 readOnly={!editMode}
                 onChange={(e) => setTelefone(e.target.value)}

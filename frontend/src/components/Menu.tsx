@@ -7,6 +7,7 @@ import { MdOutlineAddBox } from "react-icons/md";
 import { TbLogout2 } from "react-icons/tb";
 import ModalEmprestimo from "./Modal/ModalCreateEmprestimo";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Menu = () => {
   const location = useLocation();
@@ -15,6 +16,32 @@ const Menu = () => {
   const getIconColor = (path: string) => location.pathname === path ? "#133E87" : "#444";
 
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Deseja mesmo sair da conta ?",
+      icon: "warning",
+      width: "90%",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#808080",
+      confirmButtonText: "Sair",
+      cancelButtonText: "Cancelar",
+      backdrop: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await Swal.fire({
+          title: "Logout efetuado!",
+          icon: "success",
+          showConfirmButton: true,
+          confirmButtonText: "OK",
+        });
+      }
+      localStorage.removeItem("token");
+      navigate("/");
+    });
+    setAbrirDrawer(false);
+  }
 
   return (
     <>
@@ -76,11 +103,7 @@ const Menu = () => {
                 
                 {/* Botão Sair no final */}
                 <button
-                  onClick={() => {
-                    localStorage.removeItem("token");              
-                    navigate("/"); 
-                    setAbrirDrawer(false);                 
-                  }}
+                  onClick={handleLogout}
                   className="mt-6 self-start text-red-600 font-semibold hover:text-red-700 transition flex items-center gap-2"
                 >
                   <TbLogout2 size={20} />

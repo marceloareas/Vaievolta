@@ -47,10 +47,9 @@ def atualizar_usuario(
         usuario.endereco = dados.endereco
     if dados.telefone is not None:
         usuario.telefone = dados.telefone
-    if dados.foto_perfil is not None:
-        usuario.foto_perfil = dados.foto_perfil
 
     db.commit()
     db.refresh(usuario)
+
     return {"msg": "Usuário atualizado com sucesso", "usuario": usuario}
 

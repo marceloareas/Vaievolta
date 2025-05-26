@@ -1,8 +1,12 @@
 from datetime import datetime, timedelta
 from jose import jwt
 from models.usuario import Usuario
+from dotenv import load_dotenv
+import os
 
-SECRET_KEY = "chave_vai_e_volta"
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 EXPIRA_MINUTOS = 30
 

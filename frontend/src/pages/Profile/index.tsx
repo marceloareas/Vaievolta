@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
 import { MdModeEdit, MdCancel } from "react-icons/md";
 import { IoMdExit } from "react-icons/io";
 import Swal from "sweetalert2";
+import { IMaskInput } from 'react-imask';
+
 import Footer from "../Footer/index";
 import Menu from "../../components/Menu";
-import { useNavigate } from "react-router-dom";
 import { useUser, User } from "../../contexts/UserContext";
 import { updateUser } from "../../services/userService";
 
@@ -29,6 +31,8 @@ const Profile = () => {
         setName(user?.nome || "");
         setEmail(user?.email || "");
         setProfileImage(`http://localhost:8000${user?.foto_perfil}`);
+        setEndereco(user?.endereco || "");
+        setTelefone(user?.telefone || "");
       }
     }, [user]);
 
@@ -280,14 +284,15 @@ const Profile = () => {
           <div className="mb-1">
             <label className="block text-sm text-white">Telefone</label>
             <div className="relative">
-              <input
-                type="text"
-                className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
-                placeholder="(xx) xxxxx-xxxx"
-                value={telefone}
-                readOnly={!editMode}
-                onChange={(e) => setTelefone(e.target.value)}
-              />
+            <IMaskInput
+              mask="(00) 00000-0000"
+              value={telefone}
+              unmask={false}
+              disabled={!editMode}
+              onAccept={(value) => setTelefone(value)}
+              className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
+              placeholder="(xx) xxxxx-xxxx"
+            />
               <span
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
                 onClick={editMode ? handleCancelEdit : () => setEditMode(true)}

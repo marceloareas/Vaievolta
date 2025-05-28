@@ -26,3 +26,17 @@ export const createEmprestimo = async (emprestimo: any) => {
   return res.json();
 };
 
+export const updateEmprestimo = async (id: number, emprestimo: any) => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`http://localhost:8000/emprestimos/editarEmprestimo/${id}/`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(emprestimo),
+  });
+
+  if (!res.ok) throw new Error("Erro ao atualizar empréstimo");
+  return res.json();
+};

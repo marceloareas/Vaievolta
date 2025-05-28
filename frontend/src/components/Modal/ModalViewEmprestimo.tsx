@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import Emprestimo from "../../types/index";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { Pessoa } from "./ModalCreateEmprestimo";
+import { IoMdAddCircleOutline } from "react-icons/io";
+import ModalPessoa from "./ModalAddPessoa";
+import { updateEmprestimo } from "../../services/emprestimoService";
 
 interface ModalViewEmprestimoProps {
   aberto: boolean;
@@ -17,9 +21,12 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
   const [id, setId] = useState<number>();
   const [item, setItem] = useState("");
   const [tomador, setTomador] = useState("");
+  const [tomadorId, setTomadorId] = useState<number | null>(null);
+  const [pessoas, setPessoas] = useState<Pessoa[]>([]);
   const [dataDevolucao, setDataDevolucao] = useState("");
   const [descricao, setDescricao] = useState("");
   const [foto, setFoto] = useState('');
+  const [abrirModalPessoa, setAbrirModalPessoa] = useState(false);
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -27,18 +34,61 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
 
   useEffect(() => {
     if (emprestimo) {
+      // console.log("Carregando empréstimo:", emprestimo);
       setId(emprestimo.id);
       setNome(emprestimo.nome);
       setItem(emprestimo.item);
-      setTomador(emprestimo.tomador);
+      setTomador(emprestimo.nome_pessoa || "");
+      setTomadorId(emprestimo.pessoa_id || null);
       setDataDevolucao(emprestimo.data_devolucao_esperada);
       setDescricao(emprestimo.descricao);
       setFoto(emprestimo.foto_url || '');
     }
     setModoEdicao(false); // volta ao modo visual sempre que abre
+
+    // console.log(tomador)
+
+    fetch("http://localhost:8000/pessoas/")
+        .then((res) => res.json())
+        .then((data) => setPessoas(data))
+        .catch((err) => console.error("Erro ao buscar pessoas:", err));
+
   }, [emprestimo]);
 
   const handleSalvar = async () => {
+
+    // try {
+    //   const dadosAtualizados = {
+    //     id: id,
+    //     nome: nome,
+    //     item: item,
+    //     tomador: tomador,
+    //     data_devolucao_esperada: dataDevolucao,
+    //     descricao: descricao,
+    //     foto_url: foto,
+    //   };
+
+    //   if (id === undefined) {
+    //     throw new Error("ID do empréstimo não definido.");
+    //   }
+
+    //   const data = await updateEmprestimo(id, dadosAtualizados);
+    //   console.log("Empréstimo atualizado:", data);
+
+    //   await Swal.fire({
+    //     title: "Alterações salvas!",
+    //     icon: "success",
+    //     confirmButtonText: "OK",
+    //   });
+    // } catch (error) {
+    //   console.error("Erro ao salvar alterações:", error);
+    //   await Swal.fire({
+    //     title: "Erro ao salvar",
+    //     text: "Verifique os dados e tente novamente.",
+    //     icon: "error",
+    //   });
+    // }
+
     await Swal.fire({
       title: "Salvo!",
       text: "O empréstimo foi salvo com sucesso.",
@@ -49,6 +99,8 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
       confirmButtonText: "OK",
       timerProgressBar: true
     })
+
+    setModoEdicao(false);
 
     onFechar();
     
@@ -187,10 +239,29 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                 <input value={item} onChange={(e) => setItem(e.target.value)} className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]" />
               </div>
 
-              <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">Tomador:</label>
-                <input value={tomador} onChange={(e) => setTomador(e.target.value)} className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]" />
-              </div>
+              <div className="flex items-center gap-2">
+                <select
+                  value={tomadorId || ""}
+                  onChange={(e) => setTomador(e.target.value)}
+                  className="flex-1 p-2 border rounded text-black bg-white max-h-40 overflow-y-auto"
+                >
+                  <option value="" disabled>Selecione...</option>
+                  {pessoas.map((pessoa) => (
+                    <option key={pessoa.id} value={pessoa.id}>
+                      {pessoa.nome}
+                    </option>
+                  ))}
+                </select>
+                
+                <button
+                  type="button"
+                  onClick={() => setAbrirModalPessoa(true)}
+                  className="bg-[#2c64dd] text-white p-2 rounded-full font-semibold hover:bg-[#0f326f] transition"
+                >
+                  <IoMdAddCircleOutline size={30} />
+                </button>
+
+            </div>
 
               <div>
                 <label className="text-sm font-bold text-[#2c64dd] font-medium">Data de devolução:</label>
@@ -220,6 +291,49 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                   Selecionar imagem
                 </button>
               </div>
+
+              <ModalPessoa
+                aberto={abrirModalPessoa}
+                onFechar={() => setAbrirModalPessoa(false)}
+                onCriar={async (novaPessoa) => {
+                  try {
+                    const response = await fetch("http://localhost:8000/pessoas/create", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        nome: novaPessoa.nome,
+                        email: novaPessoa.email,
+                        telefone: novaPessoa.telefone,
+                        observacao: novaPessoa.descricao,
+                      }),
+                    });
+
+                    const pessoaCriada = await response.json();
+
+                    setPessoas((prev) => [...prev, pessoaCriada]); // Atualiza a lista de pessoas
+                    setTomador(pessoaCriada.id); // ir por padrao direto pro select
+
+                    await Swal.fire({
+                      icon: "success",
+                      title: "Pessoa criada com sucesso!",
+                      showConfirmButton: true,
+                      confirmButtonText: "OK",
+                      backdrop: true,
+                    });
+
+                  } catch (err) {
+                    await Swal.fire({
+                      title: "Erro ao criar pessoa",
+                      text: "Por favor, verifique os dados e tente novamente.",
+                      icon: "error",
+                      width: "90%",
+                      showConfirmButton: true,
+                      confirmButtonText: "OK",
+                      timerProgressBar: true
+                    });
+                  }
+                }}
+              />
 
             </>
           ) : (

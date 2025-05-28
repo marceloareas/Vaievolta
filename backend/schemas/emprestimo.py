@@ -10,7 +10,7 @@ class EmprestimoBase(BaseModel):
     data_devolucao_esperada: date
     status: str
     foto_url: Optional[str] = None
-    pessoa_id: int  # substitui o antigo `tomador: str`
+    pessoa_id: int
 
 class EmprestimoCreate(EmprestimoBase):
     pass
@@ -20,8 +20,17 @@ class EmprestimoDelete(BaseModel):
 
 class EmprestimoUpdate(BaseModel):
     id: int
+    nome: Optional[str] = None
+    item: Optional[str] = None
+    descricao: Optional[str] = None
+    data_emprestimo: Optional[date] = None
+    data_devolucao_esperada: Optional[date] = None
+    status: Optional[str] = None
+    foto_url: Optional[str] = None
+    pessoa_id: Optional[int] = None
 
 class EmprestimoOut(EmprestimoBase):
     id: int
+    nome_pessoa: Optional[str] = None  # Adiciona o nome da pessoa vinculada ao empréstimo
     class Config:
         from_attributes = True

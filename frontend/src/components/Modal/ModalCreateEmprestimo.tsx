@@ -5,7 +5,7 @@ import Emprestimo from "../../types/index"; // Importando o tipo Emprestimo
 import ModalPessoa from "../Modal/ModalAddPessoa"; // Importando o modal de criação de pessoa
 import Swal from "sweetalert2";
 
-interface Pessoa {
+export interface Pessoa {
   id: number;
   nome: string;
 }
@@ -32,7 +32,7 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
   const [abrirModalPessoa, setAbrirModalPessoa] = useState(false);
 
   useEffect(() => {
-      fetch("http://localhost:8000/pessoas/") // ajuste a URL conforme sua rota
+      fetch("http://localhost:8000/pessoas/")
         .then((res) => res.json())
         .then((data) => setPessoas(data))
         .catch((err) => console.error("Erro ao buscar pessoas:", err));

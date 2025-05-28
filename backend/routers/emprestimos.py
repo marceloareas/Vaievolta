@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, asc
 from auth.auth_utils import verificar_token
+from models.pessoa import Pessoa
 from database import get_db
 from schemas.emprestimo import EmprestimoCreate, EmprestimoOut, EmprestimoDelete, EmprestimoUpdate
 from models.emprestimo import Emprestimo
@@ -57,10 +58,35 @@ def listar_emprestimos(
     db: Session = Depends(get_db),
     usuario_id: int = Depends(verificar_token)
 ):
-    return (
+    emprestimos = (
         db.query(Emprestimo)
         .filter(Emprestimo.usuario_id == usuario_id)
         .filter(Emprestimo.status != "Devolvido")
         .order_by(Emprestimo.data_devolucao_esperada.asc())
         .all()
     )
+    # Adiciona o nome da pessoa vinculada ao empréstimo
+    for emp in emprestimos:
+        pessoa = db.query(Pessoa).filter(Pessoa.id == emp.pessoa_id).first()
+        emp.nome_pessoa = pessoa.nome if pessoa else None
+    return emprestimos
+
+@router.patch("/editarEmprestimo/{emprestimo_id}", response_model=EmprestimoOut)
+def atualizar_emprestimo(
+    emprestimo: EmprestimoUpdate,
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token)
+):
+    emprestimo_existente = db.query(Emprestimo).filter(Emprestimo.id == emprestimo.id).first()
+    if not emprestimo_existente:
+        raise HTTPException(status_code=404, detail="Empréstimo não encontrado")
+
+    try:
+        for key, value in emprestimo.model_dump().items():
+            setattr(emprestimo_existente, key, value)
+        db.commit()
+        db.refresh(emprestimo_existente)
+        return emprestimo_existente
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"Erro ao atualizar empréstimo: {str(e)}")

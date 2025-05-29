@@ -73,17 +73,19 @@ def listar_emprestimos(
 
 @router.patch("/editarEmprestimo/{emprestimo_id}", response_model=EmprestimoOut)
 def atualizar_emprestimo(
+    emprestimo_id: int,
     emprestimo: EmprestimoUpdate,
     db: Session = Depends(get_db),
     usuario_id: int = Depends(verificar_token)
 ):
-    emprestimo_existente = db.query(Emprestimo).filter(Emprestimo.id == emprestimo.id).first()
+    emprestimo_existente = db.query(Emprestimo).filter(Emprestimo.id == emprestimo_id).first()
     if not emprestimo_existente:
         raise HTTPException(status_code=404, detail="Empréstimo não encontrado")
 
     try:
-        for key, value in emprestimo.model_dump().items():
+        for key, value in emprestimo.model_dump(exclude_unset=True).items():
             setattr(emprestimo_existente, key, value)
+
         db.commit()
         db.refresh(emprestimo_existente)
         return emprestimo_existente

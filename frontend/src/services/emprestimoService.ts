@@ -28,7 +28,7 @@ export const createEmprestimo = async (emprestimo: any) => {
 
 export const updateEmprestimo = async (id: number, emprestimo: any) => {
   const token = localStorage.getItem("token");
-  const res = await fetch(`http://localhost:8000/emprestimos/editarEmprestimo/${id}/`, {
+  const res = await fetch(`http://localhost:8000/emprestimos/editarEmprestimo/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

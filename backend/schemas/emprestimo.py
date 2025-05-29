@@ -19,7 +19,6 @@ class EmprestimoDelete(BaseModel):
     id: int
 
 class EmprestimoUpdate(BaseModel):
-    id: int
     nome: Optional[str] = None
     item: Optional[str] = None
     descricao: Optional[str] = None

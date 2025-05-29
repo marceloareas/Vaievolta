@@ -57,48 +57,43 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
 
   const handleSalvar = async () => {
 
-    // try {
-    //   const dadosAtualizados = {
-    //     id: id,
-    //     nome: nome,
-    //     item: item,
-    //     tomador: tomador,
-    //     data_devolucao_esperada: dataDevolucao,
-    //     descricao: descricao,
-    //     foto_url: foto,
-    //   };
+    try {
+      const dadosAtualizados = {
+        id: id,
+        nome: nome,
+        item: item,
+        tomador: tomador,
+        data_devolucao_esperada: dataDevolucao,
+        descricao: descricao,
+        pessoa_id: tomadorId,
+        foto_url: foto? '' : null,
+      };
 
-    //   if (id === undefined) {
-    //     throw new Error("ID do empréstimo não definido.");
-    //   }
+      if (id === undefined) {
+        throw new Error("ID do empréstimo não definido.");
+      }
 
-    //   const data = await updateEmprestimo(id, dadosAtualizados);
-    //   console.log("Empréstimo atualizado:", data);
+      const data = await updateEmprestimo(id, dadosAtualizados);
+      console.log("Empréstimo atualizado:", data);
 
-    //   await Swal.fire({
-    //     title: "Alterações salvas!",
-    //     icon: "success",
-    //     confirmButtonText: "OK",
-    //   });
-    // } catch (error) {
-    //   console.error("Erro ao salvar alterações:", error);
-    //   await Swal.fire({
-    //     title: "Erro ao salvar",
-    //     text: "Verifique os dados e tente novamente.",
-    //     icon: "error",
-    //   });
-    // }
-
-    await Swal.fire({
-      title: "Salvo!",
-      text: "O empréstimo foi salvo com sucesso.",
-      icon: "success",
-      width: "90%",
-      backdrop: true,
-      showConfirmButton: true,
-      confirmButtonText: "OK",
-      timerProgressBar: true
-    })
+      await Swal.fire({
+        title: "Salvo!",
+        text: "O empréstimo foi salvo com sucesso.",
+        icon: "success",
+        width: "90%",
+        backdrop: true,
+        showConfirmButton: true,
+        confirmButtonText: "OK",
+        timerProgressBar: true
+      })
+    } catch (error) {
+      console.error("Erro ao salvar alterações:", error);
+      await Swal.fire({
+        title: "Erro ao salvar",
+        text: "Verifique os dados e tente novamente.",
+        icon: "error",
+      });
+    }
 
     setModoEdicao(false);
 

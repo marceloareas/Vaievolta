@@ -87,7 +87,7 @@ const Menu = () => {
               <div className="flex-1 flex flex-col justify-between">
                 <nav className="flex flex-col gap-6">
                   <Link to="/home" className="flex items-center gap-3 text-md font-medium" onClick={() => setAbrirDrawer(false)}>
-                    <FaHome size={20} color={getIconColor("/")} />
+                    <FaHome size={20} color={getIconColor("/home")} />
                     <span className="text-gray-500">Home</span>
                   </Link>
                   <Link to="/historico" className="flex items-center gap-3 text-md font-medium" onClick={() => setAbrirDrawer(false)}>

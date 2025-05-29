@@ -6,6 +6,7 @@ import { Pessoa } from "./ModalCreateEmprestimo";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import ModalPessoa from "./ModalAddPessoa";
 import { updateEmprestimo } from "../../services/emprestimoService";
+import { MdEdit } from "react-icons/md";
 
 interface ModalViewEmprestimoProps {
   aberto: boolean;
@@ -25,7 +26,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);
   const [dataDevolucao, setDataDevolucao] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [foto, setFoto] = useState('');
+  const [foto, setFoto] = useState("");
   const [abrirModalPessoa, setAbrirModalPessoa] = useState(false);
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -34,7 +35,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
 
   useEffect(() => {
     if (emprestimo) {
-      // console.log("Carregando empréstimo:", emprestimo);
+      console.log("Carregando empréstimo:", emprestimo);
       setId(emprestimo.id);
       setNome(emprestimo.nome);
       setItem(emprestimo.item);
@@ -42,7 +43,11 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
       setTomadorId(emprestimo.pessoa_id || null);
       setDataDevolucao(emprestimo.data_devolucao_esperada);
       setDescricao(emprestimo.descricao);
-      setFoto(emprestimo.foto_url || '');
+      if (emprestimo.foto_url) {
+        setFoto(`http://localhost:8000${emprestimo.foto_url}`);
+      } else {
+        setFoto(`http://localhost:8000/uploads/error.png`);
+      }
     }
     setModoEdicao(false); // volta ao modo visual sempre que abre
 
@@ -66,7 +71,6 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
         data_devolucao_esperada: dataDevolucao,
         descricao: descricao,
         pessoa_id: tomadorId,
-        foto_url: foto? '' : null,
       };
 
       if (id === undefined) {
@@ -153,6 +157,43 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
       carregarEmprestimos();
     });
   }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !id) return;
+  
+    const formData = new FormData();
+    formData.append("file", file);
+  
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:8000/emprestimos/imagemEmprestimo/${id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+  
+      if (!res.ok) throw new Error("Erro ao fazer upload da imagem");
+  
+      const data = await res.json();
+      setFoto(`http://localhost:8000${data.url}`);
+  
+      await Swal.fire({
+        title: "Imagem atualizada!",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+    } catch (err) {
+      console.error("Erro ao enviar imagem:", err);
+      await Swal.fire({
+        title: "Erro ao enviar imagem",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  };
 
   const handleDevolvido = (id: number) => {
     Swal.fire({
@@ -271,25 +312,6 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                 <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]" />
               </div>
 
-              <div>
-                <button type="button"
-                  onClick={() => {
-                    Swal.fire({
-                      title: "Dica!",
-                      text: "Tire uma foto da pessoa com o objeto emprestado.",
-                      icon: "info",
-                      confirmButtonText: "OK",
-                    }).then((result) => {
-                      if (result.isConfirmed && fileInputRef.current) {
-                        fileInputRef.current.click();
-                      }
-                    });
-                  }}
-                  className="w-full bg-[#2c64dd] text-white py-2 rounded font-semibold hover:bg-[#0f326f] transition">
-                  Selecionar imagem
-                </button>
-              </div>
-
               <ModalPessoa
                 aberto={abrirModalPessoa}
                 onFechar={() => setAbrirModalPessoa(false)}
@@ -336,6 +358,29 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
             </>
           ) : (
             <>
+
+              {/* Área de imagem */}
+              <div className="flex flex-col items-center">
+                <div className="relative w-48 h-32">
+                  <img
+                    src={foto || '/error.png'}
+                    alt="Foto do item"
+                    className="w-full h-full rounded-xl object-cover border-4 border-blue-900"
+                  />
+                  <label htmlFor="upload" className="absolute bottom-0 right-0 bg-white p-1 rounded-full cursor-pointer shadow">
+                    <MdEdit className="text-blue-600 w-5 h-5" />
+                  </label>
+                  <input
+                    id="upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                  />
+                </div>
+                <p className="mt-2 text-sm text-white">Toque para alterar a foto</p>
+              </div>
+
               <div>
                 <label className="text-sm font-bold text-[#2c64dd] font-medium">Nome:</label>
                 <input
@@ -385,20 +430,6 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                   className="w-full p-2 rounded-lg text-[#0068df] bg-[#8dc2ff] resize-none"
                 />
               </div>
-
-              {/* Área de imagem */}
-              {foto && typeof foto === "string" && (
-                <div>
-                  <label className="text-sm font-bold text-[#2c64dd] font-medium">Foto:</label>
-                  <div className="mt-2 w-full rounded-lg overflow-hidden border border-[#8dc2ff]">
-                    <img
-                      src={foto}
-                      alt="Foto do empréstimo"
-                      className="w-full h-48 object-cover rounded"
-                    />
-                  </div>
-                </div>
-              )}
             </>
           )}
         </div>

@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+import os
+import shutil
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, asc
 from auth.auth_utils import verificar_token
@@ -7,6 +9,9 @@ from database import get_db
 from schemas.emprestimo import EmprestimoCreate, EmprestimoOut, EmprestimoDelete, EmprestimoUpdate
 from models.emprestimo import Emprestimo
 import datetime
+
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 router = APIRouter(prefix="/emprestimos", tags=["emprestimos"])
 
@@ -92,3 +97,29 @@ def atualizar_emprestimo(
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=f"Erro ao atualizar empréstimo: {str(e)}")
+    
+@router.post("/imagemEmprestimo/{emprestimo_id}")
+async def upload_imagem_emprestimo(
+    emprestimo_id: int,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    try:
+        # Salva arquivo fisicamente
+        file_path = os.path.join(UPLOAD_DIR, file.filename)
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        # Atualiza foto_url do usuário
+        emprestimo = db.query(Emprestimo).filter(Emprestimo.id == emprestimo_id).first()
+        if not emprestimo:
+            raise HTTPException(status_code=404, detail="Empréstimo não encontrado")
+
+        emprestimo.foto_url = f"/{file_path}"
+
+        db.commit()
+        db.refresh(emprestimo)
+
+        return {"url": f"/{file_path}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao salvar imagem: {e}")

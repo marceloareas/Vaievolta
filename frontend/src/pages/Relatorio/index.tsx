@@ -31,6 +31,7 @@ const Relatorio = () => {
         if (!res.ok) throw new Error("Erro ao carregar relatório");
 
         const data = await res.json();
+        console.log("Dados do relatório:", data);
         setEmprestimos(data);
 
       } catch (error) {

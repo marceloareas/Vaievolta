@@ -31,6 +31,8 @@ class EmprestimoUpdate(BaseModel):
 
 class EmprestimoOut(EmprestimoBase):
     id: int
-    nome_pessoa: Optional[str] = None  # Adiciona o nome da pessoa vinculada ao empréstimo
+    nome_pessoa: Optional[str] = None
+    data_devolucao_real: Optional[date] = None
+
     class Config:
         from_attributes = True

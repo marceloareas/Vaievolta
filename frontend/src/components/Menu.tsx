@@ -90,9 +90,9 @@ const Menu = () => {
                     <FaHome size={20} color={getIconColor("/")} />
                     <span className="text-gray-500">Home</span>
                   </Link>
-                  <Link to="/relatorio" className="flex items-center gap-3 text-md font-medium" onClick={() => setAbrirDrawer(false)}>
-                    <SiGooglesheets size={20} color={getIconColor("/relatorio")} />
-                    <span className="text-gray-500">Relatório</span>
+                  <Link to="/historico" className="flex items-center gap-3 text-md font-medium" onClick={() => setAbrirDrawer(false)}>
+                    <SiGooglesheets size={20} color={getIconColor("/historico")} />
+                    <span className="text-gray-500">Histórico</span>
                   </Link>
                   <Link to="/perfil" className="flex items-center gap-3 text-md font-medium" onClick={() => setAbrirDrawer(false)}>
                     <FaUserAlt size={20} color={getIconColor("/perfil")} />

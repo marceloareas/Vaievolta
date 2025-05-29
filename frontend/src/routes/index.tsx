@@ -4,7 +4,7 @@ import Home from "../pages/Home";
 // import AdicionarEmprestimo from "../pages/AddEmprestimo";
 import NewPassword from "../pages/ForgotPassword/newPassword";
 import Profile from "../pages/Profile";
-import Relatorio from "../pages/Relatorio";
+import Historico from "../pages/Historico";
 
 const routes: RouteObject[] = [
   {
@@ -24,8 +24,8 @@ const routes: RouteObject[] = [
     element: <Profile />,
   },
   {
-    path: "/relatorio",  // Rota para a página de visualizar relatório
-    element: <Relatorio />,
+    path: "/historico",  // Rota para a página de visualizar relatório
+    element: <Historico />,
   },
 ];
 

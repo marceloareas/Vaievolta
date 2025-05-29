@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from database import Base, engine
 from models import usuario, pessoa, emprestimo
-from routers import usuarios, pessoas, auth, emprestimos, profile, relatorio
+from routers import usuarios, pessoas, auth, emprestimos, profile, historico
 from seed import populate_emprestimos, populate_pessoas, populate_usuarios
 
 app = FastAPI()
@@ -31,7 +31,7 @@ app.include_router(pessoas.router)
 app.include_router(auth.router)
 app.include_router(emprestimos.router)
 app.include_router(profile.router)
-app.include_router(relatorio.router)
+app.include_router(historico.router)
 
 @app.get("/")
 def read_root():

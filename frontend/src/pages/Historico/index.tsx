@@ -15,36 +15,36 @@ interface Emprestimo {
   foto_url?: string;
 }
 
-const Relatorio = () => {
+const Historico = () => {
   const [emprestimos, setEmprestimos] = useState<Emprestimo[]>([]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const carregarRelatorio = async () => {
+    const carregarHistorico = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:8000/relatorio", {
+        const res = await fetch("http://localhost:8000/historico", {
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        if (!res.ok) throw new Error("Erro ao carregar relatório");
+        if (!res.ok) throw new Error("Erro ao carregar histórico");
 
         const data = await res.json();
-        console.log("Dados do relatório:", data);
+        // console.log("Dados do historico:", data);
         setEmprestimos(data);
 
       } catch (error) {
-        console.error("Erro ao carregar relatório:", error);
+        console.error("Erro ao carregar histórico:", error);
         Swal.fire({
           icon: "error",
-          title: "Erro ao carregar relatório",
+          title: "Erro ao carregar histórico",
           text: "Tente novamente mais tarde.",
         });
       }
     };
 
-    carregarRelatorio();
+    carregarHistorico();
   }, []);
 
   return (
@@ -52,7 +52,7 @@ const Relatorio = () => {
       <header className="w-full flex items-center justify-center px-6 py-3 fixed top-1 left- bg-[#2c64dd] z-40">
         <Menu />
         <h2 className="text-white text-2xl font-bold flex items-center gap-2 ml-5">
-          Relatório
+          Histórico
         </h2>
         <img src="/logo.png" alt="Logo" className="h-10 ml-4" />
       </header>
@@ -79,4 +79,4 @@ const Relatorio = () => {
   );
 };
 
-export default Relatorio;
+export default Historico;

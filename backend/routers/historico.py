@@ -7,7 +7,7 @@ from schemas.emprestimo import EmprestimoCreate, EmprestimoOut, EmprestimoDelete
 from models.emprestimo import Emprestimo
 import datetime
 
-router = APIRouter(prefix="/relatorio", tags=["relatorio"])
+router = APIRouter(prefix="/historico", tags=["historico"])
 
 @router.get("/", response_model=list[EmprestimoOut])
 def relatorio_emprestimos(

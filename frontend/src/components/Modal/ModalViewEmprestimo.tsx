@@ -242,7 +242,10 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
               <div className="flex items-center gap-2">
                 <select
                   value={tomadorId || ""}
-                  onChange={(e) => setTomador(e.target.value)}
+                  onChange={(e) => {
+                    setTomador(e.target.selectedOptions[0].text);
+                    setTomadorId(e.target.value ? parseInt(e.target.value) : null);
+                  }}
                   className="flex-1 p-2 border rounded text-black bg-white max-h-40 overflow-y-auto"
                 >
                   <option value="" disabled>Selecione...</option>

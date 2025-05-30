@@ -36,7 +36,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
 
   useEffect(() => {
     if (emprestimo) {
-      console.log("Carregando empréstimo:", emprestimo);
+      // console.log("Carregando empréstimo:", emprestimo);
       setId(emprestimo.id);
       setNome(emprestimo.nome);
       setItem(emprestimo.item);
@@ -329,7 +329,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
               <div className="flex flex-col items-center">
                 <div className="relative w-48 h-32">
                   <img
-                    src={foto || ''}
+                    src={foto || 'http://localhost:8000/uploads/error.png'}
                     alt="Foto do item"
                     className="w-full h-full rounded-xl object-contain border-4 border-blue-900"
                   />

@@ -141,7 +141,22 @@ const Home = () => {
                   Devolução prevista: {new Date(item.data_devolucao_esperada).toLocaleDateString("pt-BR")}
                 </p>
               </div>
-              <HiOutlineQrcode size={24} />
+              {item.foto_url && (
+                <img
+                  src={encodeURI(`http://localhost:8000${item.foto_url}`)}
+                  alt="Foto do empréstimo"
+                  className="w-10 h-10 object-cover rounded cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    Swal.fire({
+                      imageUrl: `http://localhost:8000${item.foto_url}`,
+                      imageAlt: "Foto do empréstimo",
+                      showConfirmButton: false,
+                      backdrop: true,
+                    });
+                  }}
+                />
+              )}
             </div>
           ))
         ) : (
@@ -180,7 +195,15 @@ const Home = () => {
       )}
 
       {showToast && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black px-4 py-2 rounded-lg shadow-lg z-50">
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black px-4 py-3 rounded-lg shadow-lg z-50 w-[90%] max-w-sm relative">
+          {/* Botão de fechar (X) */}
+          <button
+            onClick={() => setShowToast(false)}
+            className="absolute top-1 right-2 text-black font-bold text-lg hover:text-red-600"
+          >
+            ×
+          </button>
+          {/* Conteúdo do Toast */}
           ⚠️ Você tem empréstimos vencendo nos próximos dias!
         </div>
       )}

@@ -16,7 +16,7 @@ class EmprestimoCreate(EmprestimoBase):
     pass
 
 class EmprestimoDelete(BaseModel):
-    id: int
+    id: Optional[int] = None
 
 class EmprestimoUpdate(BaseModel):
     id: Optional[int] = None

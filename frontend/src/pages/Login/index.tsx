@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 import { useUser } from "../../contexts/UserContext";
+import { login } from "../../services/authService";
 
 interface Props {
   onShowRegister: () => void;
@@ -23,23 +24,9 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://localhost:8000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email, senha })
-      });
-
-      if (!response.ok) {
-        throw new Error("Email ou senha inválidos");
-      }
-
-      const data = await response.json();
-      const { user, access_token } = data;
+      const { user, access_token } = await login(email, senha);
       setUser(user);
-      
-      localStorage.setItem("token", access_token); // ✅ salva o token JWT
+      localStorage.setItem("token", access_token);
       navigate("/home");
 
     } catch (error) {

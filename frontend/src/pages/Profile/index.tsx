@@ -9,7 +9,7 @@ import { IMaskInput } from 'react-imask';
 import Footer from "../Footer/index";
 import Menu from "../../components/Menu";
 import { useUser, User } from "../../contexts/UserContext";
-import { updateUser } from "../../services/userService";
+import { updateUser, uploadUserPhoto } from "../../services/userService";
 
 const Profile = () => {
   const [name, setName] = useState("");
@@ -140,18 +140,7 @@ const Profile = () => {
       formData.append("file", file);
   
       try {
-        const token = localStorage.getItem("token"); // ⬅️ pega o token salvo no login
-        const response = await fetch("http://localhost:8000/upload/imagem", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`, // ⬅️ envia o token no cabeçalho
-          },
-          body: formData,
-        });
-  
-        if (!response.ok) throw new Error("Erro no upload da imagem");
-  
-        const data = await response.json();
+        const data = await uploadUserPhoto(formData);
   
         // Atualiza o User Context com o novo caminho da foto
         setUser({

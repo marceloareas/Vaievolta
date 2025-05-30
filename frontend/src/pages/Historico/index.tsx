@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Menu from "../../components/Menu";
 import Swal from "sweetalert2";
+import { fetchHistorico } from "../../services/historicoService";
 
 interface Emprestimo {
   id: number;
@@ -23,17 +24,8 @@ const Historico = () => {
   useEffect(() => {
     const carregarHistorico = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:8000/historico", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
-        if (!res.ok) throw new Error("Erro ao carregar histórico");
-
-        const data = await res.json();
-        // console.log("Dados do historico:", data);
+        const data = await fetchHistorico();
         setEmprestimos(data);
-
       } catch (error) {
         console.error("Erro ao carregar histórico:", error);
         Swal.fire({
@@ -43,7 +35,7 @@ const Historico = () => {
         });
       }
     };
-
+  
     carregarHistorico();
   }, []);
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import Emprestimo from "../../types/index"; // Importando o tipo Emprestimo
+import api from "../../services/api";
 
 import ModalPessoa from "../Modal/ModalAddPessoa"; // Importando o modal de criação de pessoa
 import Swal from "sweetalert2";
@@ -32,10 +33,9 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
   const [abrirModalPessoa, setAbrirModalPessoa] = useState(false);
 
   useEffect(() => {
-      fetch("http://localhost:8000/pessoas/")
-        .then((res) => res.json())
-        .then((data) => setPessoas(data))
-        .catch((err) => console.error("Erro ao buscar pessoas:", err));
+    api.get("/pessoas/")
+      .then((res) => setPessoas(res.data))
+      .catch((err) => console.error("Erro ao buscar pessoas:", err));
   }, []);
 
   if (!aberto) return null;
@@ -179,18 +179,14 @@ const ModalEmprestimo = ({ aberto, onFechar, onAdicionar}: ModalEmprestimoProps)
           onFechar={() => setAbrirModalPessoa(false)}
           onCriar={async (novaPessoa) => {
             try {
-              const response = await fetch("http://localhost:8000/pessoas/create", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  nome: novaPessoa.nome,
-                  email: novaPessoa.email,
-                  telefone: novaPessoa.telefone,
-                  observacao: novaPessoa.descricao,
-                }),
+              const response = await api.post("/pessoas/create", {
+                nome: novaPessoa.nome,
+                email: novaPessoa.email,
+                telefone: novaPessoa.telefone,
+                observacao: novaPessoa.descricao,
               });
 
-              const pessoaCriada = await response.json();
+              const pessoaCriada = response.data;
 
               setPessoas((prev) => [...prev, pessoaCriada]); // Atualiza a lista de pessoas
               setTomador(pessoaCriada.id); // ir por padrao direto pro select

@@ -5,8 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { Pessoa } from "./ModalCreateEmprestimo";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import ModalPessoa from "./ModalAddPessoa";
-import { updateEmprestimo } from "../../services/emprestimoService";
+import { createPessoa, devolverEmprestimo, updateEmprestimo, uploadImagemEmprestimo } from "../../services/emprestimoService";
 import { MdEdit } from "react-icons/md";
+import api from "../../services/api";
 
 interface ModalViewEmprestimoProps {
   aberto: boolean;
@@ -53,10 +54,13 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
 
     // console.log(tomador)
 
-    fetch("http://localhost:8000/pessoas/")
-        .then((res) => res.json())
-        .then((data) => setPessoas(data))
-        .catch((err) => console.error("Erro ao buscar pessoas:", err));
+    api.get("/pessoas/")
+      .then((response) => {
+        setPessoas(response.data);
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar pessoas:", err);
+      });
 
   }, [emprestimo]);
 
@@ -123,22 +127,20 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
         console.log("Excluído:", { nome, item, tomador, dataDevolucao, descricao, foto });
       }
 
-      // TODO: Adicionar lógica de exclusão no backend
       try {
-        const response = await fetch(`http://localhost:8000/emprestimos/${id}/`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: id,  
-          }),
+        await api.delete(`/emprestimos/${id}/`, {
+          data: {
+            id: id
+          }
         });
-        if (!response.ok) {
-          throw new Error("Erro ao excluir o empréstimo");
-        }
-      }
-      catch (error) {
+      
+        await Swal.fire({
+          icon: "success",
+          title: "Empréstimo excluído com sucesso!",
+          confirmButtonText: "OK",
+        });
+      
+      } catch (error) {
         console.error("Erro ao excluir o empréstimo:", error);
         await Swal.fire({
           icon: "error",
@@ -146,13 +148,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
           text: "Tente novamente mais tarde.",
         });
       }
-      await Swal.fire({
-        title: "Excluído!",
-        text: "O empréstimo foi excluído.",
-        icon: "success",
-        showConfirmButton: true,
-        confirmButtonText: "OK",
-      });
+  
       onFechar();
       carregarEmprestimos();
     });
@@ -166,25 +162,16 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
     formData.append("file", file);
   
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:8000/emprestimos/imagemEmprestimo/${id}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-  
-      if (!res.ok) throw new Error("Erro ao fazer upload da imagem");
-  
-      const data = await res.json();
+      const res = await uploadImagemEmprestimo(id, formData);
+      const data = res.data;
       setFoto(`http://localhost:8000${data.url}`);
-  
+    
       await Swal.fire({
         title: "Imagem atualizada!",
         icon: "success",
         confirmButtonText: "OK",
       });
+    
     } catch (err) {
       console.error("Erro ao enviar imagem:", err);
       await Swal.fire({
@@ -214,25 +201,14 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
       }
         
       try {
-        const response = await fetch(`http://localhost:8000/emprestimos/devolver/${id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: id,
-          }),
-        });
-        if (!response.ok) {
-          throw new Error("Erro ao marcar como devolvido");
-        }
+        await devolverEmprestimo(id);
         await Swal.fire({
-        title: "Devolvido!",
-        text: "O empréstimo foi marcado como devolvido.",
-        icon: "success",
-        showConfirmButton: true,
-        confirmButtonText: "OK",
-      });
+          title: "Devolvido!",
+          text: "O empréstimo foi marcado como devolvido.",
+          icon: "success",
+          showConfirmButton: true,
+          confirmButtonText: "OK",
+        });
       }
       catch (error) {
         console.error("Erro ao marcar como devolvido:", error);
@@ -317,22 +293,11 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                 onFechar={() => setAbrirModalPessoa(false)}
                 onCriar={async (novaPessoa) => {
                   try {
-                    const response = await fetch("http://localhost:8000/pessoas/create", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        nome: novaPessoa.nome,
-                        email: novaPessoa.email,
-                        telefone: novaPessoa.telefone,
-                        observacao: novaPessoa.descricao,
-                      }),
-                    });
-
-                    const pessoaCriada = await response.json();
-
+                    const pessoaCriada = await createPessoa(novaPessoa);
+                  
                     setPessoas((prev) => [...prev, pessoaCriada]); // Atualiza a lista de pessoas
                     setTomador(pessoaCriada.id); // ir por padrao direto pro select
-
+                  
                     await Swal.fire({
                       icon: "success",
                       title: "Pessoa criada com sucesso!",
@@ -340,8 +305,9 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                       confirmButtonText: "OK",
                       backdrop: true,
                     });
-
+                  
                   } catch (err) {
+                    console.error("Erro ao criar pessoa:", err);
                     await Swal.fire({
                       title: "Erro ao criar pessoa",
                       text: "Por favor, verifique os dados e tente novamente.",
@@ -363,9 +329,9 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
               <div className="flex flex-col items-center">
                 <div className="relative w-48 h-32">
                   <img
-                    src={foto || '/error.png'}
+                    src={foto || ''}
                     alt="Foto do item"
-                    className="w-full h-full rounded-xl object-cover border-4 border-blue-900"
+                    className="w-full h-full rounded-xl object-contain border-4 border-blue-900"
                   />
                   <label htmlFor="upload" className="absolute bottom-0 right-0 bg-white p-1 rounded-full cursor-pointer shadow">
                     <MdEdit className="text-blue-600 w-5 h-5" />

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { IoArrowBack, IoEyeOutline, IoEyeOffOutline, IoRefreshOutline } from "react-icons/io5";
 import { FiMail, FiLock, FiUser } from "react-icons/fi";
 import Swal from "sweetalert2";
+import { createUser } from "../../services/userService";
 
 interface Props {
   onBack: () => void;
@@ -36,24 +37,9 @@ const Register = ({ onBack }: Props) => {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/usuarios/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          nome: form.name,
-          email: form.email,
-          senha: form.password,
-        }),
-      });
+      const data = await createUser(form.name, form.email, form.password);
+      // console.log("Usuário cadastrado com sucesso:", data);
 
-      if (!response.ok) {
-        throw new Error("Erro ao cadastrar usuário");
-      }
-
-      const data = await response.json();
-      console.log("Usuário cadastrado com sucesso:", data);
       await Swal.fire({
         title: "Usuário cadastrado com sucesso!",
         text: "Você pode fazer login agora.",

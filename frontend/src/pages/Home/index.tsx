@@ -20,9 +20,27 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [placeholder, setPlaceholder] = useState("Buscar por empréstimo");
 
+  const [showToast, setShowToast] = useState(false);
+
   useEffect(() => {
     carregarEmprestimos();
   }, []);
+
+  useEffect(() => {
+    const hoje = new Date();
+  
+    const emprestimosVencendo = emprestimos.filter((e) => {
+      const dataDevolucao = new Date(e.data_devolucao_esperada);
+      const diffDias = Math.ceil((dataDevolucao.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
+      return diffDias >= 0 && diffDias <= 2;
+    });
+  
+    if (emprestimosVencendo.length > 0) {
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 5000);
+    }
+  
+  }, [emprestimos]);
 
   const carregarEmprestimos = async () => {
     try {
@@ -160,7 +178,17 @@ const Home = () => {
           carregarEmprestimos={carregarEmprestimos}
         />
       )}
+
+      {showToast && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black px-4 py-2 rounded-lg shadow-lg z-50">
+          ⚠️ Você tem empréstimos vencendo nos próximos dias!
+        </div>
+      )}
+
     </div>
+
+      
+
   );
 };
 

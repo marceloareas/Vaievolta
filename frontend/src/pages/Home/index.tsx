@@ -28,9 +28,12 @@ const Home = () => {
   const { user } = useUser();
 
   useEffect(() => {
-    setNomeuser(user?.nome || "Usuário");
     carregarEmprestimos();
   }, []);
+
+  useEffect(() => {
+    setNomeuser(user?.nome || "Usuário");
+  }, [user]);
 
   useEffect(() => {
     const hoje = new Date();
@@ -107,7 +110,10 @@ const Home = () => {
       {/* Header */}
       <header className="w-full flex items-center justify-center px-6 py-3 fixed top-1 left- bg-[#2c64dd] z-40">
         <Menu />
-        <h2 className="text-white text-2xl font-bold flex items-center gap-2 ml-5">
+        {/* <h2 className="text-white text-2xl font-bold flex items-center gap-2 ml-5">
+          Bem-vindo, {getUserFirstName(nomeuser)}
+        </h2> */}
+        <h2 className="text-white font-bold flex items-center gap-2 ml-5 text-2xl sm:text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis max-w-[300px]">
           Bem-vindo, {getUserFirstName(nomeuser)}
         </h2>
         <img src="/logo.png" alt="Logo" className="h-10 ml-4" />

@@ -53,3 +53,18 @@ def atualizar_usuario(
 
     return {"msg": "Usuário atualizado com sucesso", "usuario": usuario}
 
+@router.delete("/me")
+def excluir_usuario(
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token)
+):
+    usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
+
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+    db.delete(usuario)
+    db.commit()
+
+    return {"msg": "Usuário excluído com sucesso"}
+

@@ -11,6 +11,7 @@ import Emprestimo from "../../types/index";
 
 import { fetchEmprestimos, createEmprestimo } from "../../services/emprestimoService";
 import { getUserFirstName } from "../../services/utils";
+import { useUser } from "../../contexts/UserContext";
 
 const Home = () => {
   const [abrirModal, setAbrirModal] = useState(false);
@@ -20,9 +21,14 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [placeholder, setPlaceholder] = useState("Buscar por empréstimo");
 
+  const [nomeuser, setNomeuser] = useState("");
+
   const [showToast, setShowToast] = useState(false);
 
+  const { user } = useUser();
+
   useEffect(() => {
+    setNomeuser(user?.nome || "Usuário");
     carregarEmprestimos();
   }, []);
 
@@ -102,7 +108,7 @@ const Home = () => {
       <header className="w-full flex items-center justify-center px-6 py-3 fixed top-1 left- bg-[#2c64dd] z-40">
         <Menu />
         <h2 className="text-white text-2xl font-bold flex items-center gap-2 ml-5">
-          Bem-vindo, {getUserFirstName() || "User"}
+          Bem-vindo, {getUserFirstName(nomeuser)}
         </h2>
         <img src="/logo.png" alt="Logo" className="h-10 ml-4" />
       </header>

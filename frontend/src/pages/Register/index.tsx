@@ -74,7 +74,6 @@ const Register = ({ onBack }: Props) => {
       </div>
 
       {/* Bloco do formulário com fundo escuro */}
-      {/* <div className="bg-[#2348a1] w-full max-w-md rounded-t-3xl p-6 flex flex-col gap-4 flex-grow"> */}
       <div className="bg-[#2348a1] w-full max-w-md rounded-t-3xl p-6 flex flex-col gap-4 flex-grow min-h-[calc(100vh-5.5rem)]">
         {/* Cabeçalho */}
         <div className="flex items-center justify-center relative mb-8">
@@ -86,8 +85,14 @@ const Register = ({ onBack }: Props) => {
           </h1>
         </div>
 
-        {/* Inputs */}
-        <div className="flex flex-col gap-4">
+        {/* FORMULARIO */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleRegister();
+          }}
+          className="flex flex-col gap-4"
+        >
           {/* Nome */}
           <div className="relative mb-4">
             <FiUser className="absolute top-3 left-3 text-blue-700" />
@@ -153,15 +158,15 @@ const Register = ({ onBack }: Props) => {
               {showConfirmPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
             </button>
           </div>
-        </div>
 
-        {/* Botão */}
-        <button
-          onClick={handleRegister}
-          className="mt-4 bg-white text-blue-600 font-bold py-2 rounded-2xl text-center hover:bg-blue-50 transition cursor-pointer"
-        >
-          Cadastrar
-        </button>
+          {/* Botão */}
+          <button
+            type="submit"
+            className="mt-4 bg-white text-blue-600 font-bold py-2 rounded-2xl text-center hover:bg-blue-50 transition cursor-pointer"
+          >
+            Cadastrar
+          </button>
+        </form>
       </div>
     </div>
   );

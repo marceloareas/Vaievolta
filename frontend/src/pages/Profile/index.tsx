@@ -9,7 +9,7 @@ import { IMaskInput } from 'react-imask';
 import Footer from "../Footer/index";
 import Menu from "../../components/Menu";
 import { useUser, User } from "../../contexts/UserContext";
-import { updateUser, uploadUserPhoto } from "../../services/userService";
+import { deleteUser, updateUser, uploadUserPhoto } from "../../services/userService";
 
 const Profile = () => {
   const [name, setName] = useState("");
@@ -62,7 +62,7 @@ const Profile = () => {
   };
 
   const handleDeleteAccount = async () => {
-    Swal.fire({
+    const result = await Swal.fire({
       title: "Deseja mesmo excluir sua conta ?",
       text: "Essa ação não poderá ser desfeita.",
       icon: "warning",
@@ -73,19 +73,33 @@ const Profile = () => {
       confirmButtonText: "Excluir",
       cancelButtonText: "Cancelar",
       backdrop: true,
-    }).then(async (result) => {
-      if (result.isConfirmed) {
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await deleteUser();
+  
         await Swal.fire({
-          title: "Excluído!",
-          text: "A conta foi excluída.",
+          title: "Conta excluída!",
+          text: "Sua conta foi excluída com sucesso.",
           icon: "success",
-          showConfirmButton: true,
+          confirmButtonText: "OK",
+        });
+  
+        localStorage.removeItem("token");
+        localStorage.removeItem("user"); // se estiver usando o localStorage
+        navigate("/");
+  
+      } catch (error) {
+        console.error("Erro ao excluir conta:", error);
+        await Swal.fire({
+          title: "Erro ao excluir conta",
+          text: "Tente novamente mais tarde.",
+          icon: "error",
           confirmButtonText: "OK",
         });
       }
-
-      // TODO: Adicionar lógica de exclusão no backend
-    });
+    }
   };
 
   // const handleSaveChanges = async () => {
@@ -204,60 +218,19 @@ const Profile = () => {
 
 
       {/* Formulário de perfil */}
-      <div className="space-y-2">
-        <div className="bg-transparent text-white pt-6 pl-6 pr-6 pb-3 rounded-lg shadow-none">
-        <div className="mb-2">
-          <label className="block text-sm text-white">Nome</label>
-          <div className="relative">
-            <input
-              type="text"
-              className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
-              placeholder="Digite seu nome"
-              value={name}
-              readOnly={!editMode}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <span
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
-              onClick={editMode ? handleCancelEdit : () => setEditMode(true)}
-            >
-              {editMode ? <MdCancel /> : <MdModeEdit />}
-            </span>
-          </div>
-        </div>
-
-          {/* Email */}
+      <div className="flex-1 overflow-y-auto max-h-[740px]">
+        <div className="space-y-2">
+          <div className="bg-transparent text-white pt-6 pl-6 pr-6 pb-3 rounded-lg shadow-none">
           <div className="mb-2">
-            <label className="block text-sm text-white">Email</label>
-            <div className="relative">
-              <input
-                type="email"
-                className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
-                placeholder="Digite seu email"
-                value={email}
-                readOnly={!editMode}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <span
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
-                onClick={editMode ? handleCancelEdit : () => setEditMode(true)}
-              >
-                {editMode ? <MdCancel /> : <MdModeEdit />}
-              </span>
-            </div>
-          </div>
-
-          {/* Endereço */}
-          <div className="mb-2">
-            <label className="block text-sm text-white">Endereço</label>
+            <label className="block text-sm text-white">Nome</label>
             <div className="relative">
               <input
                 type="text"
                 className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
-                placeholder="Rua, número, bairro"
-                value={endereco}
+                placeholder="Digite seu nome"
+                value={name}
                 readOnly={!editMode}
-                onChange={(e) => setEndereco(e.target.value)}
+                onChange={(e) => setName(e.target.value)}
               />
               <span
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
@@ -268,63 +241,111 @@ const Profile = () => {
             </div>
           </div>
 
-          
-          {/* Telefone */}
-          <div className="mb-1">
-            <label className="block text-sm text-white">Telefone</label>
-            <div className="relative">
-            <IMaskInput
-              mask="(00) 00000-0000"
-              value={telefone}
-              unmask={false}
-              disabled={!editMode}
-              onAccept={(value) => setTelefone(value)}
-              className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
-              placeholder="(xx) xxxxx-xxxx"
-            />
-              <span
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
-                onClick={editMode ? handleCancelEdit : () => setEditMode(true)}
-              >
-                {editMode ? <MdCancel /> : <MdModeEdit />}
-              </span>
+            {/* Email */}
+            <div className="mb-2">
+              <label className="block text-sm text-white">Email</label>
+              <div className="relative">
+                <input
+                  type="email"
+                  className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
+                  placeholder="Digite seu email"
+                  value={email}
+                  readOnly={!editMode}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <span
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
+                  onClick={editMode ? handleCancelEdit : () => setEditMode(true)}
+                >
+                  {editMode ? <MdCancel /> : <MdModeEdit />}
+                </span>
+              </div>
+            </div>
+
+            {/* Endereço */}
+            <div className="mb-2">
+              <label className="block text-sm text-white">Endereço</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
+                  placeholder="Rua, número, bairro"
+                  value={endereco}
+                  readOnly={!editMode}
+                  onChange={(e) => setEndereco(e.target.value)}
+                />
+                <span
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
+                  onClick={editMode ? handleCancelEdit : () => setEditMode(true)}
+                >
+                  {editMode ? <MdCancel /> : <MdModeEdit />}
+                </span>
+              </div>
+            </div>
+
+            
+            {/* Telefone */}
+            <div className="mb-1">
+              <label className="block text-sm text-white">Telefone</label>
+              <div className="relative">
+              <IMaskInput
+                mask="(00) 00000-0000"
+                value={telefone}
+                unmask={false}
+                disabled={!editMode}
+                onAccept={(value) => setTelefone(value)}
+                className="w-full p-2 pr-10 bg-[#2c64dd] border-2 border-white rounded-lg text-white"
+                placeholder="(xx) xxxxx-xxxx"
+              />
+                <span
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
+                  onClick={editMode ? handleCancelEdit : () => setEditMode(true)}
+                >
+                  {editMode ? <MdCancel /> : <MdModeEdit />}
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {editMode && (
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-5">
           <button
             onClick={handleSaveChanges}
-            className="bg-green-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-green-500"
+            className="bg-green-600 text-white font-bold px-4 py-2 rounded-lg hover:bg-green-500 mr-4"
           >
             Salvar
+          </button>
+          <button
+            onClick={() => setEditMode(false) }
+            className="bg-red-700 text-white font-bold px-4 py-2 rounded-lg hover:bg-green-500"
+          >
+            Cancelar
           </button>
         </div>
       )}
 
-      {/* Rodapé fixo */}
-      <div className="fixed bottom-2 left-0 w-full bg-[#2c64dd] px-4 py-4">
-        <button
-          className="block w-[75%] mx-auto py-2 px-4 bg-white text-blue-600 rounded-lg hover:bg-red-500 font-bold mb-6"
-          onClick={handleLogout}
-        >
-          <IoMdExit className="inline-block mr-2" />
-          Sair
-        </button>
-        <div className="text-center mt-3">
-          <a
-            href="#"
-            className="text-white hover:underline"
-            onClick={handleDeleteAccount}
+      {!editMode && (
+        <div className="fixed bottom-0 left-0 w-full bg-[#2c64dd] px-4 py-4 z-30">
+          <button
+            className="block w-[75%] mx-auto py-2 px-4 bg-white text-blue-600 rounded-lg hover:bg-red-500 font-bold mb-3"
+            onClick={handleLogout}
           >
-            Deseja excluir sua conta? <span className="underline text-gray-300">Clique aqui.</span>
-          </a>
+            <IoMdExit className="inline-block mr-2" />
+            Sair
+          </button>
+          <div className="text-center">
+            <a
+              href="#"
+              className="text-white hover:underline"
+              onClick={handleDeleteAccount}
+            >
+              Deseja excluir sua conta? <span className="underline text-gray-300">Clique aqui.</span>
+            </a>
+          </div>
         </div>
-      </div>
-
-      {/* <Footer /> */}
+      )}
     </div>
   );
 };

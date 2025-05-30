@@ -16,6 +16,7 @@
 #     # tomador = Column(String)
 
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy.orm import relationship
 from database import Base
 
 class Emprestimo(Base):
@@ -32,4 +33,6 @@ class Emprestimo(Base):
     foto_url = Column(String)
 
     pessoa_id = Column(Integer, ForeignKey('pessoas.id'))     # Tomador do empréstimo
-    usuario_id = Column(Integer, ForeignKey('usuarios.id'))   # Quem realizou o empréstimo
+    usuario_id = Column(Integer, ForeignKey('usuarios.id', ondelete="CASCADE"))   # Quem realizou o empréstimo
+
+    usuario = relationship("Usuario", back_populates="emprestimos")

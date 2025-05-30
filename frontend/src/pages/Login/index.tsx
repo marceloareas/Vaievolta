@@ -59,59 +59,76 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
   return (
     <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: '#2c64dd' }}>
       <div className="w-full max-w-xs flex flex-col items-center">
+  
         {/* Logo e título */}
         <h1 className="text-white text-4xl font-bold mb-6 flex items-center gap-2">
           Vai & Volta <FiRefreshCcw size={28} />
         </h1>
         <img src="/logo.png" alt="Logo" className="h-35 mb-8" />
-
-        {/* Campo de email */}
-        <div className="w-full relative mb-4">
-          <FiMail className="absolute top-3 left-3 text-white" />
-          <input
-            type="email"
-            placeholder="Insira o seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-md border border-white bg-transparent text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white"
-          />
-        </div>
-
-        {/* Campo de senha */}
-        <div className="w-full relative mb-2">
-          <FiLock className="absolute top-3 left-3 text-white" />
-          <input
-            type={showPassword ? "text" : "password"}
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            placeholder="Insira a sua senha"
-            className="w-full pl-10 pr-10 py-2 rounded-md border border-white bg-transparent text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white"
-          />
+  
+        {/* Formulário */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault(); // evita reload da página
+            handleLogin();
+          }}
+          className="w-full"
+        >
+          {/* Campo de email */}
+          <div className="w-full relative mb-4">
+            <FiMail className="absolute top-3 left-3 text-white" />
+            <input
+              type="email"
+              placeholder="Insira o seu email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-md border border-white bg-transparent text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white"
+            />
+          </div>
+  
+          {/* Campo de senha */}
+          <div className="w-full relative mb-2">
+            <FiLock className="absolute top-3 left-3 text-white" />
+            <input
+              type={showPassword ? "text" : "password"}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              placeholder="Insira a sua senha"
+              className="w-full pl-10 pr-10 py-2 rounded-md border border-white bg-transparent text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute top-3 right-3 text-white cursor-pointer"
+            >
+              {showPassword ? (
+                <IoEyeOffOutline size={20} />
+              ) : (
+                <IoEyeOutline size={20} />
+              )}
+            </button>
+          </div>
+  
+          {/* Esqueci a senha */}
+          <div className="w-full text-right mb-6">
+            <button
+              type="button"
+              onClick={onShowForgotPassword}
+              className="text-sm text-white/70 hover:underline cursor-pointer"
+            >
+              Esqueceu a senha?
+            </button>
+          </div>
+  
+          {/* Botão de login */}
           <button
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute top-3 right-3 text-white cursor-pointer"
+            type="submit" // <-- agora é submit!
+            className="w-full bg-white text-blue-600 font-bold py-2 rounded-xl hover:bg-gray-100 transition cursor-pointer"
           >
-            {showPassword ? (
-              <IoEyeOffOutline size={20} />
-            ) : (
-              <IoEyeOutline size={20} />
-            )}
+            Acessar
           </button>
-        </div>
-
-        {/* Esqueci a senha */}
-        <div className="w-full text-right mb-6">
-          <button onClick={onShowForgotPassword} className="text-sm text-white/70 hover:underline cursor-pointer">
-            Esqueceu a senha?
-          </button>
-        </div>
-
-        {/* Botão de login */}
-        <button onClick={handleLogin} className="w-full bg-white text-blue-600 font-bold py-2 rounded-xl hover:bg-gray-100 transition cursor-pointer">
-          Acessar
-        </button>
-
+        </form>
+  
         {/* Cadastro */}
         <p className="text-sm text-white mt-6">
           Não possui uma conta?{" "}

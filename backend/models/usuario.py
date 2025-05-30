@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from database import Base
 
 class Usuario(Base):
@@ -11,3 +12,9 @@ class Usuario(Base):
     endereco = Column(String)
     telefone = Column(String)
     foto_perfil = Column(String)
+
+    emprestimos = relationship(
+        "Emprestimo",
+        back_populates="usuario",
+        cascade="all, delete-orphan"
+    )

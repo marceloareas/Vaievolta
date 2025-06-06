@@ -3,6 +3,8 @@ import { FiSearch } from "react-icons/fi";
 import { HiOutlineQrcode } from "react-icons/hi";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import Swal from "sweetalert2";
+import AnimatedList from "../../components/AnimatedList";
+import SplitText from "../../components/SplitText";
 
 import Menu from "../../components/Menu";
 import ModalEmprestimo from "../../components/Modal/ModalCreateEmprestimo";
@@ -95,10 +97,42 @@ const Home = () => {
       });
     }
   };
-
+  
   const filteredEmprestimos = emprestimos.filter((item) =>
     item.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
+  const animatedEmprestimos = filteredEmprestimos.map((item, index) => (
+    <div
+      key={index}
+      className="bg-white text-blue-600 rounded-lg p-3 flex justify-between items-center"
+      onClick={() => abrirModalViewEmprestimos(item)}
+    >
+      <div>
+        <p className="font-bold">{item.nome}</p>
+        <p className="text-sm">
+          Devolução prevista: {new Date(item.data_devolucao_esperada).toLocaleDateString("pt-BR")}
+        </p>
+      </div>
+      {item.foto_url && (
+        <img
+          src={encodeURI(`http://localhost:8000${item.foto_url}`)}
+          alt="Foto do empréstimo"
+          className="w-10 h-10 object-cover rounded cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            Swal.fire({
+              imageUrl: `http://localhost:8000${item.foto_url}`,
+              imageAlt: "Foto do empréstimo",
+              showConfirmButton: false,
+              backdrop: true,
+            });
+          }}
+        />
+      )}
+    </div>
+  ));
+
 
   const abrirModalViewEmprestimos = (emprestimo: Emprestimo) => {
     setEmprestimoSelecionado(emprestimo);
@@ -110,9 +144,7 @@ const Home = () => {
       {/* Header */}
       <header className="w-full flex items-center justify-center px-6 py-3 fixed top-1 left- bg-[#2c64dd] z-40">
         <Menu />
-        {/* <h2 className="text-white text-2xl font-bold flex items-center gap-2 ml-5">
-          Bem-vindo, {getUserFirstName(nomeuser)}
-        </h2> */}
+
         <h2 className="text-white font-bold flex items-center gap-2 ml-5 text-2xl sm:text-xl md:text-2xl truncate max-w-[300px]">
           Bem-vindo, {getUserFirstName(nomeuser)}
         </h2>

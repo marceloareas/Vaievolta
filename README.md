@@ -87,3 +87,16 @@ No terminal, na raiz do projeto, execute:
 ```bash
 docker compose up --build
 ```
+
+### Comando para subir uma nova versão do banco de dados (migration)
+
+```bash
+docker exec vaievolta-backend-1 alembic revision --autogenerate -m "initial migration"
+```
+
+### Comando para aplicar a última versão do banco de dados (migration)
+
+```bash
+docker exec vaievolta-backend-1 alembic upgrade head
+```
+

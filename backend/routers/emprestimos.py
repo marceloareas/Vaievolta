@@ -1,6 +1,8 @@
+import json
 import os
 import shutil
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, asc
 from auth.auth_utils import verificar_token
@@ -123,3 +125,43 @@ async def upload_imagem_emprestimo(
         return {"url": f"/{file_path}"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao salvar imagem: {e}")
+
+@router.get("/exportar")
+def exportar_dados(db: Session = Depends(get_db), usuario_id: int = Depends(verificar_token)):
+    emprestimos = db.query(Emprestimo).filter(Emprestimo.usuario_id == usuario_id).all()
+    pessoas = db.query(Pessoa).filter(Pessoa.usuario_id == usuario_id).all()
+
+    dados = {
+        "emprestimos": [e.to_dict() for e in emprestimos],
+        "pessoas": [p.to_dict() for p in pessoas]
+    }
+
+    path = "dados_exportados.json"
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(dados, f, ensure_ascii=False, indent=4)
+
+    return FileResponse(path, filename="dados_exportados.json", media_type="application/json")
+
+@router.post("/importar")
+async def importar_dados(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token)
+):
+    try:
+        conteudo = await file.read()
+        dados = json.loads(conteudo)
+
+        for p in dados.get("pessoas", []):
+            nova_pessoa = Pessoa(**p, usuario_id=usuario_id)
+            db.merge(nova_pessoa)
+
+        for e in dados.get("emprestimos", []):
+            novo_emprestimo = Emprestimo(**e, usuario_id=usuario_id)
+            db.merge(novo_emprestimo)
+
+        db.commit()
+        return {"message": "Importação concluída com sucesso"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao importar dados: {e}")

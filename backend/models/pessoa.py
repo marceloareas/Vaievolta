@@ -22,3 +22,13 @@ class Pessoa(Base):
     telefone = Column(String)
     observacao = Column(String)
     usuario_id = Column(Integer, ForeignKey('usuario.id'))  # Quem cadastrou essa pessoa
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "nome": self.nome,
+            "email": self.email,
+            "telefone": self.telefone,
+            "observacao": self.observacao,
+            "usuario_id": self.usuario_id,
+        }

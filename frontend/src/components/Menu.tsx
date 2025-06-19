@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaBars, FaHome, FaUserAlt } from "react-icons/fa";
+import { FiDownload, FiUpload } from "react-icons/fi";
 import { SiGooglesheets } from "react-icons/si";
 import { MdOutlineAddBox } from "react-icons/md";
 import { TbLogout2 } from "react-icons/tb";
@@ -100,15 +101,39 @@ const Menu = () => {
                   </Link>
                 </nav>
 
-                
-                {/* Botão Sair no final */}
-                <button
-                  onClick={handleLogout}
-                  className="mt-6 self-start text-red-600 font-semibold hover:text-red-700 transition flex items-center gap-2"
-                >
-                  <TbLogout2 size={20} />
-                  Sair
-                </button>
+                <div>
+                  // Botão de Exportar
+                  <button
+                    onClick={async () => {
+                      try {
+                        const token = localStorage.getItem("token");
+                        const response = await fetch("http://localhost:8000/emprestimos/exportar", {
+                          headers: { Authorization: `Bearer ${token}` }
+                        });
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "dados_exportados.json";
+                        a.click();
+                      } catch (error) {
+                        Swal.fire("Erro", "Falha ao exportar os dados", "error");
+                      }
+                    }}
+                    className="self-start text-blue-600 font-semibold hover:text-blue-700 transition flex items-center gap-2"
+                  >
+                    <FiDownload size={20} /> Exportar dados
+                  </button>
+
+                  {/* Botão Sair no final */}
+                  <button
+                    onClick={handleLogout}
+                    className="mt-5 self-start text-red-600 font-semibold hover:text-red-700 transition flex items-center gap-2"
+                  >
+                    <TbLogout2 size={20} />
+                    Sair
+                  </button>
+                </div>
               
               </div>
             </motion.div>

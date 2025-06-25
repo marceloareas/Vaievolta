@@ -39,7 +39,7 @@ const Menu = () => {
         });
       }
       localStorage.removeItem("token");
-      navigate("/");
+      navigate("/auth");
     });
     setAbrirDrawer(false);
   }

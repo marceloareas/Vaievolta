@@ -22,8 +22,8 @@ const Footer = () => {
     <footer className="w-full bg-[#3090FF] py-4 fixed bottom-0 left-0 flex justify-around items-center z-50">
       <div className="flex justify-around w-full max-w-[480px] mx-auto">
         <div className="flex flex-col items-center">
-          <Link to="/" className="flex flex-col items-center">
-            <FaHome size={24} className="text-white" style={{ color: getIconColor("/") }} />
+          <Link to="/auth" className="flex flex-col items-center">
+            <FaHome size={24} className="text-white" style={{ color: getIconColor("/auth") }} />
             <span className="text-white text-xs">Home</span>
           </Link>
         </div>

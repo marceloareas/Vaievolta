@@ -142,26 +142,25 @@ def exportar_dados(db: Session = Depends(get_db), usuario_id: int = Depends(veri
 
     return FileResponse(path, filename="dados_exportados.json", media_type="application/json")
 
-@router.post("/importar")
-async def importar_dados(
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db),
-    usuario_id: int = Depends(verificar_token)
-):
-    try:
-        conteudo = await file.read()
-        dados = json.loads(conteudo)
 
-        for p in dados.get("pessoas", []):
-            nova_pessoa = Pessoa(**p, usuario_id=usuario_id)
-            db.merge(nova_pessoa)
+@router.post("/importar-dados")
+async def importar_dados(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    content = await file.read()
+    data = json.loads(content.decode("utf-8"))
 
-        for e in dados.get("emprestimos", []):
-            novo_emprestimo = Emprestimo(**e, usuario_id=usuario_id)
-            db.merge(novo_emprestimo)
+    pessoas = data.get("pessoas", [])
+    emprestimos = data.get("emprestimos", [])
 
-        db.commit()
-        return {"message": "Importação concluída com sucesso"}
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Erro ao importar dados: {e}")
+    for p in pessoas:
+        nova_pessoa = Pessoa(**p)
+        db.add(nova_pessoa)
+
+    db.commit()
+
+    for e in emprestimos:
+        novo_emprestimo = Emprestimo(**e)
+        db.add(novo_emprestimo)
+
+    db.commit()
+
+    return {"msg": "Importação concluída com sucesso"}

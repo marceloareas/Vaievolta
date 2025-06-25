@@ -5,10 +5,15 @@ import Home from "../pages/Home";
 import NewPassword from "../pages/ForgotPassword/newPassword";
 import Profile from "../pages/Profile";
 import Historico from "../pages/Historico";
+import EscolherModo from "../pages/ChooseMode";
 
 const routes: RouteObject[] = [
   {
     path: "/",
+    element: <EscolherModo />,
+  },
+  {
+    path: "/auth",
     element: <AuthScreen />,
   },
   {

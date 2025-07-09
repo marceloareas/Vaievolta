@@ -6,11 +6,13 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, asc
 from auth.auth_utils import verificar_token
+from models.usuario import Usuario
 from models.pessoa import Pessoa
 from database import get_db
 from schemas.emprestimo import EmprestimoCreate, EmprestimoOut, EmprestimoDelete, EmprestimoUpdate
 from models.emprestimo import Emprestimo
 import datetime
+# from datetime import datetime
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -76,6 +78,7 @@ def listar_emprestimos(
     for emp in emprestimos:
         pessoa = db.query(Pessoa).filter(Pessoa.id == emp.pessoa_id).first()
         emp.nome_pessoa = pessoa.nome if pessoa else None
+    print(f"Listando {len(emprestimos)} empréstimos para o usuário {usuario_id}")
     return emprestimos
 
 @router.patch("/editarEmprestimo/{emprestimo_id}", response_model=EmprestimoOut)
@@ -130,10 +133,20 @@ async def upload_imagem_emprestimo(
 def exportar_dados(db: Session = Depends(get_db), usuario_id: int = Depends(verificar_token)):
     emprestimos = db.query(Emprestimo).filter(Emprestimo.usuario_id == usuario_id).all()
     pessoas = db.query(Pessoa).filter(Pessoa.usuario_id == usuario_id).all()
+    usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
 
     dados = {
-        "emprestimos": [e.to_dict() for e in emprestimos],
-        "pessoas": [p.to_dict() for p in pessoas]
+        "emprestimo": [e.to_dict() for e in emprestimos],
+        "pessoa": [p.to_dict() for p in pessoas],
+        "usuario": {
+            "id": usuario.id,
+            "nome": usuario.nome,
+            "email": usuario.email,
+            "senha": usuario.senha,
+            "endereco": usuario.endereco,
+            "telefone": usuario.telefone,
+            "foto_perfil": usuario.foto_perfil,
+        }
     }
 
     path = "dados_exportados.json"
@@ -143,23 +156,36 @@ def exportar_dados(db: Session = Depends(get_db), usuario_id: int = Depends(veri
     return FileResponse(path, filename="dados_exportados.json", media_type="application/json")
 
 
+def parse_date_safe(data: dict, field: str):
+    if field in data and isinstance(data[field], str):
+        data[field] = datetime.datetime.strptime(data[field], "%Y-%m-%d").date()
+
 @router.post("/importar-dados")
 async def importar_dados(file: UploadFile = File(...), db: Session = Depends(get_db)):
     content = await file.read()
     data = json.loads(content.decode("utf-8"))
 
-    pessoas = data.get("pessoas", [])
-    emprestimos = data.get("emprestimos", [])
+    # aceita ambos singular e plural
+    pessoas = data.get("pessoas") or data.get("pessoa") or []
+    emprestimos = data.get("emprestimos") or data.get("emprestimo") or []
+    usuario = data.get("usuario")
+
+    if usuario:
+        from models.usuario import Usuario
+
+        db.add(Usuario(**usuario))
+        db.commit()
 
     for p in pessoas:
-        nova_pessoa = Pessoa(**p)
-        db.add(nova_pessoa)
+        db.add(Pessoa(**p))
 
     db.commit()
 
     for e in emprestimos:
-        novo_emprestimo = Emprestimo(**e)
-        db.add(novo_emprestimo)
+        parse_date_safe(e, "data_emprestimo")
+        parse_date_safe(e, "data_devolucao_esperada")
+        parse_date_safe(e, "data_devolucao_real")
+        db.add(Emprestimo(**e))
 
     db.commit()
 

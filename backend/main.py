@@ -16,11 +16,11 @@ async def lifespan(app: FastAPI):
     # Cria tabelas só depois do engine estar disponível
     engine = get_engine()
     Base.metadata.create_all(bind=engine)
-
-    # Popula se for necessário
-    populate_usuarios()
-    populate_pessoas()
-    populate_emprestimos()
+    
+    if modo == "online":
+        populate_usuarios()
+        populate_pessoas()
+        populate_emprestimos()
 
     yield  # <--- continua a execução do FastAPI
     # nada no shutdown

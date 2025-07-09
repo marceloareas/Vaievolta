@@ -22,7 +22,6 @@ from database import Base
 class Emprestimo(Base):
     __tablename__ = 'emprestimo'
 
-
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, nullable=False)
     item = Column(String)

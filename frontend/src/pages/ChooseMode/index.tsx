@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const EscolherModo = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const escolherModo = async (modo: "online" | "offline") => {
@@ -21,18 +22,30 @@ const EscolherModo = () => {
   };
 
   const importarJSON = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    setLoading(true);
 
-    const formData = new FormData();
-    formData.append("file", file);
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
 
-    await fetch("http://localhost:8000/importar-dados", {
-      method: "POST",
-      body: formData,
-    });
+      const formData = new FormData();
+      formData.append("file", file);
 
-    navigate("/home");
+      const response = await fetch("http://localhost:8000/emprestimos/importar-dados", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao importar JSON");
+      }
+
+      navigate("/home");
+    } catch (error:any) {
+      alert("Falha na importação: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

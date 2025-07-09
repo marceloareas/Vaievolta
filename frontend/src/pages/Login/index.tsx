@@ -152,6 +152,16 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
             >
               Acessar
             </button>
+
+            <button
+              type="button"
+              className="w-full mt-4 bg-blue-900 text-white font-bold py-2 rounded-xl hover:bg-blue-950 transition cursor-pointer"
+              onClick={() => navigate("/")}
+            >
+              Escolha de modo
+            </button>
+            
+
           </form>
     
           {/* Cadastro */}

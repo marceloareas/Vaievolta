@@ -24,5 +24,7 @@ dist-ssr
 *.sw?
 
 .db
+offline.db
+*.sqlite
 .env
 venv

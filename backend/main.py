@@ -8,6 +8,7 @@ from routers import usuarios, pessoas, auth, emprestimos, profile, historico, mo
 from seed import populate_usuarios, populate_pessoas, populate_emprestimos
 from utils import get_modo
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     modo = get_modo()
@@ -16,7 +17,7 @@ async def lifespan(app: FastAPI):
     # Cria tabelas só depois do engine estar disponível
     engine = get_engine()
     Base.metadata.create_all(bind=engine)
-    
+
     if modo == "online":
         populate_usuarios()
         populate_pessoas()
@@ -24,6 +25,7 @@ async def lifespan(app: FastAPI):
 
     yield  # <--- continua a execução do FastAPI
     # nada no shutdown
+
 
 app = FastAPI(lifespan=lifespan)
 
@@ -46,6 +48,7 @@ app.include_router(emprestimos.router)
 app.include_router(profile.router)
 app.include_router(historico.router)
 app.include_router(modo.router)
+
 
 @app.get("/")
 def read_root():

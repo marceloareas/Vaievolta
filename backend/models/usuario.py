@@ -2,8 +2,9 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from database import Base
 
+
 class Usuario(Base):
-    __tablename__ = 'usuario'
+    __tablename__ = "usuario"
 
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String)
@@ -14,7 +15,5 @@ class Usuario(Base):
     foto_perfil = Column(String)
 
     emprestimos = relationship(
-        "Emprestimo",
-        back_populates="usuario",
-        cascade="all, delete-orphan"
+        "Emprestimo", back_populates="usuario", cascade="all, delete-orphan"
     )

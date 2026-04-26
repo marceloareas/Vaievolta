@@ -1,4 +1,4 @@
-from .emprestimo import Emprestimo
-from .pessoa import Pessoa
-from .usuario import Usuario
-from database import Base
+from database import Base as Base
+from .emprestimo import Emprestimo as Emprestimo
+from .pessoa import Pessoa as Pessoa
+from .usuario import Usuario as Usuario

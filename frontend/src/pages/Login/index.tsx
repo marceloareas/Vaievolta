@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { IoEyeOutline, IoEyeOffOutline, IoRefreshOutline  } from "react-icons/io5";
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-import { useUser } from "../../contexts/UserContext";
-import AnimatedContent from "../../components/AnimatedContent";
+import { useUser } from "../../contexts/useUser";
 import FadeContent from "../../components/FadeContent";
 
 interface Props {
@@ -18,7 +17,6 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
-  
   const { setUser } = useUser();
 
   const navigate = useNavigate();
@@ -28,9 +26,9 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
       const response = await fetch("http://localhost:8000/login", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, senha })
+        body: JSON.stringify({ email, senha }),
       });
 
       if (!response.ok) {
@@ -40,10 +38,9 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
       const data = await response.json();
       const { user, access_token } = data;
       setUser(user);
-      
+
       localStorage.setItem("token", access_token); // ✅ salva o token JWT
       navigate("/home");
-
     } catch (error) {
       console.error("Erro no login:", error);
       await Swal.fire({
@@ -59,13 +56,19 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
   };
 
   return (
-    <FadeContent blur={true} duration={600} easing="ease-out" initialOpacity={0}>
-      <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: '#2c64dd' }}>
+    <FadeContent
+      blur={true}
+      duration={600}
+      easing="ease-out"
+      initialOpacity={0}
+    >
+      <div
+        className="min-h-screen flex items-center justify-center px-6"
+        style={{ backgroundColor: "#2c64dd" }}
+      >
         <div className="w-full max-w-xs flex flex-col items-center">
-    
           {/* Logo e título */}
-          
-            
+
           <h1 className="text-white text-4xl font-bold mb-6 flex items-center gap-2">
             Vai & Volta <FiRefreshCcw size={28} />
           </h1>
@@ -90,7 +93,7 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
               <img src="/logo.png" alt="Logo" className="h-35 mb-8" />
             </div>
           </AnimatedContent> */}
-    
+
           {/* Formulário */}
           <form
             onSubmit={(e) => {
@@ -110,7 +113,7 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
                 className="w-full pl-10 pr-4 py-2 rounded-md border border-white bg-transparent text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
-    
+
             {/* Campo de senha */}
             <div className="w-full relative mb-2">
               <FiLock className="absolute top-3 left-3 text-white" />
@@ -133,7 +136,7 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
                 )}
               </button>
             </div>
-    
+
             {/* Esqueci a senha */}
             <div className="w-full text-right mb-6">
               <button
@@ -144,7 +147,7 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
                 Esqueceu a senha?
               </button>
             </div>
-    
+
             {/* Botão de login */}
             <button
               type="submit" // <-- agora é submit!
@@ -160,10 +163,8 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
             >
               Escolha de modo
             </button>
-            
-
           </form>
-    
+
           {/* Cadastro */}
           <p className="text-sm text-white mt-6">
             Não possui uma conta?{" "}
@@ -181,4 +182,3 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
 };
 
 export default Login;
-

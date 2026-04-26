@@ -37,7 +37,7 @@ const FadeContent: React.FC<FadeContentProps> = ({
           }, delay);
         }
       },
-      { threshold }
+      { threshold },
     );
 
     observer.observe(element);

@@ -1,24 +1,25 @@
 import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { HiOutlineQrcode } from "react-icons/hi";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import Swal from "sweetalert2";
-import AnimatedList from "../../components/AnimatedList";
-import SplitText from "../../components/SplitText";
 
 import Menu from "../../components/Menu";
 import ModalEmprestimo from "../../components/Modal/ModalCreateEmprestimo";
 import ModalViewEmprestimo from "../../components/Modal/ModalViewEmprestimo";
 import Emprestimo from "../../types/index";
 
-import { fetchEmprestimos, createEmprestimo } from "../../services/emprestimoService";
+import {
+  fetchEmprestimos,
+  createEmprestimo,
+} from "../../services/emprestimoService";
 import { getUserFirstName } from "../../services/utils";
-import { useUser } from "../../contexts/UserContext";
+import { useUser } from "../../contexts/useUser";
 
 const Home = () => {
   const [abrirModal, setAbrirModal] = useState(false);
   const [viewEmprestimoAberto, setViewEmprestimoAberto] = useState(false);
-  const [emprestimoSelecionado, setEmprestimoSelecionado] = useState<Emprestimo | null>(null);
+  const [emprestimoSelecionado, setEmprestimoSelecionado] =
+    useState<Emprestimo | null>(null);
   const [emprestimos, setEmprestimos] = useState<Emprestimo[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [placeholder, setPlaceholder] = useState("Buscar por empréstimo");
@@ -39,18 +40,19 @@ const Home = () => {
 
   useEffect(() => {
     const hoje = new Date();
-  
+
     const emprestimosVencendo = emprestimos.filter((e) => {
       const dataDevolucao = new Date(e.data_devolucao_esperada);
-      const diffDias = Math.ceil((dataDevolucao.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
+      const diffDias = Math.ceil(
+        (dataDevolucao.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24),
+      );
       return diffDias >= 0 && diffDias <= 2;
     });
-  
+
     if (emprestimosVencendo.length > 0) {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 5000);
     }
-  
   }, [emprestimos]);
 
   const carregarEmprestimos = async () => {
@@ -77,7 +79,7 @@ const Home = () => {
         data_devolucao_esperada: novoEmprestimo.data_devolucao_esperada,
         descricao: novoEmprestimo.descricao,
         foto_url: "",
-        status: "Pendente"
+        status: "Pendente",
       });
 
       await Swal.fire({
@@ -97,42 +99,10 @@ const Home = () => {
       });
     }
   };
-  
-  const filteredEmprestimos = emprestimos.filter((item) =>
-    item.nome.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
-  const animatedEmprestimos = filteredEmprestimos.map((item, index) => (
-    <div
-      key={index}
-      className="bg-white text-blue-600 rounded-lg p-3 flex justify-between items-center"
-      onClick={() => abrirModalViewEmprestimos(item)}
-    >
-      <div>
-        <p className="font-bold">{item.nome}</p>
-        <p className="text-sm">
-          Devolução prevista: {new Date(item.data_devolucao_esperada).toLocaleDateString("pt-BR")}
-        </p>
-      </div>
-      {item.foto_url && (
-        <img
-          src={encodeURI(`http://localhost:8000${item.foto_url}`)}
-          alt="Foto do empréstimo"
-          className="w-10 h-10 object-cover rounded cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation();
-            Swal.fire({
-              imageUrl: `http://localhost:8000${item.foto_url}`,
-              imageAlt: "Foto do empréstimo",
-              showConfirmButton: false,
-              backdrop: true,
-            });
-          }}
-        />
-      )}
-    </div>
-  ));
 
+  const filteredEmprestimos = emprestimos.filter((item) =>
+    item.nome.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   const abrirModalViewEmprestimos = (emprestimo: Emprestimo) => {
     setEmprestimoSelecionado(emprestimo);
@@ -182,7 +152,10 @@ const Home = () => {
               <div>
                 <p className="font-bold">{item.nome}</p>
                 <p className="text-sm">
-                  Devolução prevista: {new Date(item.data_devolucao_esperada).toLocaleDateString("pt-BR")}
+                  Devolução prevista:{" "}
+                  {new Date(item.data_devolucao_esperada).toLocaleDateString(
+                    "pt-BR",
+                  )}
                 </p>
               </div>
               {item.foto_url && (
@@ -251,11 +224,7 @@ const Home = () => {
           ⚠️ Você tem empréstimos vencendo nos próximos dias!
         </div>
       )}
-
     </div>
-
-      
-
   );
 };
 

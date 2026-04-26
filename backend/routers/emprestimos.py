@@ -4,12 +4,16 @@ import shutil
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, asc
 from auth.auth_utils import verificar_token
 from models.usuario import Usuario
 from models.pessoa import Pessoa
 from database import get_db
-from schemas.emprestimo import EmprestimoCreate, EmprestimoOut, EmprestimoDelete, EmprestimoUpdate
+from schemas.emprestimo import (
+    EmprestimoCreate,
+    EmprestimoOut,
+    EmprestimoDelete,
+    EmprestimoUpdate,
+)
 from models.emprestimo import Emprestimo
 import datetime
 # from datetime import datetime
@@ -19,24 +23,25 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 router = APIRouter(prefix="/emprestimos", tags=["emprestimos"])
 
+
 @router.post("/", response_model=EmprestimoOut)
 def criar_emprestimo(
     emprestimo: EmprestimoCreate,
     db: Session = Depends(get_db),
-    usuario_id: int = Depends(verificar_token)
+    usuario_id: int = Depends(verificar_token),
 ):
     try:
-        novo = Emprestimo(
-            **emprestimo.model_dump(),
-            usuario_id=usuario_id
-        )
+        novo = Emprestimo(**emprestimo.model_dump(), usuario_id=usuario_id)
         db.add(novo)
         db.commit()
         db.refresh(novo)
         return novo
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Erro ao criar empréstimo: {str(e)}")
+        raise HTTPException(
+            status_code=400, detail=f"Erro ao criar empréstimo: {str(e)}"
+        )
+
 
 @router.delete("/{emprestimo_id}", response_model=EmprestimoOut)
 def deletar_emprestimo(emprestimo: EmprestimoDelete, db: Session = Depends(get_db)):
@@ -47,25 +52,30 @@ def deletar_emprestimo(emprestimo: EmprestimoDelete, db: Session = Depends(get_d
         return emprestimo
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Erro ao deletar empréstimo: {str(e)}")
+        raise HTTPException(
+            status_code=400, detail=f"Erro ao deletar empréstimo: {str(e)}"
+        )
+
 
 @router.put("/devolver/{emprestimo_id}", response_model=EmprestimoOut)
 def registrar_devolucao(emprestimo: EmprestimoUpdate, db: Session = Depends(get_db)):
     emprestimo = db.query(Emprestimo).filter(Emprestimo.id == emprestimo.id).first()
     try:
         emprestimo.data_devolucao_real = datetime.date.today()
-        emprestimo.status = 'Devolvido'
+        emprestimo.status = "Devolvido"
         db.commit()
         db.refresh(emprestimo)
         return emprestimo
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Erro ao registrar devolução: {str(e)}")
+        raise HTTPException(
+            status_code=400, detail=f"Erro ao registrar devolução: {str(e)}"
+        )
+
 
 @router.get("/", response_model=list[EmprestimoOut])
 def listar_emprestimos(
-    db: Session = Depends(get_db),
-    usuario_id: int = Depends(verificar_token)
+    db: Session = Depends(get_db), usuario_id: int = Depends(verificar_token)
 ):
     emprestimos = (
         db.query(Emprestimo)
@@ -81,14 +91,17 @@ def listar_emprestimos(
     print(f"Listando {len(emprestimos)} empréstimos para o usuário {usuario_id}")
     return emprestimos
 
+
 @router.patch("/editarEmprestimo/{emprestimo_id}", response_model=EmprestimoOut)
 def atualizar_emprestimo(
     emprestimo_id: int,
     emprestimo: EmprestimoUpdate,
     db: Session = Depends(get_db),
-    usuario_id: int = Depends(verificar_token)
+    usuario_id: int = Depends(verificar_token),
 ):
-    emprestimo_existente = db.query(Emprestimo).filter(Emprestimo.id == emprestimo_id).first()
+    emprestimo_existente = (
+        db.query(Emprestimo).filter(Emprestimo.id == emprestimo_id).first()
+    )
     if not emprestimo_existente:
         raise HTTPException(status_code=404, detail="Empréstimo não encontrado")
 
@@ -101,8 +114,11 @@ def atualizar_emprestimo(
         return emprestimo_existente
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Erro ao atualizar empréstimo: {str(e)}")
-    
+        raise HTTPException(
+            status_code=400, detail=f"Erro ao atualizar empréstimo: {str(e)}"
+        )
+
+
 @router.post("/imagemEmprestimo/{emprestimo_id}")
 async def upload_imagem_emprestimo(
     emprestimo_id: int,
@@ -111,7 +127,7 @@ async def upload_imagem_emprestimo(
 ):
     try:
         # Salva arquivo fisicamente
-        file_path = os.path.join(UPLOAD_DIR, file.filename)
+        file_path = os.path.join(UPLOAD_DIR, file.filename or "upload")
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
@@ -129,8 +145,11 @@ async def upload_imagem_emprestimo(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao salvar imagem: {e}")
 
+
 @router.get("/exportar")
-def exportar_dados(db: Session = Depends(get_db), usuario_id: int = Depends(verificar_token)):
+def exportar_dados(
+    db: Session = Depends(get_db), usuario_id: int = Depends(verificar_token)
+):
     emprestimos = db.query(Emprestimo).filter(Emprestimo.usuario_id == usuario_id).all()
     pessoas = db.query(Pessoa).filter(Pessoa.usuario_id == usuario_id).all()
     usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
@@ -146,19 +165,22 @@ def exportar_dados(db: Session = Depends(get_db), usuario_id: int = Depends(veri
             "endereco": usuario.endereco,
             "telefone": usuario.telefone,
             "foto_perfil": usuario.foto_perfil,
-        }
+        },
     }
 
     path = "dados_exportados.json"
     with open(path, "w", encoding="utf-8") as f:
         json.dump(dados, f, ensure_ascii=False, indent=4)
 
-    return FileResponse(path, filename="dados_exportados.json", media_type="application/json")
+    return FileResponse(
+        path, filename="dados_exportados.json", media_type="application/json"
+    )
 
 
 def parse_date_safe(data: dict, field: str):
     if field in data and isinstance(data[field], str):
         data[field] = datetime.datetime.strptime(data[field], "%Y-%m-%d").date()
+
 
 @router.post("/importar-dados")
 async def importar_dados(file: UploadFile = File(...), db: Session = Depends(get_db)):

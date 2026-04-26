@@ -4,6 +4,7 @@ from models.usuario import Usuario
 from database import get_db
 from datetime import date
 
+
 def populate_usuarios():
     db = next(get_db())
     if db.query(Usuario).count() == 0:
@@ -12,13 +13,14 @@ def populate_usuarios():
             email="admin@example.com",
             senha="senha123",  # Em produção, criptografe!
             endereco="Rua Exemplo, 123",
-            telefone="(00) 00000-0000"
+            telefone="(00) 00000-0000",
         )
         db.add(usuario)
         db.commit()
         print("✅ Usuário administrador criado.")
     else:
         print("ℹ️ Usuários já cadastrados.")
+
 
 def populate_pessoas():
     db = next(get_db())
@@ -29,16 +31,41 @@ def populate_pessoas():
 
     if db.query(Pessoa).count() == 0:
         pessoas = [
-            Pessoa(nome="Maria Silva", email="maria@example.com", telefone="(11) 91234-5678", observacao="Cliente recorrente", usuario_id=admin.id),
-            Pessoa(nome="João Souza", email="joao@example.com", telefone="(21) 98765-4321", observacao="Pagou com atraso", usuario_id=admin.id),
-            Pessoa(nome="Ana Lima", email="ana@example.com", telefone="(31) 99876-5432", observacao="Prefere contato por WhatsApp", usuario_id=admin.id),
-            Pessoa(nome="Carlos Mendes", email="carlos@example.com", telefone="(41) 95555-1234", observacao="Novo cliente", usuario_id=admin.id),
+            Pessoa(
+                nome="Maria Silva",
+                email="maria@example.com",
+                telefone="(11) 91234-5678",
+                observacao="Cliente recorrente",
+                usuario_id=admin.id,
+            ),
+            Pessoa(
+                nome="João Souza",
+                email="joao@example.com",
+                telefone="(21) 98765-4321",
+                observacao="Pagou com atraso",
+                usuario_id=admin.id,
+            ),
+            Pessoa(
+                nome="Ana Lima",
+                email="ana@example.com",
+                telefone="(31) 99876-5432",
+                observacao="Prefere contato por WhatsApp",
+                usuario_id=admin.id,
+            ),
+            Pessoa(
+                nome="Carlos Mendes",
+                email="carlos@example.com",
+                telefone="(41) 95555-1234",
+                observacao="Novo cliente",
+                usuario_id=admin.id,
+            ),
         ]
         db.add_all(pessoas)
         db.commit()
         print("✅ Pessoas inseridas com sucesso.")
     else:
         print("ℹ️ Pessoas já cadastradas.")
+
 
 def populate_emprestimos():
     db = next(get_db())
@@ -55,10 +82,34 @@ def populate_emprestimos():
     pessoas_dict = {p.nome: p.id for p in pessoas}
 
     exemplos = [
-        ("Emprestimo #001", "Notebook Dell", "Emprestado para trabalho remoto", "2025-12-13", "Maria Silva"),
-        ("Emprestimo #002", "Projetor Epson", "Uso em apresentação de TCC", "2026-01-05", "João Souza"),
-        ("Emprestimo #003", "Caixa de Som JBL", "Uso em evento social", "2026-06-07", "Carlos Mendes"),
-        ("Emprestimo #004", "Tablet Samsung", "Leitura de documentos técnicos", "2026-10-01", "Ana Lima"),
+        (
+            "Emprestimo #001",
+            "Notebook Dell",
+            "Emprestado para trabalho remoto",
+            "2025-12-13",
+            "Maria Silva",
+        ),
+        (
+            "Emprestimo #002",
+            "Projetor Epson",
+            "Uso em apresentação de TCC",
+            "2026-01-05",
+            "João Souza",
+        ),
+        (
+            "Emprestimo #003",
+            "Caixa de Som JBL",
+            "Uso em evento social",
+            "2026-06-07",
+            "Carlos Mendes",
+        ),
+        (
+            "Emprestimo #004",
+            "Tablet Samsung",
+            "Leitura de documentos técnicos",
+            "2026-10-01",
+            "Ana Lima",
+        ),
     ]
 
     for nome, item, descricao, data_devolucao_esperada, nome_tomador in exemplos:
@@ -77,7 +128,7 @@ def populate_emprestimos():
             status="Pendente",
             foto_url=None,
             pessoa_id=pessoa_id,
-            usuario_id=admin.id
+            usuario_id=admin.id,
         )
         db.add(emprestimo)
 

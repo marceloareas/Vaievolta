@@ -7,13 +7,13 @@ import { StyleSheetManager } from "styled-components";
 import { UserProvider } from "./contexts/UserContext";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-	<Suspense fallback={<div>Carregando...</div>}>
-		<BrowserRouter>
-			<StyleSheetManager shouldForwardProp={(prop) => prop !== "shake"}>
-				<UserProvider>
-					<App />
-				</UserProvider>
-			</StyleSheetManager>
-		</BrowserRouter>
-	</Suspense>
+  <Suspense fallback={<div>Carregando...</div>}>
+    <BrowserRouter>
+      <StyleSheetManager shouldForwardProp={(prop) => prop !== "shake"}>
+        <UserProvider>
+          <App />
+        </UserProvider>
+      </StyleSheetManager>
+    </BrowserRouter>
+  </Suspense>,
 );

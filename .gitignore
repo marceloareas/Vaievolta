@@ -37,3 +37,10 @@ __pycache__/
 */__pycache__/
 *.py[cod]
 *$py.class
+.mypy_cache/
+.ruff_cache/
+
+# Python virtual environment
+
+.venv/
+venv/

@@ -12,11 +12,14 @@ Base = declarative_base()
 SessionLocal = None
 _engine = None  # engine interno armazenado
 
+
 def init_db(modo: str):
     global SessionLocal, _engine
 
     # Lê a string de conexão baseada no modo (ex: "online" ou "offline")
-    DATABASE_URL = 'sqlite:///./offline.db' if modo == "offline" else os.getenv("DATABASE_URL")
+    DATABASE_URL = (
+        "sqlite:///./offline.db" if modo == "offline" else os.getenv("DATABASE_URL")
+    )
 
     if not DATABASE_URL:
         raise ValueError("❌ DATABASE_URL não definido nas variáveis de ambiente")
@@ -26,26 +29,36 @@ def init_db(modo: str):
     for attempt in range(max_retries):
         try:
             _engine = create_engine(DATABASE_URL)
-            with _engine.connect() as conn:
+            with _engine.connect():
                 print("✅ Banco de dados conectado com sucesso!")
             break
         except OperationalError:
-            print(f"⏳ Tentativa {attempt+1}/{max_retries}: aguardando banco de dados...")
+            print(
+                f"⏳ Tentativa {attempt + 1}/{max_retries}: aguardando banco de dados..."
+            )
             time.sleep(3)
     else:
-        raise RuntimeError("❌ Não foi possível conectar ao banco de dados após várias tentativas.")
+        raise RuntimeError(
+            "❌ Não foi possível conectar ao banco de dados após várias tentativas."
+        )
 
     # Define o sessionmaker global
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=_engine)
 
+
 def get_engine():
     if _engine is None:
-        raise RuntimeError("⚠️ O banco de dados ainda não foi inicializado com `init_db`.")
+        raise RuntimeError(
+            "⚠️ O banco de dados ainda não foi inicializado com `init_db`."
+        )
     return _engine
+
 
 def get_db():
     if SessionLocal is None:
-        raise RuntimeError("⚠️ O banco de dados ainda não foi inicializado com `init_db`.")
+        raise RuntimeError(
+            "⚠️ O banco de dados ainda não foi inicializado com `init_db`."
+        )
     db = SessionLocal()
     try:
         yield db

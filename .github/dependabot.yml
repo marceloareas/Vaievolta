@@ -2,12 +2,12 @@ version: 2
 updates:
   - package-ecosystem: pip
     directory: /backend
-    target-branch: "2026/main"
+    target-branch: 2026/main
     schedule:
       interval: weekly
 
   - package-ecosystem: npm
     directory: /frontend
-    target-branch: "2026/main"
+    target-branch: 2026/main
     schedule:
       interval: weekly

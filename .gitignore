@@ -28,3 +28,12 @@ offline.db
 *.sqlite
 .env
 venv
+
+# Python cache
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*/__pycache__/
+*.py[cod]
+*$py.class

@@ -1,10 +1,7 @@
-import json
 from auth.auth_utils import verificar_token
-from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
-from models.emprestimo import Emprestimo
-from models.pessoa import Pessoa
 from models.usuario import Usuario
 from schemas.usuario import UsuarioCreate, UsuarioOut, UsuarioUpdate
 from passlib.context import CryptContext

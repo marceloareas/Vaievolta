@@ -6,7 +6,7 @@ def get_modo():
     try:
         with open("modo.json", "r") as f:
             return json.load(f)["modo"]
-    except:
+    except Exception:
         return "online"
 
 

@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaBars, FaHome, FaUserAlt } from "react-icons/fa";
-import { FiDownload, FiUpload } from "react-icons/fi";
+import { FiDownload } from "react-icons/fi";
 import { SiGooglesheets } from "react-icons/si";
-import { MdOutlineAddBox } from "react-icons/md";
 import { TbLogout2 } from "react-icons/tb";
-import ModalEmprestimo from "./Modal/ModalCreateEmprestimo";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -135,7 +133,7 @@ const Menu = () => {
                         a.href = url;
                         a.download = "dados_exportados.json";
                         a.click();
-                      } catch (error) {
+                      } catch {
                         Swal.fire(
                           "Erro",
                           "Falha ao exportar os dados",

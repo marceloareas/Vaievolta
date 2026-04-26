@@ -29,7 +29,7 @@ def init_db(modo: str):
     for attempt in range(max_retries):
         try:
             _engine = create_engine(DATABASE_URL)
-            with _engine.connect() as conn:
+            with _engine.connect():
                 print("✅ Banco de dados conectado com sucesso!")
             break
         except OperationalError:

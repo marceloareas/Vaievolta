@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { HiOutlineQrcode } from "react-icons/hi";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import Swal from "sweetalert2";
-import AnimatedList from "../../components/AnimatedList";
-import SplitText from "../../components/SplitText";
 
 import Menu from "../../components/Menu";
 import ModalEmprestimo from "../../components/Modal/ModalCreateEmprestimo";
@@ -16,7 +13,7 @@ import {
   createEmprestimo,
 } from "../../services/emprestimoService";
 import { getUserFirstName } from "../../services/utils";
-import { useUser } from "../../contexts/UserContext";
+import { useUser } from "../../contexts/useUser";
 
 const Home = () => {
   const [abrirModal, setAbrirModal] = useState(false);
@@ -106,38 +103,6 @@ const Home = () => {
   const filteredEmprestimos = emprestimos.filter((item) =>
     item.nome.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-
-  const animatedEmprestimos = filteredEmprestimos.map((item, index) => (
-    <div
-      key={index}
-      className="bg-white text-blue-600 rounded-lg p-3 flex justify-between items-center"
-      onClick={() => abrirModalViewEmprestimos(item)}
-    >
-      <div>
-        <p className="font-bold">{item.nome}</p>
-        <p className="text-sm">
-          Devolução prevista:{" "}
-          {new Date(item.data_devolucao_esperada).toLocaleDateString("pt-BR")}
-        </p>
-      </div>
-      {item.foto_url && (
-        <img
-          src={encodeURI(`http://localhost:8000${item.foto_url}`)}
-          alt="Foto do empréstimo"
-          className="w-10 h-10 object-cover rounded cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation();
-            Swal.fire({
-              imageUrl: `http://localhost:8000${item.foto_url}`,
-              imageAlt: "Foto do empréstimo",
-              showConfirmButton: false,
-              backdrop: true,
-            });
-          }}
-        />
-      )}
-    </div>
-  ));
 
   const abrirModalViewEmprestimos = (emprestimo: Emprestimo) => {
     setEmprestimoSelecionado(emprestimo);

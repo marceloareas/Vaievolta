@@ -4,7 +4,6 @@ import shutil
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, asc
 from auth.auth_utils import verificar_token
 from models.usuario import Usuario
 from models.pessoa import Pessoa

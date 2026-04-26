@@ -1,16 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, asc
 from auth.auth_utils import verificar_token
 from database import get_db
 from schemas.emprestimo import (
-    EmprestimoCreate,
     EmprestimoOut,
-    EmprestimoDelete,
-    EmprestimoUpdate,
 )
 from models.emprestimo import Emprestimo
-import datetime
 
 router = APIRouter(prefix="/historico", tags=["historico"])
 

@@ -1,6 +1,4 @@
-import { Navigate, Outlet, useNavigate } from "react-router";
-import { useEffect, useState } from "react";
-import api from "../services/api";
+import { Outlet } from "react-router";
 
 const Layout = () => {
   return (

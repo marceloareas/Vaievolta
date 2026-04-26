@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Menu from "../../components/Menu";
 import Swal from "sweetalert2";
 import { fetchHistorico } from "../../services/historicoService";
@@ -18,8 +17,6 @@ interface Emprestimo {
 
 const Historico = () => {
   const [emprestimos, setEmprestimos] = useState<Emprestimo[]>([]);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const carregarHistorico = async () => {

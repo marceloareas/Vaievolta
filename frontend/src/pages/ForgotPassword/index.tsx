@@ -1,12 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  IoEyeOutline,
-  IoEyeOffOutline,
-  IoRefreshOutline,
-} from "react-icons/io5";
-import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
-import { Dialog } from "@headlessui/react";
+import { FiMail, FiRefreshCcw } from "react-icons/fi";
 
 interface Props {
   onBack: () => void;

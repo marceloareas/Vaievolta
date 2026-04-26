@@ -1,15 +1,10 @@
 import { useState } from "react";
-import {
-  IoEyeOutline,
-  IoEyeOffOutline,
-  IoRefreshOutline,
-} from "react-icons/io5";
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-import { useUser } from "../../contexts/UserContext";
-import AnimatedContent from "../../components/AnimatedContent";
+import { useUser } from "../../contexts/useUser";
 import FadeContent from "../../components/FadeContent";
 
 interface Props {

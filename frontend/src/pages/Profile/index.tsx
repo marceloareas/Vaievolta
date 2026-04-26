@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
 import { MdModeEdit, MdCancel } from "react-icons/md";
 import { IoMdExit } from "react-icons/io";
 import Swal from "sweetalert2";
 import { IMaskInput } from "react-imask";
 
-import Footer from "../Footer/index";
 import Menu from "../../components/Menu";
-import { useUser, User } from "../../contexts/UserContext";
+import { useUser } from "../../contexts/useUser";
+import { User } from "../../contexts/UserContext";
 import {
   deleteUser,
   updateUser,
@@ -18,9 +17,7 @@ import {
 const Profile = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("********");
   const [editMode, setEditMode] = useState(false);
-  const [newPassword, setNewPassword] = useState(password);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [endereco, setEndereco] = useState("");
   const [telefone, setTelefone] = useState("");

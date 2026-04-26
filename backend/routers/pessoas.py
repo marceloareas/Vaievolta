@@ -4,9 +4,7 @@ from schemas.pessoa import PessoaOut
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database import get_db
-from models.usuario import Usuario
-from schemas.usuario import UsuarioCreate, UsuarioOut
-from schemas.pessoa import PessoaCreate, PessoaOut
+from schemas.pessoa import PessoaCreate
 
 router = APIRouter(prefix="/pessoas", tags=["pessoas"])
 

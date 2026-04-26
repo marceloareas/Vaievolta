@@ -1,16 +1,20 @@
 import api from "./api";
+import Emprestimo from "../types/index";
 
 export const fetchEmprestimos = async () => {
   const res = await api.get("/emprestimos/");
   return res.data;
 };
 
-export const createEmprestimo = async (emprestimo: any) => {
+export const createEmprestimo = async (emprestimo: Omit<Emprestimo, "id">) => {
   const res = await api.post("/emprestimos/", emprestimo);
   return res.data;
 };
 
-export const updateEmprestimo = async (id: number, emprestimo: any) => {
+export const updateEmprestimo = async (
+  id: number,
+  emprestimo: Partial<Emprestimo>,
+) => {
   const res = await api.patch(
     `/emprestimos/editarEmprestimo/${id}`,
     emprestimo,

@@ -1,10 +1,6 @@
 import { useState } from "react";
-import {
-  IoEyeOutline,
-  IoEyeOffOutline,
-  IoRefreshOutline,
-} from "react-icons/io5";
-import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+import { FiLock, FiRefreshCcw } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 const NewPassword = () => {

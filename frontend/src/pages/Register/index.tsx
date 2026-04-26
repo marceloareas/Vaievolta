@@ -42,8 +42,7 @@ const Register = ({ onBack }: Props) => {
     }
 
     try {
-      const data = await createUser(form.name, form.email, form.password);
-      // console.log("Usuário cadastrado com sucesso:", data);
+      await createUser(form.name, form.email, form.password);
 
       await Swal.fire({
         title: "Usuário cadastrado com sucesso!",

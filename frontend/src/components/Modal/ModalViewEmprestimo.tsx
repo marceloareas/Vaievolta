@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Emprestimo from "../../types/index";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
 import { Pessoa } from "./ModalCreateEmprestimo";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import ModalPessoa from "./ModalAddPessoa";
@@ -39,10 +38,6 @@ const ModalViewEmprestimo = ({
   const [descricao, setDescricao] = useState("");
   const [foto, setFoto] = useState("");
   const [abrirModalPessoa, setAbrirModalPessoa] = useState(false);
-
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (emprestimo) {

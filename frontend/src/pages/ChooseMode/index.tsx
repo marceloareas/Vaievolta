@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 const EscolherModo = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const escolherModo = async (modo: "online" | "offline") => {
@@ -22,8 +21,6 @@ const EscolherModo = () => {
   };
 
   const importarJSON = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLoading(true);
-
     try {
       const file = event.target.files?.[0];
       if (!file) return;
@@ -44,10 +41,11 @@ const EscolherModo = () => {
       }
 
       navigate("/home");
-    } catch (error: any) {
-      alert("Falha na importação: " + error.message);
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      alert(
+        "Falha na importação: " +
+          (error instanceof Error ? error.message : String(error)),
+      );
     }
   };
 

@@ -250,7 +250,7 @@ const ModalEmprestimo = ({
               confirmButtonText: "OK",
               backdrop: true,
             });
-          } catch (err) {
+          } catch {
             await Swal.fire({
               title: "Erro ao criar pessoa",
               text: "Por favor, verifique os dados e tente novamente.",

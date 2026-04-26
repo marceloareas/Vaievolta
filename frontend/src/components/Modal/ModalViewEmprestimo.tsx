@@ -5,7 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { Pessoa } from "./ModalCreateEmprestimo";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import ModalPessoa from "./ModalAddPessoa";
-import { createPessoa, devolverEmprestimo, updateEmprestimo, uploadImagemEmprestimo } from "../../services/emprestimoService";
+import {
+  createPessoa,
+  devolverEmprestimo,
+  updateEmprestimo,
+  uploadImagemEmprestimo,
+} from "../../services/emprestimoService";
 import { MdEdit } from "react-icons/md";
 import api from "../../services/api";
 
@@ -16,7 +21,12 @@ interface ModalViewEmprestimoProps {
   carregarEmprestimos: () => void;
 }
 
-const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos }: ModalViewEmprestimoProps) => {
+const ModalViewEmprestimo = ({
+  aberto,
+  onFechar,
+  emprestimo,
+  carregarEmprestimos,
+}: ModalViewEmprestimoProps) => {
   const [modoEdicao, setModoEdicao] = useState(false);
 
   const [nome, setNome] = useState("");
@@ -54,18 +64,17 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
 
     // console.log(tomador)
 
-    api.get("/pessoas/")
+    api
+      .get("/pessoas/")
       .then((response) => {
         setPessoas(response.data);
       })
       .catch((err) => {
         console.error("Erro ao buscar pessoas:", err);
       });
-
   }, [emprestimo]);
 
   const handleSalvar = async () => {
-
     try {
       const dadosAtualizados = {
         id: id,
@@ -92,8 +101,8 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
         backdrop: true,
         showConfirmButton: true,
         confirmButtonText: "OK",
-        timerProgressBar: true
-      })
+        timerProgressBar: true,
+      });
     } catch (error) {
       console.error("Erro ao salvar alterações:", error);
       await Swal.fire({
@@ -106,7 +115,6 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
     setModoEdicao(false);
 
     onFechar();
-    
   };
 
   const handleExcluir = (id: number) => {
@@ -121,25 +129,30 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
       confirmButtonText: "Excluir",
       cancelButtonText: "Cancelar",
       backdrop: true,
-  
     }).then(async (result) => {
       if (result.isConfirmed) {
-        console.log("Excluído:", { nome, item, tomador, dataDevolucao, descricao, foto });
+        console.log("Excluído:", {
+          nome,
+          item,
+          tomador,
+          dataDevolucao,
+          descricao,
+          foto,
+        });
       }
 
       try {
         await api.delete(`/emprestimos/${id}/`, {
           data: {
-            id: id
-          }
+            id: id,
+          },
         });
-      
+
         await Swal.fire({
           icon: "success",
           title: "Empréstimo excluído com sucesso!",
           confirmButtonText: "OK",
         });
-      
       } catch (error) {
         console.error("Erro ao excluir o empréstimo:", error);
         await Swal.fire({
@@ -148,30 +161,29 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
           text: "Tente novamente mais tarde.",
         });
       }
-  
+
       onFechar();
       carregarEmprestimos();
     });
-  }
+  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !id) return;
-  
+
     const formData = new FormData();
     formData.append("file", file);
-  
+
     try {
       const res = await uploadImagemEmprestimo(id, formData);
       const data = res.data;
       setFoto(`http://localhost:8000${data.url}`);
-    
+
       await Swal.fire({
         title: "Imagem atualizada!",
         icon: "success",
         confirmButtonText: "OK",
       });
-    
     } catch (err) {
       console.error("Erro ao enviar imagem:", err);
       await Swal.fire({
@@ -194,12 +206,18 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
       confirmButtonText: "Sim, confirmar",
       cancelButtonText: "Cancelar",
       backdrop: true,
-  
     }).then(async (result) => {
       if (result.isConfirmed) {
-        console.log("Devolvido:", { nome, item, tomador, dataDevolucao, descricao, foto });
+        console.log("Devolvido:", {
+          nome,
+          item,
+          tomador,
+          dataDevolucao,
+          descricao,
+          foto,
+        });
       }
-        
+
       try {
         await devolverEmprestimo(id);
         await Swal.fire({
@@ -209,8 +227,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
           showConfirmButton: true,
           confirmButtonText: "OK",
         });
-      }
-      catch (error) {
+      } catch (error) {
         console.error("Erro ao marcar como devolvido:", error);
         await Swal.fire({
           icon: "error",
@@ -218,7 +235,7 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
           text: "Tente novamente mais tarde.",
         });
       }
-      
+
       onFechar();
       carregarEmprestimos();
     });
@@ -229,26 +246,42 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-40">
       <div className="bg-white rounded-2xl shadow-xl w-[90%] max-w-sm max-h-[85vh] flex flex-col overflow-hidden">
-        
         {/* Cabeçalho fixo */}
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-xl font-bold text-[#2c64dd]">
             {modoEdicao ? "Editar empréstimo" : "Detalhes do empréstimo"}
           </h2>
-          <button onClick={onFechar} className="text-xl text-[#2c64dd] font-bold">×</button>
+          <button
+            onClick={onFechar}
+            className="text-xl text-[#2c64dd] font-bold"
+          >
+            ×
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4 text-black">
           {modoEdicao ? (
             <>
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">Nome:</label>
-                <input value={nome} onChange={(e) => setNome(e.target.value)} className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]" />
+                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                  Nome:
+                </label>
+                <input
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]"
+                />
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">Item:</label>
-                <input value={item} onChange={(e) => setItem(e.target.value)} className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]" />
+                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                  Item:
+                </label>
+                <input
+                  value={item}
+                  onChange={(e) => setItem(e.target.value)}
+                  className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]"
+                />
               </div>
 
               <div className="flex items-center gap-2">
@@ -256,18 +289,22 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                   value={tomadorId || ""}
                   onChange={(e) => {
                     setTomador(e.target.selectedOptions[0].text);
-                    setTomadorId(e.target.value ? parseInt(e.target.value) : null);
+                    setTomadorId(
+                      e.target.value ? parseInt(e.target.value) : null,
+                    );
                   }}
                   className="flex-1 p-2 border rounded text-black bg-white max-h-40 overflow-y-auto"
                 >
-                  <option value="" disabled>Selecione...</option>
+                  <option value="" disabled>
+                    Selecione...
+                  </option>
                   {pessoas.map((pessoa) => (
                     <option key={pessoa.id} value={pessoa.id}>
                       {pessoa.nome}
                     </option>
                   ))}
                 </select>
-                
+
                 <button
                   type="button"
                   onClick={() => setAbrirModalPessoa(true)}
@@ -275,17 +312,29 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                 >
                   <IoMdAddCircleOutline size={30} />
                 </button>
-
-            </div>
-
-              <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">Data de devolução:</label>
-                <input type="date" value={dataDevolucao} onChange={(e) => setDataDevolucao(e.target.value)} className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]" />
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">Descrição:</label>
-                <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]" />
+                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                  Data de devolução:
+                </label>
+                <input
+                  type="date"
+                  value={dataDevolucao}
+                  onChange={(e) => setDataDevolucao(e.target.value)}
+                  className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                  Descrição:
+                </label>
+                <textarea
+                  value={descricao}
+                  onChange={(e) => setDescricao(e.target.value)}
+                  className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]"
+                />
               </div>
 
               <ModalPessoa
@@ -294,10 +343,10 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                 onCriar={async (novaPessoa) => {
                   try {
                     const pessoaCriada = await createPessoa(novaPessoa);
-                  
+
                     setPessoas((prev) => [...prev, pessoaCriada]); // Atualiza a lista de pessoas
                     setTomador(pessoaCriada.id); // ir por padrao direto pro select
-                  
+
                     await Swal.fire({
                       icon: "success",
                       title: "Pessoa criada com sucesso!",
@@ -305,7 +354,6 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                       confirmButtonText: "OK",
                       backdrop: true,
                     });
-                  
                   } catch (err) {
                     console.error("Erro ao criar pessoa:", err);
                     await Swal.fire({
@@ -315,25 +363,26 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                       width: "90%",
                       showConfirmButton: true,
                       confirmButtonText: "OK",
-                      timerProgressBar: true
+                      timerProgressBar: true,
                     });
                   }
                 }}
               />
-
             </>
           ) : (
             <>
-
               {/* Área de imagem */}
               <div className="flex flex-col items-center">
                 <div className="relative w-48 h-32">
                   <img
-                    src={foto || 'http://localhost:8000/uploads/error.png'}
+                    src={foto || "http://localhost:8000/uploads/error.png"}
                     alt="Foto do item"
                     className="w-full h-full rounded-xl object-contain border-4 border-blue-900"
                   />
-                  <label htmlFor="upload" className="absolute bottom-0 right-0 bg-white p-1 rounded-full cursor-pointer shadow">
+                  <label
+                    htmlFor="upload"
+                    className="absolute bottom-0 right-0 bg-white p-1 rounded-full cursor-pointer shadow"
+                  >
                     <MdEdit className="text-blue-600 w-5 h-5" />
                   </label>
                   <input
@@ -344,11 +393,15 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
                     onChange={handleImageUpload}
                   />
                 </div>
-                <p className="mt-2 text-sm text-white">Toque para alterar a foto</p>
+                <p className="mt-2 text-sm text-white">
+                  Toque para alterar a foto
+                </p>
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">Nome:</label>
+                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                  Nome:
+                </label>
                 <input
                   type="text"
                   value={nome}
@@ -358,7 +411,9 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">Item:</label>
+                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                  Item:
+                </label>
                 <input
                   type="text"
                   value={item}
@@ -368,7 +423,9 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">Tomador:</label>
+                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                  Tomador:
+                </label>
                 <input
                   type="text"
                   value={tomador}
@@ -378,7 +435,9 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">Data de devolução:</label>
+                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                  Data de devolução:
+                </label>
                 <input
                   type="text"
                   value={new Date(dataDevolucao).toLocaleDateString("pt-BR")}
@@ -388,7 +447,9 @@ const ModalViewEmprestimo = ({ aberto, onFechar, emprestimo, carregarEmprestimos
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">Descrição:</label>
+                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                  Descrição:
+                </label>
                 <textarea
                   value={descricao}
                   readOnly

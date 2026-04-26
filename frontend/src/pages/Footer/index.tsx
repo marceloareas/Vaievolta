@@ -12,7 +12,7 @@ const Footer = () => {
 
   // TODO: Adicionar lógica para mudar a cor dos icones baseado na rota atual
   // Função para definir a cor do ícone baseado na rota
-  const getIconColor = (path : string) => {
+  const getIconColor = (path: string) => {
     return location.pathname === path ? "#133E87" : "white"; // Verifica se a rota corresponde ao ícone
   };
 
@@ -23,34 +23,54 @@ const Footer = () => {
       <div className="flex justify-around w-full max-w-[480px] mx-auto">
         <div className="flex flex-col items-center">
           <Link to="/auth" className="flex flex-col items-center">
-            <FaHome size={24} className="text-white" style={{ color: getIconColor("/auth") }} />
+            <FaHome
+              size={24}
+              className="text-white"
+              style={{ color: getIconColor("/auth") }}
+            />
             <span className="text-white text-xs">Home</span>
           </Link>
         </div>
         <div className="flex flex-col items-center">
-          <button onClick={() => setAbrirModal(true)} className="flex flex-col items-center">
-            <MdOutlineAddBox size={24} style={{ color: getIconColor("/adicionar") }} />
+          <button
+            onClick={() => setAbrirModal(true)}
+            className="flex flex-col items-center"
+          >
+            <MdOutlineAddBox
+              size={24}
+              style={{ color: getIconColor("/adicionar") }}
+            />
             <span className="text-white text-xs">Adicionar</span>
           </button>
         </div>
         <div className="flex flex-col items-center">
           <Link to="/relatorio" className="flex flex-col items-center">
-            <SiGooglesheets size={24} className="text-white" style={{ color: getIconColor("/relatorio") }} />
+            <SiGooglesheets
+              size={24}
+              className="text-white"
+              style={{ color: getIconColor("/relatorio") }}
+            />
             <span className="text-white text-xs">Relatório</span>
           </Link>
         </div>
         <div className="flex flex-col items-center">
           <Link to="/perfil" className="flex flex-col items-center">
-            <FaUserAlt size={24} className="text-white" style={{ color: getIconColor("/perfil") }} />
+            <FaUserAlt
+              size={24}
+              className="text-white"
+              style={{ color: getIconColor("/perfil") }}
+            />
             <span className="text-white text-xs">Perfil</span>
           </Link>
         </div>
       </div>
 
       {abrirModal && (
-        <ModalEmprestimo aberto={abrirModal} onFechar={() => setAbrirModal(false)} />
+        <ModalEmprestimo
+          aberto={abrirModal}
+          onFechar={() => setAbrirModal(false)}
+        />
       )}
-
     </footer>
   );
 };

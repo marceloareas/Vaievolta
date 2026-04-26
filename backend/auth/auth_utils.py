@@ -8,10 +8,8 @@ from models.usuario import Usuario
 from sqlalchemy.orm import Session
 
 # 1️⃣  auto_error=False impede que o schema dispare 401 sozinho
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="/auth/login",
-    auto_error=False
-)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
+
 
 def verificar_token(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     # Se o sistema estiver em modo offline, ignora a autenticação
@@ -19,9 +17,11 @@ def verificar_token(token: str = Depends(oauth2_scheme), db: Session = Depends(g
         usuario = db.query(Usuario).first()
         print(usuario)
         if not usuario:
-            raise HTTPException(status_code=404, detail="Nenhum usuário encontrado no modo offline")
+            raise HTTPException(
+                status_code=404, detail="Nenhum usuário encontrado no modo offline"
+            )
         return usuario.id
-    
+
     # A partir daqui estamos em modo online👇
     if not token:
         raise HTTPException(

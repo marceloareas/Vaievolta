@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from datetime import date
 from typing import Optional
 
+
 class EmprestimoBase(BaseModel):
     nome: str
     item: str
@@ -12,11 +13,14 @@ class EmprestimoBase(BaseModel):
     foto_url: Optional[str] = None
     pessoa_id: int
 
+
 class EmprestimoCreate(EmprestimoBase):
     pass
 
+
 class EmprestimoDelete(BaseModel):
     id: Optional[int] = None
+
 
 class EmprestimoUpdate(BaseModel):
     id: Optional[int] = None
@@ -28,6 +32,7 @@ class EmprestimoUpdate(BaseModel):
     status: Optional[str] = None
     foto_url: Optional[str] = None
     pessoa_id: Optional[int] = None
+
 
 class EmprestimoOut(EmprestimoBase):
     id: int

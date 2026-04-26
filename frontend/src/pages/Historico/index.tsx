@@ -35,7 +35,7 @@ const Historico = () => {
         });
       }
     };
-  
+
     carregarHistorico();
   }, []);
 
@@ -52,19 +52,37 @@ const Historico = () => {
       <div className="space-y-3 max-h-[75vh] overflow-y-auto mt-2">
         {emprestimos.length > 0 ? (
           emprestimos.map((item) => (
-            <div key={item.id} className="bg-white text-blue-600 rounded-lg p-3 shadow">
+            <div
+              key={item.id}
+              className="bg-white text-blue-600 rounded-lg p-3 shadow"
+            >
               <p className="font-bold">{item.nome}</p>
               <p className="text-sm">Item: {item.item}</p>
               <p className="text-sm">Status: {item.status}</p>
-              <p className="text-sm">Empréstimo: {new Date(item.data_emprestimo).toLocaleDateString("pt-BR")}</p>
-              <p className="text-sm">Devolução Esperada: {new Date(item.data_devolucao_esperada).toLocaleDateString("pt-BR")}</p>
+              <p className="text-sm">
+                Empréstimo:{" "}
+                {new Date(item.data_emprestimo).toLocaleDateString("pt-BR")}
+              </p>
+              <p className="text-sm">
+                Devolução Esperada:{" "}
+                {new Date(item.data_devolucao_esperada).toLocaleDateString(
+                  "pt-BR",
+                )}
+              </p>
               {item.data_devolucao_real && (
-                <p className="text-sm">Devolvido em: {new Date(item.data_devolucao_real).toLocaleDateString("pt-BR")}</p>
+                <p className="text-sm">
+                  Devolvido em:{" "}
+                  {new Date(item.data_devolucao_real).toLocaleDateString(
+                    "pt-BR",
+                  )}
+                </p>
               )}
             </div>
           ))
         ) : (
-          <p className="text-white text-center mt-4">Nenhum empréstimo encontrado.</p>
+          <p className="text-white text-center mt-4">
+            Nenhum empréstimo encontrado.
+          </p>
         )}
       </div>
     </div>

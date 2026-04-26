@@ -92,7 +92,7 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
     setTopGradientOpacity(Math.min(scrollTop / 50, 1));
     const bottomDistance = scrollHeight - (scrollTop + clientHeight);
     setBottomGradientOpacity(
-      scrollHeight <= clientHeight ? 0 : Math.min(bottomDistance / 50, 1)
+      scrollHeight <= clientHeight ? 0 : Math.min(bottomDistance / 50, 1),
     );
   };
 
@@ -127,7 +127,7 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
     if (!keyboardNav || selectedIndex < 0 || !listRef.current) return;
     const container = listRef.current;
     const selectedItem = container.querySelector(
-      `[data-index="${selectedIndex}"]`
+      `[data-index="${selectedIndex}"]`,
     ) as HTMLElement | null;
     if (selectedItem) {
       const extraMargin = 50;

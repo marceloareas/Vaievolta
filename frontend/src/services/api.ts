@@ -1,12 +1,12 @@
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000', //  local
+  baseURL: "http://localhost:8000", //  local
 });
 
 // Interceptador para enviar o token automaticamente
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -22,12 +22,12 @@ api.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       // Se deu 401 → limpa token e redireciona para login
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/'; // redireciona para login (ou sua rota inicial)
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/"; // redireciona para login (ou sua rota inicial)
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

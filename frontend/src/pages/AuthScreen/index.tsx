@@ -5,7 +5,9 @@ import Register from "../Register";
 import ForgotPassword from "../ForgotPassword";
 
 const AuthScreen = () => {
-  const [telaAtiva, setTelaAtiva] = useState<"login" | "register" | "forgot">("login");
+  const [telaAtiva, setTelaAtiva] = useState<"login" | "register" | "forgot">(
+    "login",
+  );
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden bg-[#2c64dd]">
@@ -18,7 +20,10 @@ const AuthScreen = () => {
             transition={{ duration: 0.4 }}
             className="absolute inset-0 z-10"
           >
-            <Login onShowRegister={() => setTelaAtiva("register")} onShowForgotPassword={() => setTelaAtiva("forgot")} />
+            <Login
+              onShowRegister={() => setTelaAtiva("register")}
+              onShowForgotPassword={() => setTelaAtiva("forgot")}
+            />
           </motion.div>
         )}
 

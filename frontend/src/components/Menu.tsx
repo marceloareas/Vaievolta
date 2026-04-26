@@ -14,7 +14,8 @@ const Menu = () => {
   const location = useLocation();
   const [abrirDrawer, setAbrirDrawer] = useState(false);
 
-  const getIconColor = (path: string) => location.pathname === path ? "#133E87" : "#444";
+  const getIconColor = (path: string) =>
+    location.pathname === path ? "#133E87" : "#444";
 
   const navigate = useNavigate();
 
@@ -42,7 +43,7 @@ const Menu = () => {
       navigate("/auth");
     });
     setAbrirDrawer(false);
-  }
+  };
 
   return (
     <>
@@ -87,15 +88,30 @@ const Menu = () => {
               {/* Conteúdo principal do Drawer */}
               <div className="flex-1 flex flex-col justify-between">
                 <nav className="flex flex-col gap-6">
-                  <Link to="/home" className="flex items-center gap-3 text-md font-medium" onClick={() => setAbrirDrawer(false)}>
+                  <Link
+                    to="/home"
+                    className="flex items-center gap-3 text-md font-medium"
+                    onClick={() => setAbrirDrawer(false)}
+                  >
                     <FaHome size={20} color={getIconColor("/home")} />
                     <span className="text-gray-500">Home</span>
                   </Link>
-                  <Link to="/historico" className="flex items-center gap-3 text-md font-medium" onClick={() => setAbrirDrawer(false)}>
-                    <SiGooglesheets size={20} color={getIconColor("/historico")} />
+                  <Link
+                    to="/historico"
+                    className="flex items-center gap-3 text-md font-medium"
+                    onClick={() => setAbrirDrawer(false)}
+                  >
+                    <SiGooglesheets
+                      size={20}
+                      color={getIconColor("/historico")}
+                    />
                     <span className="text-gray-500">Histórico</span>
                   </Link>
-                  <Link to="/perfil" className="flex items-center gap-3 text-md font-medium" onClick={() => setAbrirDrawer(false)}>
+                  <Link
+                    to="/perfil"
+                    className="flex items-center gap-3 text-md font-medium"
+                    onClick={() => setAbrirDrawer(false)}
+                  >
                     <FaUserAlt size={20} color={getIconColor("/perfil")} />
                     <span className="text-gray-500">Perfil</span>
                   </Link>
@@ -107,9 +123,12 @@ const Menu = () => {
                     onClick={async () => {
                       try {
                         const token = localStorage.getItem("token");
-                        const response = await fetch("http://localhost:8000/emprestimos/exportar", {
-                          headers: { Authorization: `Bearer ${token}` }
-                        });
+                        const response = await fetch(
+                          "http://localhost:8000/emprestimos/exportar",
+                          {
+                            headers: { Authorization: `Bearer ${token}` },
+                          },
+                        );
                         const blob = await response.blob();
                         const url = window.URL.createObjectURL(blob);
                         const a = document.createElement("a");
@@ -117,14 +136,17 @@ const Menu = () => {
                         a.download = "dados_exportados.json";
                         a.click();
                       } catch (error) {
-                        Swal.fire("Erro", "Falha ao exportar os dados", "error");
+                        Swal.fire(
+                          "Erro",
+                          "Falha ao exportar os dados",
+                          "error",
+                        );
                       }
                     }}
                     className="self-start text-blue-600 font-semibold hover:text-blue-700 transition flex items-center gap-2"
                   >
                     <FiDownload size={20} /> Exportar dados
                   </button>
-
                   {/* Botão Sair no final */}
                   <button
                     onClick={handleLogout}
@@ -134,10 +156,8 @@ const Menu = () => {
                     Sair
                   </button>
                 </div>
-              
               </div>
             </motion.div>
-
           </>
         )}
       </AnimatePresence>

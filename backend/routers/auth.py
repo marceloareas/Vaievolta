@@ -7,6 +7,7 @@ from auth.jwt import criar_token
 
 router = APIRouter(prefix="/login", tags=["login"])
 
+
 @router.post("/")
 def login(usuario: UsuarioLogin, db: Session = Depends(get_db)):
     usuario_autenticado = autenticar_usuario(db, usuario.email, usuario.senha)
@@ -21,6 +22,6 @@ def login(usuario: UsuarioLogin, db: Session = Depends(get_db)):
         "user": {
             "id": usuario_autenticado.id,
             "nome": usuario_autenticado.nome,
-            "email": usuario_autenticado.email
-        }
+            "email": usuario_autenticado.email,
+        },
     }

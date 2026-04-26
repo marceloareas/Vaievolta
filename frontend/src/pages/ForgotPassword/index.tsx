@@ -1,11 +1,15 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { IoEyeOutline, IoEyeOffOutline, IoRefreshOutline  } from "react-icons/io5";
+import {
+  IoEyeOutline,
+  IoEyeOffOutline,
+  IoRefreshOutline,
+} from "react-icons/io5";
 import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
-import { Dialog } from '@headlessui/react';
+import { Dialog } from "@headlessui/react";
 
 interface Props {
-    onBack: () => void;
+  onBack: () => void;
 }
 
 const ForgotPassword = ({ onBack }: Props) => {
@@ -32,12 +36,14 @@ const ForgotPassword = ({ onBack }: Props) => {
       if (value && index < refs.length - 1) {
         refs[index + 1].current?.focus();
       }
-
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: '#2c64dd' }}>
+    <div
+      className="min-h-screen flex items-center justify-center px-6"
+      style={{ backgroundColor: "#2c64dd" }}
+    >
       <div className="w-full max-w-md flex flex-col items-center">
         {/* Logo e título */}
         <h1 className="text-white text-4xl font-bold mb-6 flex items-center gap-2">
@@ -46,7 +52,7 @@ const ForgotPassword = ({ onBack }: Props) => {
         <img src="/logo.png" alt="Logo" className="h-35 mb-8" />
 
         <h4 className="text-white text-sm mb-4">
-            Digite o seu endereço de e-mail para recuperar a senha:
+          Digite o seu endereço de e-mail para recuperar a senha:
         </h4>
 
         {/* Campo de email */}
@@ -62,24 +68,31 @@ const ForgotPassword = ({ onBack }: Props) => {
         </div>
 
         {/* Botão de recuperar senha */}
-        <button className="w-full mb-3 bg-white text-blue-600 font-bold py-2 rounded-xl hover:bg-gray-100 transition cursor-pointer" onClick={() => setMostrarModal(true)}>
+        <button
+          className="w-full mb-3 bg-white text-blue-600 font-bold py-2 rounded-xl hover:bg-gray-100 transition cursor-pointer"
+          onClick={() => setMostrarModal(true)}
+        >
           Recuperar senha
         </button>
 
         {/* Voltar */}
         <button
-            onClick={onBack}
-            className="w-full bg-blue-500 text-white font-bold py-2 rounded-xl hover:bg-blue-600 transition cursor-pointer mt-2"
+          onClick={onBack}
+          className="w-full bg-blue-500 text-white font-bold py-2 rounded-xl hover:bg-blue-600 transition cursor-pointer mt-2"
         >
-            Voltar
+          Voltar
         </button>
-
       </div>
 
       {mostrarModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-50">
           <div className="bg-white rounded-2xl px-6 py-8 shadow-lg w-[90%] max-w-md relative">
-            <button onClick={() => setMostrarModal(false)} className="absolute top-3 right-3 text-blue-600 font-bold text-lg">×</button>
+            <button
+              onClick={() => setMostrarModal(false)}
+              className="absolute top-3 right-3 text-blue-600 font-bold text-lg"
+            >
+              ×
+            </button>
 
             <h2 className="text-center text-sm text-gray-800 font-semibold mb-4">
               Confirme o seu e-mail e digite o código de verificação abaixo:
@@ -106,8 +119,7 @@ const ForgotPassword = ({ onBack }: Props) => {
                 setMostrarModal(false);
 
                 // Navegar para a página de nova senha
-                navigate('/nova_senha');
-
+                navigate("/nova_senha");
               }}
             >
               Confirmar
@@ -120,4 +132,3 @@ const ForgotPassword = ({ onBack }: Props) => {
 };
 
 export default ForgotPassword;
-

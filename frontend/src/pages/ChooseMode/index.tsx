@@ -31,17 +31,20 @@ const EscolherModo = () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("http://localhost:8000/emprestimos/importar-dados", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://localhost:8000/emprestimos/importar-dados",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Erro ao importar JSON");
       }
 
       navigate("/home");
-    } catch (error:any) {
+    } catch (error: any) {
       alert("Falha na importação: " + error.message);
     } finally {
       setLoading(false);

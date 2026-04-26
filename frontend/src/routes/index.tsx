@@ -21,15 +21,15 @@ const routes: RouteObject[] = [
     element: <Home />,
   },
   {
-    path: "/nova_senha",  // Rota para a página de mudar senha
+    path: "/nova_senha", // Rota para a página de mudar senha
     element: <NewPassword />,
   },
   {
-    path: "/perfil",  // Rota para a página visualizar perfil
+    path: "/perfil", // Rota para a página visualizar perfil
     element: <Profile />,
   },
   {
-    path: "/historico",  // Rota para a página de visualizar relatório
+    path: "/historico", // Rota para a página de visualizar relatório
     element: <Historico />,
   },
 ];

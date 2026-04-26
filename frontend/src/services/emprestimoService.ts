@@ -11,11 +11,17 @@ export const createEmprestimo = async (emprestimo: any) => {
 };
 
 export const updateEmprestimo = async (id: number, emprestimo: any) => {
-  const res = await api.patch(`/emprestimos/editarEmprestimo/${id}`, emprestimo);
+  const res = await api.patch(
+    `/emprestimos/editarEmprestimo/${id}`,
+    emprestimo,
+  );
   return res.data;
 };
 
-export const uploadImagemEmprestimo = async (id: number, formData: FormData) => {
+export const uploadImagemEmprestimo = async (
+  id: number,
+  formData: FormData,
+) => {
   return await api.post(`/emprestimos/imagemEmprestimo/${id}`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",

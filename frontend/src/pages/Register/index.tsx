@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { IoArrowBack, IoEyeOutline, IoEyeOffOutline, IoRefreshOutline } from "react-icons/io5";
+import {
+  IoArrowBack,
+  IoEyeOutline,
+  IoEyeOffOutline,
+  IoRefreshOutline,
+} from "react-icons/io5";
 import { FiMail, FiLock, FiUser } from "react-icons/fi";
 import Swal from "sweetalert2";
 import { createUser } from "../../services/userService";
@@ -25,13 +30,13 @@ const Register = ({ onBack }: Props) => {
   const handleRegister = async () => {
     if (form.password !== form.confirmPassword) {
       await Swal.fire({
-          title: "As senhas não coincidem!",
-          text: "Por favor, verifique e tente novamente.",  
-          icon: "error",
-          width: "90%",
-          backdrop: true,
-          showConfirmButton: true,
-          confirmButtonText: "OK",
+        title: "As senhas não coincidem!",
+        text: "Por favor, verifique e tente novamente.",
+        icon: "error",
+        width: "90%",
+        backdrop: true,
+        showConfirmButton: true,
+        confirmButtonText: "OK",
       });
       return;
     }
@@ -51,17 +56,16 @@ const Register = ({ onBack }: Props) => {
       });
 
       onBack(); // volta para tela anterior, se desejar
-
     } catch (error) {
       console.error("Erro:", error);
       await Swal.fire({
-          title: "Erro ao cadastrar usuário",
-          text: "Por favor, verifique os dados e tente novamente.",
-          icon: "error",
-          width: "90%",
-          backdrop: true,
-          showConfirmButton: true,
-          confirmButtonText: "OK",
+        title: "Erro ao cadastrar usuário",
+        text: "Por favor, verifique os dados e tente novamente.",
+        icon: "error",
+        width: "90%",
+        backdrop: true,
+        showConfirmButton: true,
+        confirmButtonText: "OK",
       });
     }
   };
@@ -77,7 +81,10 @@ const Register = ({ onBack }: Props) => {
       <div className="bg-[#2348a1] w-full max-w-md rounded-t-3xl p-6 flex flex-col gap-4 flex-grow min-h-[calc(100vh-5.5rem)]">
         {/* Cabeçalho */}
         <div className="flex items-center justify-center relative mb-8">
-          <button onClick={onBack} className="absolute left-0 text-white text-2xl cursor-pointer">
+          <button
+            onClick={onBack}
+            className="absolute left-0 text-white text-2xl cursor-pointer"
+          >
             <IoArrowBack />
           </button>
           <h1 className="text-white text-xl font-bold flex items-center gap-1">

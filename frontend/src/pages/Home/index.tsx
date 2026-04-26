@@ -11,14 +11,18 @@ import ModalEmprestimo from "../../components/Modal/ModalCreateEmprestimo";
 import ModalViewEmprestimo from "../../components/Modal/ModalViewEmprestimo";
 import Emprestimo from "../../types/index";
 
-import { fetchEmprestimos, createEmprestimo } from "../../services/emprestimoService";
+import {
+  fetchEmprestimos,
+  createEmprestimo,
+} from "../../services/emprestimoService";
 import { getUserFirstName } from "../../services/utils";
 import { useUser } from "../../contexts/UserContext";
 
 const Home = () => {
   const [abrirModal, setAbrirModal] = useState(false);
   const [viewEmprestimoAberto, setViewEmprestimoAberto] = useState(false);
-  const [emprestimoSelecionado, setEmprestimoSelecionado] = useState<Emprestimo | null>(null);
+  const [emprestimoSelecionado, setEmprestimoSelecionado] =
+    useState<Emprestimo | null>(null);
   const [emprestimos, setEmprestimos] = useState<Emprestimo[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [placeholder, setPlaceholder] = useState("Buscar por empréstimo");
@@ -39,18 +43,19 @@ const Home = () => {
 
   useEffect(() => {
     const hoje = new Date();
-  
+
     const emprestimosVencendo = emprestimos.filter((e) => {
       const dataDevolucao = new Date(e.data_devolucao_esperada);
-      const diffDias = Math.ceil((dataDevolucao.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
+      const diffDias = Math.ceil(
+        (dataDevolucao.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24),
+      );
       return diffDias >= 0 && diffDias <= 2;
     });
-  
+
     if (emprestimosVencendo.length > 0) {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 5000);
     }
-  
   }, [emprestimos]);
 
   const carregarEmprestimos = async () => {
@@ -77,7 +82,7 @@ const Home = () => {
         data_devolucao_esperada: novoEmprestimo.data_devolucao_esperada,
         descricao: novoEmprestimo.descricao,
         foto_url: "",
-        status: "Pendente"
+        status: "Pendente",
       });
 
       await Swal.fire({
@@ -97,11 +102,11 @@ const Home = () => {
       });
     }
   };
-  
+
   const filteredEmprestimos = emprestimos.filter((item) =>
-    item.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    item.nome.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-  
+
   const animatedEmprestimos = filteredEmprestimos.map((item, index) => (
     <div
       key={index}
@@ -111,7 +116,8 @@ const Home = () => {
       <div>
         <p className="font-bold">{item.nome}</p>
         <p className="text-sm">
-          Devolução prevista: {new Date(item.data_devolucao_esperada).toLocaleDateString("pt-BR")}
+          Devolução prevista:{" "}
+          {new Date(item.data_devolucao_esperada).toLocaleDateString("pt-BR")}
         </p>
       </div>
       {item.foto_url && (
@@ -132,7 +138,6 @@ const Home = () => {
       )}
     </div>
   ));
-
 
   const abrirModalViewEmprestimos = (emprestimo: Emprestimo) => {
     setEmprestimoSelecionado(emprestimo);
@@ -182,7 +187,10 @@ const Home = () => {
               <div>
                 <p className="font-bold">{item.nome}</p>
                 <p className="text-sm">
-                  Devolução prevista: {new Date(item.data_devolucao_esperada).toLocaleDateString("pt-BR")}
+                  Devolução prevista:{" "}
+                  {new Date(item.data_devolucao_esperada).toLocaleDateString(
+                    "pt-BR",
+                  )}
                 </p>
               </div>
               {item.foto_url && (
@@ -251,11 +259,7 @@ const Home = () => {
           ⚠️ Você tem empréstimos vencendo nos próximos dias!
         </div>
       )}
-
     </div>
-
-      
-
   );
 };
 

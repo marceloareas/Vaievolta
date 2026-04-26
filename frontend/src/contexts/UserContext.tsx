@@ -2,12 +2,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 export interface User {
-    id: number;
-    nome: string;
-    email: string;
-    foto_perfil?: string;
-    endereco?: string;
-    telefone?: string;
+  id: number;
+  nome: string;
+  email: string;
+  foto_perfil?: string;
+  endereco?: string;
+  telefone?: string;
 }
 
 interface UserContextType {

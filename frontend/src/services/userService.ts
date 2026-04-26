@@ -7,7 +7,11 @@ export const updateUser = async (dados: Partial<User>) => {
   return res.data; // { msg: "...", usuario: {...} }
 };
 
-export const createUser = async (nome: string, email: string, senha: string) => {
+export const createUser = async (
+  nome: string,
+  email: string,
+  senha: string,
+) => {
   const response = await api.post("/usuarios/", { nome, email, senha });
   return response.data;
 };
@@ -28,4 +32,3 @@ export const deleteUser = async () => {
 
   return response.data; // { msg: "Usuário excluído com sucesso" }
 };
-  

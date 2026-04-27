@@ -28,37 +28,26 @@ const ModalViewEmprestimo = ({
 }: ModalViewEmprestimoProps) => {
   const [modoEdicao, setModoEdicao] = useState(false);
 
-  const [nome, setNome] = useState("");
-  const [id, setId] = useState<number>();
-  const [item, setItem] = useState("");
-  const [tomador, setTomador] = useState("");
-  const [tomadorId, setTomadorId] = useState<number | null>(null);
+  const [nome, setNome] = useState(emprestimo?.nome ?? "");
+  const id = emprestimo?.id;
+  const [item, setItem] = useState(emprestimo?.item ?? "");
+  const [tomador, setTomador] = useState(emprestimo?.nome_pessoa ?? "");
+  const [tomadorId, setTomadorId] = useState<number | null>(
+    emprestimo?.pessoa_id ?? null,
+  );
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);
-  const [dataDevolucao, setDataDevolucao] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [foto, setFoto] = useState("");
+  const [dataDevolucao, setDataDevolucao] = useState(
+    emprestimo?.data_devolucao_esperada ?? "",
+  );
+  const [descricao, setDescricao] = useState(emprestimo?.descricao ?? "");
+  const [foto, setFoto] = useState(
+    emprestimo?.foto_url
+      ? `http://localhost:8000${emprestimo.foto_url}`
+      : "http://localhost:8000/uploads/error.png",
+  );
   const [abrirModalPessoa, setAbrirModalPessoa] = useState(false);
 
   useEffect(() => {
-    if (emprestimo) {
-      // console.log("Carregando empréstimo:", emprestimo);
-      setId(emprestimo.id);
-      setNome(emprestimo.nome);
-      setItem(emprestimo.item);
-      setTomador(emprestimo.nome_pessoa || "");
-      setTomadorId(emprestimo.pessoa_id || null);
-      setDataDevolucao(emprestimo.data_devolucao_esperada);
-      setDescricao(emprestimo.descricao);
-      if (emprestimo.foto_url) {
-        setFoto(`http://localhost:8000${emprestimo.foto_url}`);
-      } else {
-        setFoto(`http://localhost:8000/uploads/error.png`);
-      }
-    }
-    setModoEdicao(false); // volta ao modo visual sempre que abre
-
-    // console.log(tomador)
-
     api
       .get("/pessoas/")
       .then((response) => {
@@ -67,7 +56,7 @@ const ModalViewEmprestimo = ({
       .catch((err) => {
         console.error("Erro ao buscar pessoas:", err);
       });
-  }, [emprestimo]);
+  }, []);
 
   const handleSalvar = async () => {
     try {

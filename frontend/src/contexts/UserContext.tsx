@@ -1,5 +1,5 @@
 // src/context/UserContext.tsx
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState } from "react";
 
 export interface User {
   id: number;
@@ -21,7 +21,10 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export default UserContext;
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUserState] = useState<User | null>(null);
+  const [user, setUserState] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   const setUser = (userData: User) => {
     setUserState(userData);
@@ -32,13 +35,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     setUserState(null);
     localStorage.removeItem("user");
   };
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUserState(JSON.parse(storedUser));
-    }
-  }, []);
 
   return (
     <UserContext.Provider value={{ user, setUser, clearUser }}>

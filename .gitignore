@@ -44,3 +44,10 @@ __pycache__/
 
 .venv/
 venv/
+
+# Claude Code
+.claude/settings.local.json
+
+# Backend uploads folder
+backend/uploads/**
+!backend/uploads/.gitkeep

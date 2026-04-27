@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdModeEdit, MdCancel } from "react-icons/md";
 import { IoMdExit } from "react-icons/io";
@@ -15,26 +15,18 @@ import {
 } from "../../services/userService";
 
 const Profile = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [editMode, setEditMode] = useState(false);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [endereco, setEndereco] = useState("");
-  const [telefone, setTelefone] = useState("");
-
   const navigate = useNavigate();
 
   const { user, setUser } = useUser();
 
-  useEffect(() => {
-    if (user) {
-      setName(user?.nome || "");
-      setEmail(user?.email || "");
-      setProfileImage(`http://localhost:8000${user?.foto_perfil}`);
-      setEndereco(user?.endereco || "");
-      setTelefone(user?.telefone || "");
-    }
-  }, [user]);
+  const [name, setName] = useState(user?.nome || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [editMode, setEditMode] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(
+    user?.foto_perfil ? `http://localhost:8000${user.foto_perfil}` : null,
+  );
+  const [endereco, setEndereco] = useState(user?.endereco || "");
+  const [telefone, setTelefone] = useState(user?.telefone || "");
 
   const handleLogout = async () => {
     Swal.fire({

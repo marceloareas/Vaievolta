@@ -1,14 +1,12 @@
+import bcrypt
 from sqlalchemy.orm import Session
 from models.usuario import Usuario
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def autenticar_usuario(db: Session, email: str, senha: str):
     usuario = db.query(Usuario).filter(Usuario.email == email).first()
     if not usuario:
         return None
-    if not pwd_context.verify(senha, usuario.senha):
+    if not bcrypt.checkpw(senha.encode(), usuario.senha.encode()):
         return None
     return usuario

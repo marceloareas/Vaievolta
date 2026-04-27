@@ -12,7 +12,9 @@ router = APIRouter(prefix="/usuarios", tags=["usuarios"])
 @router.post("/", response_model=UsuarioOut)
 def criar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     if len(usuario.senha) < 8:
-        raise HTTPException(status_code=422, detail="Senha deve ter no mínimo 8 caracteres")
+        raise HTTPException(
+            status_code=422, detail="Senha deve ter no mínimo 8 caracteres"
+        )
 
     existing = db.query(Usuario).filter(Usuario.email == usuario.email).first()
     if existing:

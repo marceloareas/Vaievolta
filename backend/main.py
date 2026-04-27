@@ -64,6 +64,7 @@ def serve_upload(
 
     return FileResponse(file_path)
 
+
 app.include_router(usuarios.router)
 app.include_router(pessoas.router)
 app.include_router(auth.router)

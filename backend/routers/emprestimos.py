@@ -142,7 +142,9 @@ def atualizar_emprestimo(
         raise HTTPException(status_code=404, detail="Empréstimo não encontrado")
 
     try:
-        for key, value in emprestimo.model_dump(exclude_unset=True, exclude={"id"}).items():
+        for key, value in emprestimo.model_dump(
+            exclude_unset=True, exclude={"id"}
+        ).items():
             setattr(emprestimo_existente, key, value)
 
         db.commit()

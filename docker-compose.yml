@@ -2,12 +2,15 @@ services:
   backend:
     build:
       context: ./backend
+    container_name: backend
     volumes:
       - ./backend:/app
-    ports:
-      - "8000:8000"
+      - uploads_data:/app/uploads
+    expose:
+      - "8000"
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-mydatabase}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost}
     depends_on:
       db:
         condition: service_healthy
@@ -16,17 +19,14 @@ services:
   frontend:
     build:
       context: ./frontend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+    container_name: frontend
     ports:
-      - "5173:5173"
+      - "80:80"
     depends_on:
       - backend
-    environment:
-      - NODE_ENV=development
 
   db:
+    container_name: db
     image: postgres:17-alpine
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
@@ -43,14 +43,6 @@ services:
       timeout: 5s
       retries: 5
 
-  adminer:
-    image: adminer:4
-    restart: always
-    ports:
-      - "8080:8080"
-    depends_on:
-      db:
-        condition: service_healthy
-
 volumes:
   pgdata:
+  uploads_data:

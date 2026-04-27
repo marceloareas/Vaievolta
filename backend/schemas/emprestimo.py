@@ -1,6 +1,12 @@
+from enum import Enum
 from pydantic import BaseModel
 from datetime import date
 from typing import Optional
+
+
+class StatusEmprestimo(str, Enum):
+    pendente = "Pendente"
+    devolvido = "Devolvido"
 
 
 class EmprestimoBase(BaseModel):
@@ -9,7 +15,7 @@ class EmprestimoBase(BaseModel):
     descricao: str
     data_emprestimo: date
     data_devolucao_esperada: date
-    status: str
+    status: StatusEmprestimo = StatusEmprestimo.pendente
     foto_url: Optional[str] = None
     pessoa_id: int
 
@@ -29,7 +35,7 @@ class EmprestimoUpdate(BaseModel):
     descricao: Optional[str] = None
     data_emprestimo: Optional[date] = None
     data_devolucao_esperada: Optional[date] = None
-    status: Optional[str] = None
+    status: Optional[StatusEmprestimo] = None
     foto_url: Optional[str] = None
     pessoa_id: Optional[int] = None
 

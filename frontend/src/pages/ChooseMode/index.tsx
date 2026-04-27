@@ -1,19 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
+import api from "../../services/api";
 
 const EscolherModo = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const escolherModo = async (modo: "online" | "offline") => {
-    await fetch("http://localhost:8000/trocar-modo", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ modo }),
-    });
-
+  const escolherModo = (modo: "online" | "offline") => {
     if (modo === "offline") {
-      // abre seleção do arquivo
       fileInputRef.current?.click();
     } else {
       navigate("/auth");
@@ -28,17 +22,9 @@ const EscolherModo = () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch(
-        "http://localhost:8000/emprestimos/importar-dados",
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Erro ao importar JSON");
-      }
+      await api.post("/emprestimos/importar-dados", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       navigate("/home");
     } catch (error) {
@@ -67,7 +53,6 @@ const EscolherModo = () => {
         Modo Offline (sem login)
       </button>
 
-      {/* input escondido */}
       <input
         ref={fileInputRef}
         type="file"

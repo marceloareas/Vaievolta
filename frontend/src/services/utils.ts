@@ -5,3 +5,8 @@ export function getUserFirstName(nome: string): string | null {
   }
   return firstName;
 }
+
+export function buildImageUrl(apiBase: string, path: string): string {
+  const token = localStorage.getItem("token") ?? "";
+  return `${apiBase}${path}?token=${encodeURIComponent(token)}`;
+}

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, func
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -13,6 +13,9 @@ class Usuario(Base):
     endereco = Column(String)
     telefone = Column(String)
     foto_perfil = Column(String)
+    is_active = Column(Boolean, nullable=False, default=True, server_default="true")
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     emprestimos = relationship(
         "Emprestimo", back_populates="usuario", cascade="all, delete-orphan"

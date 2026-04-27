@@ -10,6 +10,7 @@ import {
   updateEmprestimo,
   uploadImagemEmprestimo,
 } from "../../services/emprestimoService";
+import { buildImageUrl } from "../../services/utils";
 import { MdEdit } from "react-icons/md";
 import api from "../../services/api";
 
@@ -40,10 +41,9 @@ const ModalViewEmprestimo = ({
     emprestimo?.data_devolucao_esperada ?? "",
   );
   const [descricao, setDescricao] = useState(emprestimo?.descricao ?? "");
+  const apiBase = import.meta.env.VITE_API_URL ?? "";
   const [foto, setFoto] = useState(
-    emprestimo?.foto_url
-      ? `http://localhost:8000${emprestimo.foto_url}`
-      : "http://localhost:8000/uploads/error.png",
+    emprestimo?.foto_url ? buildImageUrl(apiBase, emprestimo.foto_url) : "",
   );
   const [abrirModalPessoa, setAbrirModalPessoa] = useState(false);
 
@@ -67,7 +67,7 @@ const ModalViewEmprestimo = ({
         tomador: tomador,
         data_devolucao_esperada: dataDevolucao,
         descricao: descricao,
-        pessoa_id: tomadorId,
+        pessoa_id: tomadorId ?? undefined,
       };
 
       if (id === undefined) {
@@ -161,7 +161,7 @@ const ModalViewEmprestimo = ({
     try {
       const res = await uploadImagemEmprestimo(id, formData);
       const data = res.data;
-      setFoto(`http://localhost:8000${data.url}`);
+      setFoto(buildImageUrl(apiBase, data.url));
 
       await Swal.fire({
         title: "Imagem atualizada!",
@@ -180,7 +180,7 @@ const ModalViewEmprestimo = ({
 
   const handleDevolvido = (id: number) => {
     Swal.fire({
-      title: "Marcar como devolvido ?",
+      title: "Marcar como devolvido?",
       text: "Essa ação não poderá ser desfeita.",
       icon: "warning",
       width: "90%",
@@ -359,7 +359,7 @@ const ModalViewEmprestimo = ({
               <div className="flex flex-col items-center">
                 <div className="relative w-48 h-32">
                   <img
-                    src={foto || "http://localhost:8000/uploads/error.png"}
+                    src={foto || "/uploads/error.png"}
                     alt="Foto do item"
                     className="w-full h-full rounded-xl object-contain border-4 border-blue-900"
                   />

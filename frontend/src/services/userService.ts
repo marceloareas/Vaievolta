@@ -25,10 +25,5 @@ export const uploadUserPhoto = async (formData: FormData) => {
 
 export const deleteUser = async () => {
   const response = await api.delete("/usuarios/me");
-
-  if (!response.status || response.status !== 200) {
-    throw new Error("Erro ao excluir usuário");
-  }
-
   return response.data; // { msg: "Usuário excluído com sucesso" }
 };

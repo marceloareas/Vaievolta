@@ -11,8 +11,9 @@ import Emprestimo from "../../types/index";
 import {
   fetchEmprestimos,
   createEmprestimo,
+  uploadImagemEmprestimo,
 } from "../../services/emprestimoService";
-import { getUserFirstName } from "../../services/utils";
+import { getUserFirstName, buildImageUrl } from "../../services/utils";
 import { useUser } from "../../contexts/useUser";
 
 const Home = () => {
@@ -27,6 +28,7 @@ const Home = () => {
   const [showToast, setShowToast] = useState(false);
 
   const { user } = useUser();
+  const apiBase = import.meta.env.VITE_API_URL ?? "";
 
   const nomeuser = user?.nome || "Usuário";
 
@@ -83,18 +85,25 @@ const Home = () => {
     }
   };
 
-  const adicionarEmprestimo = async (novoEmprestimo: Emprestimo) => {
+  const adicionarEmprestimo = async (novoEmprestimo: Emprestimo, foto: File | null) => {
     try {
-      await createEmprestimo({
+      const criado = await createEmprestimo({
         nome: novoEmprestimo.nome,
         item: novoEmprestimo.item,
-        pessoa_id: parseInt(novoEmprestimo.tomador), // <- tomador contém o ID da pessoa
+        tomador: novoEmprestimo.tomador,
+        pessoa_id: parseInt(novoEmprestimo.tomador),
         data_emprestimo: new Date().toISOString().split("T")[0],
         data_devolucao_esperada: novoEmprestimo.data_devolucao_esperada,
         descricao: novoEmprestimo.descricao,
         foto_url: "",
         status: "Pendente",
       });
+
+      if (foto && criado?.id) {
+        const formData = new FormData();
+        formData.append("file", foto);
+        await uploadImagemEmprestimo(criado.id, formData);
+      }
 
       await Swal.fire({
         icon: "success",
@@ -174,13 +183,13 @@ const Home = () => {
               </div>
               {item.foto_url && (
                 <img
-                  src={encodeURI(`http://localhost:8000${item.foto_url}`)}
+                  src={buildImageUrl(apiBase, item.foto_url)}
                   alt="Foto do empréstimo"
                   className="w-10 h-10 object-cover rounded cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     Swal.fire({
-                      imageUrl: `http://localhost:8000${item.foto_url}`,
+                      imageUrl: buildImageUrl(apiBase, item.foto_url!),
                       imageAlt: "Foto do empréstimo",
                       showConfirmButton: false,
                       backdrop: true,

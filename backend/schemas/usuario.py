@@ -34,6 +34,9 @@ class UsuarioOut(BaseModel):
     id: int
     nome: str
     email: EmailStr
+    endereco: Optional[str] = None
+    telefone: Optional[str] = None
+    foto_perfil: Optional[str] = None
 
     class Config:
         from_attributes = True

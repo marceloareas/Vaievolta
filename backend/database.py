@@ -10,25 +10,27 @@ load_dotenv()
 
 Base = declarative_base()
 SessionLocal = None
-_engine = None  # engine interno armazenado
+_engine = None
 
 
-def init_db(modo: str):
+def init_db():
     global SessionLocal, _engine
 
-    # Lê a string de conexão baseada no modo (ex: "online" ou "offline")
-    DATABASE_URL = (
-        "sqlite:///./offline.db" if modo == "offline" else os.getenv("DATABASE_URL")
-    )
+    DATABASE_URL = os.getenv("DATABASE_URL")
 
     if not DATABASE_URL:
         raise ValueError("❌ DATABASE_URL não definido nas variáveis de ambiente")
 
-    # Tenta conectar com retries
     max_retries = 10
     for attempt in range(max_retries):
         try:
-            _engine = create_engine(DATABASE_URL)
+            _engine = create_engine(
+                DATABASE_URL,
+                pool_size=5,
+                max_overflow=10,
+                pool_pre_ping=True,
+                pool_recycle=300,
+            )
             with _engine.connect():
                 print("✅ Banco de dados conectado com sucesso!")
             break
@@ -42,7 +44,6 @@ def init_db(modo: str):
             "❌ Não foi possível conectar ao banco de dados após várias tentativas."
         )
 
-    # Define o sessionmaker global
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=_engine)
 
 

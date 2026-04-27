@@ -43,7 +43,7 @@ const ModalPessoa = ({ aberto, onFechar, onCriar }: ModalPessoaProps) => {
           />
 
           <input
-            type="text"
+            type="email"
             placeholder="Email da pessoa"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

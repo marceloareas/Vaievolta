@@ -4,16 +4,14 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models.usuario import Usuario
 from schemas.usuario import UsuarioCreate, UsuarioOut, UsuarioUpdate
-from passlib.context import CryptContext
+import bcrypt
 
 router = APIRouter(prefix="/usuarios", tags=["usuarios"])
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 @router.post("/", response_model=UsuarioOut)
 def criar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
-    hashed_password = pwd_context.hash(usuario.senha)
+    hashed_password = bcrypt.hashpw(usuario.senha.encode(), bcrypt.gensalt()).decode()
     novo = Usuario(nome=usuario.nome, email=usuario.email, senha=hashed_password)
     db.add(novo)
     db.commit()

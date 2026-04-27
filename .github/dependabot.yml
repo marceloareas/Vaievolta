@@ -11,3 +11,15 @@ updates:
     target-branch: 2026/main
     schedule:
       interval: weekly
+
+  - package-ecosystem: docker
+    directory: /backend
+    target-branch: 2026/main
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: docker
+    directory: /frontend
+    target-branch: 2026/main
+    schedule:
+      interval: weekly

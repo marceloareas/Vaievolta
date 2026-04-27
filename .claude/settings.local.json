@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm remove *)",
+      "Bash(npm install *)"
+    ]
+  }
+}

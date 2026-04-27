@@ -24,41 +24,55 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [placeholder, setPlaceholder] = useState("Buscar por empréstimo");
 
-  const [nomeuser, setNomeuser] = useState("");
-
   const [showToast, setShowToast] = useState(false);
 
   const { user } = useUser();
 
+  const nomeuser = user?.nome || "Usuário";
+
   useEffect(() => {
-    carregarEmprestimos();
+    fetchEmprestimos()
+      .then((data) => {
+        setEmprestimos(data);
+        const hoje = new Date();
+        const vencendo = data.some((e) => {
+          const dataDevolucao = new Date(e.data_devolucao_esperada);
+          const diffDias = Math.ceil(
+            (dataDevolucao.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24),
+          );
+          return diffDias >= 0 && diffDias <= 2;
+        });
+        if (vencendo) {
+          setShowToast(true);
+          setTimeout(() => setShowToast(false), 5000);
+        }
+      })
+      .catch((error) => {
+        console.error("Erro ao carregar empréstimos:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Erro ao carregar empréstimos",
+          text: "Tente novamente mais tarde.",
+        });
+      });
   }, []);
-
-  useEffect(() => {
-    setNomeuser(user?.nome || "Usuário");
-  }, [user]);
-
-  useEffect(() => {
-    const hoje = new Date();
-
-    const emprestimosVencendo = emprestimos.filter((e) => {
-      const dataDevolucao = new Date(e.data_devolucao_esperada);
-      const diffDias = Math.ceil(
-        (dataDevolucao.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24),
-      );
-      return diffDias >= 0 && diffDias <= 2;
-    });
-
-    if (emprestimosVencendo.length > 0) {
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 5000);
-    }
-  }, [emprestimos]);
 
   const carregarEmprestimos = async () => {
     try {
       const data = await fetchEmprestimos();
       setEmprestimos(data);
+      const hoje = new Date();
+      const vencendo = data.some((e) => {
+        const dataDevolucao = new Date(e.data_devolucao_esperada);
+        const diffDias = Math.ceil(
+          (dataDevolucao.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24),
+        );
+        return diffDias >= 0 && diffDias <= 2;
+      });
+      if (vencendo) {
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 5000);
+      }
     } catch (error) {
       console.error("Erro ao carregar empréstimos:", error);
       await Swal.fire({
@@ -204,6 +218,7 @@ const Home = () => {
       {/* Modal visualizar */}
       {emprestimoSelecionado && (
         <ModalViewEmprestimo
+          key={emprestimoSelecionado.id}
           aberto={viewEmprestimoAberto}
           onFechar={() => setViewEmprestimoAberto(false)}
           emprestimo={emprestimoSelecionado}

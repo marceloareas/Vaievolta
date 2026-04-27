@@ -1,8 +1,8 @@
 import api from "./api";
 import Emprestimo from "../types/index";
 
-export const fetchEmprestimos = async () => {
-  const res = await api.get("/emprestimos/");
+export const fetchEmprestimos = async (): Promise<Emprestimo[]> => {
+  const res = await api.get<Emprestimo[]>("/emprestimos/");
   return res.data;
 };
 

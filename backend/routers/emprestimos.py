@@ -13,7 +13,6 @@ from database import get_db
 from schemas.emprestimo import (
     EmprestimoCreate,
     EmprestimoOut,
-    EmprestimoDelete,
     EmprestimoUpdate,
 )
 from models.emprestimo import Emprestimo
@@ -35,6 +34,13 @@ def criar_emprestimo(
     db: Session = Depends(get_db),
     usuario_id: int = Depends(verificar_token),
 ):
+    pessoa = (
+        db.query(Pessoa)
+        .filter(Pessoa.id == emprestimo.pessoa_id, Pessoa.usuario_id == usuario_id)
+        .first()
+    )
+    if not pessoa:
+        raise HTTPException(status_code=403, detail="Pessoa não pertence ao usuário")
     try:
         novo = Emprestimo(**emprestimo.model_dump(), usuario_id=usuario_id)
         db.add(novo)
@@ -50,14 +56,14 @@ def criar_emprestimo(
 
 @router.delete("/{emprestimo_id}", response_model=EmprestimoOut)
 def deletar_emprestimo(
-    emprestimo: EmprestimoDelete,
+    emprestimo_id: int,
     db: Session = Depends(get_db),
     usuario_id: int = Depends(verificar_token),
 ):
     emp = (
         db.query(Emprestimo)
         .filter(
-            Emprestimo.id == emprestimo.id,
+            Emprestimo.id == emprestimo_id,
             Emprestimo.usuario_id == usuario_id,
         )
         .first()
@@ -77,14 +83,14 @@ def deletar_emprestimo(
 
 @router.put("/devolver/{emprestimo_id}", response_model=EmprestimoOut)
 def registrar_devolucao(
-    emprestimo: EmprestimoUpdate,
+    emprestimo_id: int,
     db: Session = Depends(get_db),
     usuario_id: int = Depends(verificar_token),
 ):
     emp = (
         db.query(Emprestimo)
         .filter(
-            Emprestimo.id == emprestimo.id,
+            Emprestimo.id == emprestimo_id,
             Emprestimo.usuario_id == usuario_id,
         )
         .first()
@@ -141,10 +147,19 @@ def atualizar_emprestimo(
     if not emprestimo_existente:
         raise HTTPException(status_code=404, detail="Empréstimo não encontrado")
 
+    update_data = emprestimo.model_dump(exclude_unset=True, exclude={"id"})
+
+    if "pessoa_id" in update_data and update_data["pessoa_id"] is not None:
+        pessoa = (
+            db.query(Pessoa)
+            .filter(Pessoa.id == update_data["pessoa_id"], Pessoa.usuario_id == usuario_id)
+            .first()
+        )
+        if not pessoa:
+            raise HTTPException(status_code=403, detail="Pessoa não pertence ao usuário")
+
     try:
-        for key, value in emprestimo.model_dump(
-            exclude_unset=True, exclude={"id"}
-        ).items():
+        for key, value in update_data.items():
             setattr(emprestimo_existente, key, value)
 
         db.commit()

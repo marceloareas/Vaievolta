@@ -9,12 +9,18 @@ services:
     expose:
       - "8000"
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-mydatabase}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-mydatabase}
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost}
     depends_on:
-      db:
+      database:
         condition: service_healthy
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   frontend:
     build:
@@ -23,10 +29,11 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
-  db:
-    container_name: db
+  database:
+    container_name: database
     image: postgres:17-alpine
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}

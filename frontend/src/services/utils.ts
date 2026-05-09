@@ -6,7 +6,15 @@ export function getUserFirstName(nome: string): string | null {
   return firstName;
 }
 
-export function buildImageUrl(apiBase: string, path: string): string {
+export async function fetchImageAsObjectUrl(
+  apiBase: string,
+  path: string,
+): Promise<string> {
   const token = localStorage.getItem("token") ?? "";
-  return `${apiBase}${path}?token=${encodeURIComponent(token)}`;
+  const response = await fetch(`${apiBase}${path}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) return "";
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
 }

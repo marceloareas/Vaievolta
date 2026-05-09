@@ -28,6 +28,20 @@ const Register = ({ onBack }: Props) => {
   };
 
   const handleRegister = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      await Swal.fire({
+        title: "E-mail inválido",
+        text: "Por favor, insira um e-mail válido.",
+        icon: "error",
+        width: "90%",
+        backdrop: true,
+        showConfirmButton: true,
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
     if (form.password !== form.confirmPassword) {
       await Swal.fire({
         title: "As senhas não coincidem!",

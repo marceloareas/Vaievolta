@@ -15,7 +15,7 @@
 #     foto_url = Column(String)
 #     # tomador = Column(String)
 
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, DateTime, Integer, String, Date, ForeignKey, func
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -28,17 +28,30 @@ class Emprestimo(Base):
     item = Column(String)
     descricao = Column(String)
     data_emprestimo = Column(Date)
-    data_devolucao_esperada = Column(Date)
+    data_devolucao_esperada = Column(Date, index=True)
     data_devolucao_real = Column(Date, nullable=True)
-    status = Column(String)
+    status = Column(String, index=True)
     foto_url = Column(String)
 
-    pessoa_id = Column(Integer, ForeignKey("pessoa.id"))  # Tomador do empréstimo
+    pessoa_id = Column(
+        Integer, ForeignKey("pessoa.id", ondelete="SET NULL"), nullable=True
+    )
     usuario_id = Column(
-        Integer, ForeignKey("usuario.id", ondelete="CASCADE")
+        Integer, ForeignKey("usuario.id", ondelete="CASCADE"), index=True
     )  # Quem realizou o empréstimo
 
+    created_at = Column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
     usuario = relationship("Usuario", back_populates="emprestimos")
+    pessoa = relationship("Pessoa")
 
     def to_dict(self):
         return {

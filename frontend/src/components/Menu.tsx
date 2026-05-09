@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaBars, FaHome, FaUserAlt } from "react-icons/fa";
@@ -19,7 +19,7 @@ const Menu = () => {
 
   const handleLogout = () => {
     Swal.fire({
-      title: "Deseja mesmo sair da conta ?",
+      title: "Deseja mesmo sair da conta?",
       icon: "warning",
       width: "90%",
       showCancelButton: true,
@@ -36,9 +36,10 @@ const Menu = () => {
           showConfirmButton: true,
           confirmButtonText: "OK",
         });
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/auth");
       }
-      localStorage.removeItem("token");
-      navigate("/auth");
     });
     setAbrirDrawer(false);
   };
@@ -116,13 +117,13 @@ const Menu = () => {
                 </nav>
 
                 <div>
-                  // Botão de Exportar
                   <button
                     onClick={async () => {
                       try {
                         const token = localStorage.getItem("token");
+                        const apiBase = import.meta.env.VITE_API_URL ?? "";
                         const response = await fetch(
-                          "http://localhost:8000/emprestimos/exportar",
+                          `${apiBase}/emprestimos/exportar`,
                           {
                             headers: { Authorization: `Bearer ${token}` },
                           },

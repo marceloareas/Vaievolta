@@ -13,6 +13,7 @@ import {
   updateUser,
   uploadUserPhoto,
 } from "../../services/userService";
+import { buildImageUrl } from "../../services/utils";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -22,8 +23,9 @@ const Profile = () => {
   const [name, setName] = useState(user?.nome || "");
   const [email, setEmail] = useState(user?.email || "");
   const [editMode, setEditMode] = useState(false);
+  const apiBase = import.meta.env.VITE_API_URL ?? "";
   const [profileImage, setProfileImage] = useState<string | null>(
-    user?.foto_perfil ? `http://localhost:8000${user.foto_perfil}` : null,
+    user?.foto_perfil ? buildImageUrl(apiBase, user.foto_perfil) : null,
   );
   const [endereco, setEndereco] = useState(user?.endereco || "");
   const [telefone, setTelefone] = useState(user?.telefone || "");
@@ -47,9 +49,10 @@ const Profile = () => {
           showConfirmButton: true,
           confirmButtonText: "OK",
         });
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/auth");
       }
-      localStorage.removeItem("token");
-      navigate("/");
     });
   };
 
@@ -154,7 +157,7 @@ const Profile = () => {
         } as User);
 
         // Mostra no componente a nova imagem
-        setProfileImage(`http://localhost:8000${data.url}`);
+        setProfileImage(buildImageUrl(apiBase, data.url));
 
         Swal.fire({
           title: "Foto atualizada com sucesso!",

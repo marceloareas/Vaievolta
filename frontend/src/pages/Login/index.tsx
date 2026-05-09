@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 
 import { useUser } from "../../contexts/useUser";
 import FadeContent from "../../components/FadeContent";
+import api from "../../services/api";
 
 interface Props {
   onShowRegister: () => void;
@@ -23,23 +24,10 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://localhost:8000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, senha }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Email ou senha inválidos");
-      }
-
-      const data = await response.json();
+      const { data } = await api.post("/login", { email, senha });
       const { user, access_token } = data;
       setUser(user);
-
-      localStorage.setItem("token", access_token); // ✅ salva o token JWT
+      localStorage.setItem("token", access_token);
       navigate("/home");
     } catch (error) {
       console.error("Erro no login:", error);
@@ -154,14 +142,6 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
               className="w-full bg-white text-blue-600 font-bold py-2 rounded-xl hover:bg-gray-100 transition cursor-pointer"
             >
               Acessar
-            </button>
-
-            <button
-              type="button"
-              className="w-full mt-4 bg-blue-900 text-white font-bold py-2 rounded-xl hover:bg-blue-950 transition cursor-pointer"
-              onClick={() => navigate("/")}
-            >
-              Escolha de modo
             </button>
           </form>
 

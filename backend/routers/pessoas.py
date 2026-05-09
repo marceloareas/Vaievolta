@@ -1,7 +1,7 @@
 from auth.auth_utils import verificar_token
 from models.pessoa import Pessoa
 from schemas.pessoa import PessoaOut
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from database import get_db
 from schemas.pessoa import PessoaCreate
@@ -11,10 +11,18 @@ router = APIRouter(prefix="/pessoas", tags=["pessoas"])
 
 @router.get("/", response_model=list[PessoaOut])
 def listar_pessoas(
-    db: Session = Depends(get_db), usuario_id: int = Depends(verificar_token)
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=200, ge=1, le=500),
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token),
 ):
-    # return db.query(Pessoa).all()
-    return db.query(Pessoa).filter(Pessoa.usuario_id == usuario_id).all()
+    return (
+        db.query(Pessoa)
+        .filter(Pessoa.usuario_id == usuario_id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
 
 @router.post("/create", response_model=PessoaOut)

@@ -1,12 +1,14 @@
+import io
 import json
 import os
-import shutil
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
-from fastapi.responses import FileResponse
-from sqlalchemy.orm import Session
+import uuid
+import aiofiles
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
+from fastapi.responses import StreamingResponse
+from sqlalchemy.orm import Session, joinedload
 from auth.auth_utils import verificar_token
 from models.usuario import Usuario
-from models.pessoa import Pessoa
+from models.pessoa import Pessoa  # noqa: F401 – used via Emprestimo.pessoa relationship
 from database import get_db
 from schemas.emprestimo import (
     EmprestimoCreate,
@@ -16,10 +18,13 @@ from schemas.emprestimo import (
 )
 from models.emprestimo import Emprestimo
 import datetime
-# from datetime import datetime
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = os.path.join("uploads", "emprestimo_pictures")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
 
 router = APIRouter(prefix="/emprestimos", tags=["emprestimos"])
 
@@ -44,12 +49,25 @@ def criar_emprestimo(
 
 
 @router.delete("/{emprestimo_id}", response_model=EmprestimoOut)
-def deletar_emprestimo(emprestimo: EmprestimoDelete, db: Session = Depends(get_db)):
-    emprestimo = db.query(Emprestimo).filter(Emprestimo.id == emprestimo.id).first()
+def deletar_emprestimo(
+    emprestimo: EmprestimoDelete,
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token),
+):
+    emp = (
+        db.query(Emprestimo)
+        .filter(
+            Emprestimo.id == emprestimo.id,
+            Emprestimo.usuario_id == usuario_id,
+        )
+        .first()
+    )
+    if not emp:
+        raise HTTPException(status_code=404, detail="Empréstimo não encontrado")
     try:
-        db.delete(emprestimo)
+        db.delete(emp)
         db.commit()
-        return emprestimo
+        return emp
     except Exception as e:
         db.rollback()
         raise HTTPException(
@@ -58,14 +76,27 @@ def deletar_emprestimo(emprestimo: EmprestimoDelete, db: Session = Depends(get_d
 
 
 @router.put("/devolver/{emprestimo_id}", response_model=EmprestimoOut)
-def registrar_devolucao(emprestimo: EmprestimoUpdate, db: Session = Depends(get_db)):
-    emprestimo = db.query(Emprestimo).filter(Emprestimo.id == emprestimo.id).first()
+def registrar_devolucao(
+    emprestimo: EmprestimoUpdate,
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token),
+):
+    emp = (
+        db.query(Emprestimo)
+        .filter(
+            Emprestimo.id == emprestimo.id,
+            Emprestimo.usuario_id == usuario_id,
+        )
+        .first()
+    )
+    if not emp:
+        raise HTTPException(status_code=404, detail="Empréstimo não encontrado")
     try:
-        emprestimo.data_devolucao_real = datetime.date.today()
-        emprestimo.status = "Devolvido"
+        emp.data_devolucao_real = datetime.date.today()
+        emp.status = "Devolvido"
         db.commit()
-        db.refresh(emprestimo)
-        return emprestimo
+        db.refresh(emp)
+        return emp
     except Exception as e:
         db.rollback()
         raise HTTPException(
@@ -75,20 +106,23 @@ def registrar_devolucao(emprestimo: EmprestimoUpdate, db: Session = Depends(get_
 
 @router.get("/", response_model=list[EmprestimoOut])
 def listar_emprestimos(
-    db: Session = Depends(get_db), usuario_id: int = Depends(verificar_token)
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=200, ge=1, le=500),
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token),
 ):
     emprestimos = (
         db.query(Emprestimo)
+        .options(joinedload(Emprestimo.pessoa))
         .filter(Emprestimo.usuario_id == usuario_id)
         .filter(Emprestimo.status != "Devolvido")
         .order_by(Emprestimo.data_devolucao_esperada.asc())
+        .offset(skip)
+        .limit(limit)
         .all()
     )
-    # Adiciona o nome da pessoa vinculada ao empréstimo
     for emp in emprestimos:
-        pessoa = db.query(Pessoa).filter(Pessoa.id == emp.pessoa_id).first()
-        emp.nome_pessoa = pessoa.nome if pessoa else None
-    print(f"Listando {len(emprestimos)} empréstimos para o usuário {usuario_id}")
+        emp.nome_pessoa = emp.pessoa.nome if emp.pessoa else None
     return emprestimos
 
 
@@ -100,13 +134,17 @@ def atualizar_emprestimo(
     usuario_id: int = Depends(verificar_token),
 ):
     emprestimo_existente = (
-        db.query(Emprestimo).filter(Emprestimo.id == emprestimo_id).first()
+        db.query(Emprestimo)
+        .filter(Emprestimo.id == emprestimo_id, Emprestimo.usuario_id == usuario_id)
+        .first()
     )
     if not emprestimo_existente:
         raise HTTPException(status_code=404, detail="Empréstimo não encontrado")
 
     try:
-        for key, value in emprestimo.model_dump(exclude_unset=True).items():
+        for key, value in emprestimo.model_dump(
+            exclude_unset=True, exclude={"id"}
+        ).items():
             setattr(emprestimo_existente, key, value)
 
         db.commit()
@@ -124,31 +162,47 @@ async def upload_imagem_emprestimo(
     emprestimo_id: int,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token),
 ):
-    try:
-        # Salva arquivo fisicamente
-        file_path = os.path.join(UPLOAD_DIR, file.filename or "upload")
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+    if file.content_type not in ALLOWED_MIME_TYPES:
+        raise HTTPException(status_code=400, detail="Tipo de arquivo não permitido")
 
-        # Atualiza foto_url do usuário
-        emprestimo = db.query(Emprestimo).filter(Emprestimo.id == emprestimo_id).first()
-        if not emprestimo:
-            raise HTTPException(status_code=404, detail="Empréstimo não encontrado")
+    contents = await file.read()
+    if len(contents) > MAX_FILE_SIZE:
+        raise HTTPException(status_code=400, detail="Arquivo excede o limite de 5 MB")
 
-        emprestimo.foto_url = f"/{file_path}"
+    raw_ext = os.path.splitext(os.path.basename(file.filename or ""))[1].lower()
+    ext = raw_ext if raw_ext in ALLOWED_EXTENSIONS else ".jpg"
+    safe_name = f"{uuid.uuid4().hex}{ext}"
+    file_path = os.path.join(UPLOAD_DIR, safe_name)
 
-        db.commit()
-        db.refresh(emprestimo)
+    async with aiofiles.open(file_path, "wb") as buffer:
+        await buffer.write(contents)
 
-        return {"url": f"/{file_path}"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro ao salvar imagem: {e}")
+    emprestimo = (
+        db.query(Emprestimo)
+        .filter(
+            Emprestimo.id == emprestimo_id,
+            Emprestimo.usuario_id == usuario_id,
+        )
+        .first()
+    )
+    if not emprestimo:
+        os.remove(file_path)
+        raise HTTPException(status_code=404, detail="Empréstimo não encontrado")
+
+    url = "/uploads/emprestimo_pictures/" + safe_name
+    emprestimo.foto_url = url
+    db.commit()
+    db.refresh(emprestimo)
+
+    return {"url": url}
 
 
 @router.get("/exportar")
 def exportar_dados(
-    db: Session = Depends(get_db), usuario_id: int = Depends(verificar_token)
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token),
 ):
     emprestimos = db.query(Emprestimo).filter(Emprestimo.usuario_id == usuario_id).all()
     pessoas = db.query(Pessoa).filter(Pessoa.usuario_id == usuario_id).all()
@@ -161,54 +215,15 @@ def exportar_dados(
             "id": usuario.id,
             "nome": usuario.nome,
             "email": usuario.email,
-            "senha": usuario.senha,
             "endereco": usuario.endereco,
             "telefone": usuario.telefone,
             "foto_perfil": usuario.foto_perfil,
         },
     }
 
-    path = "dados_exportados.json"
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(dados, f, ensure_ascii=False, indent=4)
-
-    return FileResponse(
-        path, filename="dados_exportados.json", media_type="application/json"
+    content = json.dumps(dados, ensure_ascii=False, indent=2).encode("utf-8")
+    return StreamingResponse(
+        io.BytesIO(content),
+        media_type="application/json",
+        headers={"Content-Disposition": "attachment; filename=dados_exportados.json"},
     )
-
-
-def parse_date_safe(data: dict, field: str):
-    if field in data and isinstance(data[field], str):
-        data[field] = datetime.datetime.strptime(data[field], "%Y-%m-%d").date()
-
-
-@router.post("/importar-dados")
-async def importar_dados(file: UploadFile = File(...), db: Session = Depends(get_db)):
-    content = await file.read()
-    data = json.loads(content.decode("utf-8"))
-
-    # aceita ambos singular e plural
-    pessoas = data.get("pessoas") or data.get("pessoa") or []
-    emprestimos = data.get("emprestimos") or data.get("emprestimo") or []
-    usuario = data.get("usuario")
-
-    if usuario:
-        from models.usuario import Usuario
-
-        db.add(Usuario(**usuario))
-        db.commit()
-
-    for p in pessoas:
-        db.add(Pessoa(**p))
-
-    db.commit()
-
-    for e in emprestimos:
-        parse_date_safe(e, "data_emprestimo")
-        parse_date_safe(e, "data_devolucao_esperada")
-        parse_date_safe(e, "data_devolucao_real")
-        db.add(Emprestimo(**e))
-
-    db.commit()
-
-    return {"msg": "Importação concluída com sucesso"}

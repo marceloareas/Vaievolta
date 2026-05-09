@@ -1,53 +1,76 @@
-from fastapi import FastAPI
+import os
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
+from jose import JWTError, jwt
 
-from database import Base, init_db, get_engine
-from routers import usuarios, pessoas, auth, emprestimos, profile, historico, modo
-from seed import populate_usuarios, populate_pessoas, populate_emprestimos
-from utils import get_modo
+from auth.jwt import SECRET_KEY, ALGORITHM
+from database import init_db, get_db
+from models.usuario import Usuario
+from sqlalchemy.orm import Session
+from fastapi import Depends
+from routers import usuarios, pessoas, auth, emprestimos, profile, historico
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    modo = get_modo()
-    init_db(modo)
-
-    # Cria tabelas só depois do engine estar disponível
-    engine = get_engine()
-    Base.metadata.create_all(bind=engine)
-
-    if modo == "online":
-        populate_usuarios()
-        populate_pessoas()
-        populate_emprestimos()
-
-    yield  # <--- continua a execução do FastAPI
-    # nada no shutdown
+    init_db()
+    yield
 
 
 app = FastAPI(lifespan=lifespan)
 
-# Middleware CORS
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
-# Rotas
+@app.get("/uploads/{subfolder}/{filename}")
+def serve_upload(
+    subfolder: str,
+    filename: str,
+    token: str = Query(...),
+    db: Session = Depends(get_db),
+):
+    allowed_subfolders = {"pessoa_pictures", "emprestimo_pictures"}
+    if subfolder not in allowed_subfolders:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        sub = payload.get("sub")
+        if sub is None:
+            raise HTTPException(status_code=401, detail="Token inválido")
+        usuario_id = int(sub)
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Token inválido ou expirado")
+
+    usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
+    if not usuario or not usuario.is_active:
+        raise HTTPException(status_code=401, detail="Usuário inativo ou não encontrado")
+
+    safe_filename = os.path.basename(filename)
+    file_path = os.path.join("uploads", subfolder, safe_filename)
+
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    return FileResponse(file_path)
+
+
 app.include_router(usuarios.router)
 app.include_router(pessoas.router)
 app.include_router(auth.router)
 app.include_router(emprestimos.router)
 app.include_router(profile.router)
 app.include_router(historico.router)
-app.include_router(modo.router)
 
 
 @app.get("/")

@@ -35,7 +35,8 @@ body::before {
   width: 8px;
   height: 6px;
 }
-::-webkit-scrollbar * {
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {

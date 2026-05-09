@@ -14,7 +14,7 @@ export interface Pessoa {
 interface ModalEmprestimoProps {
   aberto: boolean;
   onFechar: () => void;
-  onAdicionar: (emprestimo: Emprestimo) => void; // função para adicionar o empréstimo
+  onAdicionar?: (emprestimo: Emprestimo, foto: File | null) => void;
 }
 
 const ModalEmprestimo = ({
@@ -75,7 +75,7 @@ const ModalEmprestimo = ({
       foto,
     };
 
-    onAdicionar(novoEmprestimo); // chama a função de adicionar empréstimo
+    onAdicionar?.(novoEmprestimo, foto);
     onFechar(); // fecha modal após envio
   };
 

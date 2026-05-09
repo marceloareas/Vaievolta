@@ -1,4 +1,4 @@
-aiofiles==24.1.0
+aiofiles==25.1.0
 alembic==1.18.4
 annotated-doc==0.0.4
 annotated-types==0.7.0

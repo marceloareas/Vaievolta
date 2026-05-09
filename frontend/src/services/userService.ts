@@ -27,3 +27,14 @@ export const deleteUser = async () => {
   const response = await api.delete("/usuarios/me");
   return response.data; // { msg: "Usuário excluído com sucesso" }
 };
+
+export const changePassword = async (
+  senha_atual: string,
+  nova_senha: string,
+) => {
+  const response = await api.patch("/usuarios/me/senha", {
+    senha_atual,
+    nova_senha,
+  });
+  return response.data;
+};

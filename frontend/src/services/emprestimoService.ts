@@ -34,7 +34,7 @@ export const uploadImagemEmprestimo = async (
 };
 
 export const devolverEmprestimo = async (id: number) => {
-  return await api.put(`/emprestimos/devolver/${id}`, { id });
+  return await api.put(`/emprestimos/devolver/${id}`);
 };
 
 export const createPessoa = async (novaPessoa: {

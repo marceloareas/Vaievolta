@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Emprestimo from "../../types/index";
 import Swal from "sweetalert2";
 import { Pessoa } from "./ModalCreateEmprestimo";
@@ -10,7 +10,7 @@ import {
   updateEmprestimo,
   uploadImagemEmprestimo,
 } from "../../services/emprestimoService";
-import { buildImageUrl } from "../../services/utils";
+import { fetchImageAsObjectUrl } from "../../services/utils";
 import { MdEdit } from "react-icons/md";
 import api from "../../services/api";
 
@@ -42,10 +42,22 @@ const ModalViewEmprestimo = ({
   );
   const [descricao, setDescricao] = useState(emprestimo?.descricao ?? "");
   const apiBase = import.meta.env.VITE_API_URL ?? "";
-  const [foto, setFoto] = useState(
-    emprestimo?.foto_url ? buildImageUrl(apiBase, emprestimo.foto_url) : "",
-  );
+  const [foto, setFoto] = useState("");
+  const fotoRef = useRef<string>("");
   const [abrirModalPessoa, setAbrirModalPessoa] = useState(false);
+
+  useEffect(() => {
+    if (emprestimo?.foto_url) {
+      fetchImageAsObjectUrl(apiBase, emprestimo.foto_url).then((url) => {
+        if (fotoRef.current) URL.revokeObjectURL(fotoRef.current);
+        fotoRef.current = url;
+        setFoto(url);
+      });
+    }
+    return () => {
+      if (fotoRef.current) URL.revokeObjectURL(fotoRef.current);
+    };
+  }, [emprestimo?.foto_url, apiBase]);
 
   useEffect(() => {
     api
@@ -126,11 +138,7 @@ const ModalViewEmprestimo = ({
       }
 
       try {
-        await api.delete(`/emprestimos/${id}/`, {
-          data: {
-            id: id,
-          },
-        });
+        await api.delete(`/emprestimos/${id}/`);
 
         await Swal.fire({
           icon: "success",
@@ -161,7 +169,10 @@ const ModalViewEmprestimo = ({
     try {
       const res = await uploadImagemEmprestimo(id, formData);
       const data = res.data;
-      setFoto(buildImageUrl(apiBase, data.url));
+      const objUrl = await fetchImageAsObjectUrl(apiBase, data.url);
+      if (fotoRef.current) URL.revokeObjectURL(fotoRef.current);
+      fotoRef.current = objUrl;
+      setFoto(objUrl);
 
       await Swal.fire({
         title: "Imagem atualizada!",
@@ -247,24 +258,24 @@ const ModalViewEmprestimo = ({
           {modoEdicao ? (
             <>
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                <label className="text-sm font-bold text-[#2c64dd]">
                   Nome:
                 </label>
                 <input
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
-                  className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]"
+                  className="w-full p-2 border border-blue-600 rounded-lg text-[#2c64dd]"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                <label className="text-sm font-bold text-[#2c64dd]">
                   Item:
                 </label>
                 <input
                   value={item}
                   onChange={(e) => setItem(e.target.value)}
-                  className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]"
+                  className="w-full p-2 border border-blue-600 rounded-lg text-[#2c64dd]"
                 />
               </div>
 
@@ -299,25 +310,25 @@ const ModalViewEmprestimo = ({
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                <label className="text-sm font-bold text-[#2c64dd]">
                   Data de devolução:
                 </label>
                 <input
                   type="date"
                   value={dataDevolucao}
                   onChange={(e) => setDataDevolucao(e.target.value)}
-                  className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]"
+                  className="w-full p-2 border border-blue-600 rounded-lg text-[#2c64dd]"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                <label className="text-sm font-bold text-[#2c64dd]">
                   Descrição:
                 </label>
                 <textarea
                   value={descricao}
                   onChange={(e) => setDescricao(e.target.value)}
-                  className="w-full p-2 border-1 border-blue-600 rounded-lg text-[#2c64dd]"
+                  className="w-full p-2 border border-blue-600 rounded-lg text-[#2c64dd]"
                 />
               </div>
 
@@ -383,7 +394,7 @@ const ModalViewEmprestimo = ({
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                <label className="text-sm font-bold text-[#2c64dd]">
                   Nome:
                 </label>
                 <input
@@ -395,7 +406,7 @@ const ModalViewEmprestimo = ({
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                <label className="text-sm font-bold text-[#2c64dd]">
                   Item:
                 </label>
                 <input
@@ -407,7 +418,7 @@ const ModalViewEmprestimo = ({
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                <label className="text-sm font-bold text-[#2c64dd]">
                   Tomador:
                 </label>
                 <input
@@ -419,7 +430,7 @@ const ModalViewEmprestimo = ({
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                <label className="text-sm font-bold text-[#2c64dd]">
                   Data de devolução:
                 </label>
                 <input
@@ -431,7 +442,7 @@ const ModalViewEmprestimo = ({
               </div>
 
               <div>
-                <label className="text-sm font-bold text-[#2c64dd] font-medium">
+                <label className="text-sm font-bold text-[#2c64dd]">
                   Descrição:
                 </label>
                 <textarea
@@ -445,7 +456,7 @@ const ModalViewEmprestimo = ({
           )}
         </div>
 
-        <div className="p-4 border-t space-y-2 p-5">
+        <div className="p-5 border-t space-y-2">
           {!modoEdicao ? (
             <>
               {/* Linha 1: Editar e Devolvido lado a lado */}

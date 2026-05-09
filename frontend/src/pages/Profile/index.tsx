@@ -9,11 +9,13 @@ import Menu from "../../components/Menu";
 import { useUser } from "../../contexts/useUser";
 import { User } from "../../contexts/UserContext";
 import {
+  changePassword,
   deleteUser,
   updateUser,
   uploadUserPhoto,
 } from "../../services/userService";
-import { buildImageUrl } from "../../services/utils";
+import { fetchImageAsObjectUrl } from "../../services/utils";
+import { useEffect, useRef } from "react";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -23,10 +25,25 @@ const Profile = () => {
   const [name, setName] = useState(user?.nome || "");
   const [email, setEmail] = useState(user?.email || "");
   const [editMode, setEditMode] = useState(false);
+  const [passwordMode, setPasswordMode] = useState(false);
+  const [senhaAtual, setSenhaAtual] = useState("");
+  const [novaSenha, setNovaSenha] = useState("");
+  const [confirmaSenha, setConfirmaSenha] = useState("");
   const apiBase = import.meta.env.VITE_API_URL ?? "";
-  const [profileImage, setProfileImage] = useState<string | null>(
-    user?.foto_perfil ? buildImageUrl(apiBase, user.foto_perfil) : null,
-  );
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const profileImageRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!user?.foto_perfil) return;
+    fetchImageAsObjectUrl(apiBase, user.foto_perfil).then((url) => {
+      if (profileImageRef.current) URL.revokeObjectURL(profileImageRef.current);
+      profileImageRef.current = url;
+      setProfileImage(url);
+    });
+    return () => {
+      if (profileImageRef.current) URL.revokeObjectURL(profileImageRef.current);
+    };
+  }, [user?.foto_perfil, apiBase]);
   const [endereco, setEndereco] = useState(user?.endereco || "");
   const [telefone, setTelefone] = useState(user?.telefone || "");
 
@@ -141,6 +158,42 @@ const Profile = () => {
     setEditMode(false);
   };
 
+  const handleChangePassword = async () => {
+    if (novaSenha !== confirmaSenha) {
+      await Swal.fire({
+        title: "Senhas não coincidem",
+        text: "A nova senha e a confirmação devem ser iguais.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+    try {
+      await changePassword(senhaAtual, novaSenha);
+      setSenhaAtual("");
+      setNovaSenha("");
+      setConfirmaSenha("");
+      setPasswordMode(false);
+      await Swal.fire({
+        title: "Senha alterada com sucesso!",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+    } catch (error) {
+      const detail = (error as { response?: { data?: { detail?: string } } })
+        ?.response?.data?.detail;
+      await Swal.fire({
+        title: "Erro ao alterar senha",
+        text:
+          detail === "Senha atual incorreta"
+            ? "Senha atual incorreta."
+            : "Tente novamente mais tarde.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -157,7 +210,11 @@ const Profile = () => {
         } as User);
 
         // Mostra no componente a nova imagem
-        setProfileImage(buildImageUrl(apiBase, data.url));
+        const objUrl = await fetchImageAsObjectUrl(apiBase, data.url);
+        if (profileImageRef.current)
+          URL.revokeObjectURL(profileImageRef.current);
+        profileImageRef.current = objUrl;
+        setProfileImage(objUrl);
 
         Swal.fire({
           title: "Foto atualizada com sucesso!",
@@ -233,7 +290,7 @@ const Profile = () => {
       </div>
 
       {/* Formulário de perfil */}
-      <div className="flex-1 overflow-y-auto max-h-[740px]">
+      <div className="flex-1 overflow-y-auto max-h-185">
         <div className="space-y-2">
           <div className="bg-transparent text-white pt-6 pl-6 pr-6 pb-3 rounded-lg shadow-none">
             <div className="mb-2">
@@ -345,6 +402,66 @@ const Profile = () => {
           >
             Cancelar
           </button>
+        </div>
+      )}
+
+      {/* Alterar Senha */}
+      {!editMode && (
+        <div className="bg-transparent text-white px-6 pb-4">
+          {!passwordMode ? (
+            <button
+              onClick={() => setPasswordMode(true)}
+              className="w-full py-2 px-4 border-2 border-white text-white rounded-lg font-bold hover:bg-white hover:text-blue-600 transition-colors"
+            >
+              Alterar senha
+            </button>
+          ) : (
+            <div className="space-y-3">
+              <h3 className="text-white font-bold text-center">
+                Alterar senha
+              </h3>
+              <input
+                type="password"
+                className="w-full p-2 bg-[#2c64dd] border-2 border-white rounded-lg text-white placeholder-blue-200"
+                placeholder="Senha atual"
+                value={senhaAtual}
+                onChange={(e) => setSenhaAtual(e.target.value)}
+              />
+              <input
+                type="password"
+                className="w-full p-2 bg-[#2c64dd] border-2 border-white rounded-lg text-white placeholder-blue-200"
+                placeholder="Nova senha (mínimo 8 caracteres)"
+                value={novaSenha}
+                onChange={(e) => setNovaSenha(e.target.value)}
+              />
+              <input
+                type="password"
+                className="w-full p-2 bg-[#2c64dd] border-2 border-white rounded-lg text-white placeholder-blue-200"
+                placeholder="Confirmar nova senha"
+                value={confirmaSenha}
+                onChange={(e) => setConfirmaSenha(e.target.value)}
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={handleChangePassword}
+                  className="flex-1 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-500"
+                >
+                  Salvar
+                </button>
+                <button
+                  onClick={() => {
+                    setPasswordMode(false);
+                    setSenhaAtual("");
+                    setNovaSenha("");
+                    setConfirmaSenha("");
+                  }}
+                  className="flex-1 py-2 bg-red-700 text-white font-bold rounded-lg hover:bg-red-600"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

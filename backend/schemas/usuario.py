@@ -46,3 +46,8 @@ class UsuarioUpdate(BaseModel):
     nome: Optional[str] = None
     endereco: Optional[str] = None
     telefone: Optional[str] = None
+
+
+class SenhaUpdate(BaseModel):
+    senha_atual: str
+    nova_senha: str

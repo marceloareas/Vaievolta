@@ -13,7 +13,7 @@ import {
   createEmprestimo,
   uploadImagemEmprestimo,
 } from "../../services/emprestimoService";
-import { getUserFirstName, buildImageUrl } from "../../services/utils";
+import { getUserFirstName, fetchImageAsObjectUrl } from "../../services/utils";
 import { useUser } from "../../contexts/useUser";
 
 const Home = () => {
@@ -22,6 +22,7 @@ const Home = () => {
   const [emprestimoSelecionado, setEmprestimoSelecionado] =
     useState<Emprestimo | null>(null);
   const [emprestimos, setEmprestimos] = useState<Emprestimo[]>([]);
+  const [imagemUrls, setImagemUrls] = useState<Record<number, string>>({});
   const [searchTerm, setSearchTerm] = useState("");
   const [placeholder, setPlaceholder] = useState("Buscar por empréstimo");
 
@@ -59,6 +60,33 @@ const Home = () => {
       });
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    const prev = imagemUrls;
+    const entries = emprestimos.filter((e) => e.id !== undefined && e.foto_url);
+    if (entries.length === 0) return;
+    Promise.all(
+      entries.map((e) =>
+        fetchImageAsObjectUrl(apiBase, e.foto_url!).then((url) => ({
+          id: e.id as number,
+          url,
+        })),
+      ),
+    ).then((results) => {
+      if (cancelled) {
+        results.forEach(({ url }) => URL.revokeObjectURL(url));
+        return;
+      }
+      Object.values(prev).forEach((url) => URL.revokeObjectURL(url));
+      setImagemUrls(
+        Object.fromEntries(results.map(({ id, url }) => [id, url])),
+      );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [emprestimos, apiBase]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const carregarEmprestimos = async () => {
     try {
       const data = await fetchEmprestimos();
@@ -85,7 +113,10 @@ const Home = () => {
     }
   };
 
-  const adicionarEmprestimo = async (novoEmprestimo: Emprestimo, foto: File | null) => {
+  const adicionarEmprestimo = async (
+    novoEmprestimo: Emprestimo,
+    foto: File | null,
+  ) => {
     try {
       const criado = await createEmprestimo({
         nome: novoEmprestimo.nome,
@@ -138,7 +169,7 @@ const Home = () => {
       <header className="w-full flex items-center justify-center px-6 py-3 fixed top-1 left- bg-[#2c64dd] z-40">
         <Menu />
 
-        <h2 className="text-white font-bold flex items-center gap-2 ml-5 text-2xl sm:text-xl md:text-2xl truncate max-w-[300px]">
+        <h2 className="text-white font-bold flex items-center gap-2 ml-5 text-2xl sm:text-xl md:text-2xl truncate max-w-75">
           Bem-vindo, {getUserFirstName(nomeuser)}
         </h2>
         <img src="/logo.png" alt="Logo" className="h-10 ml-4" />
@@ -181,15 +212,15 @@ const Home = () => {
                   )}
                 </p>
               </div>
-              {item.foto_url && (
+              {item.foto_url && imagemUrls[item.id!] && (
                 <img
-                  src={buildImageUrl(apiBase, item.foto_url)}
+                  src={imagemUrls[item.id!]}
                   alt="Foto do empréstimo"
                   className="w-10 h-10 object-cover rounded cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     Swal.fire({
-                      imageUrl: buildImageUrl(apiBase, item.foto_url!),
+                      imageUrl: imagemUrls[item.id!],
                       imageAlt: "Foto do empréstimo",
                       showConfirmButton: false,
                       backdrop: true,
@@ -236,16 +267,16 @@ const Home = () => {
       )}
 
       {showToast && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black px-4 py-3 rounded-lg shadow-lg z-50 w-[90%] max-w-sm relative">
-          {/* Botão de fechar (X) */}
-          <button
-            onClick={() => setShowToast(false)}
-            className="absolute top-1 right-2 text-black font-bold text-lg hover:text-red-600"
-          >
-            ×
-          </button>
-          {/* Conteúdo do Toast */}
-          ⚠️ Você tem empréstimos vencendo nos próximos dias!
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-4 py-3 rounded-lg shadow-lg z-50 w-[90%] max-w-sm">
+          <div className="relative">
+            <button
+              onClick={() => setShowToast(false)}
+              className="absolute top-0 right-0 text-black font-bold text-lg hover:text-red-600"
+            >
+              ×
+            </button>
+            ⚠️ Você tem empréstimos vencendo nos próximos dias!
+          </div>
         </div>
       )}
     </div>

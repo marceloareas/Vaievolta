@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models.usuario import Usuario
-from schemas.usuario import UsuarioCreate, UsuarioOut, UsuarioUpdate
+from schemas.usuario import UsuarioCreate, UsuarioOut, UsuarioUpdate, SenhaUpdate
 import bcrypt
 
 router = APIRouter(prefix="/usuarios", tags=["usuarios"])
@@ -54,6 +54,30 @@ def atualizar_usuario(
     }
 
 
+@router.patch("/me/senha")
+def alterar_senha(
+    dados: SenhaUpdate,
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token),
+):
+    usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+    if not bcrypt.checkpw(dados.senha_atual.encode(), usuario.senha.encode()):
+        raise HTTPException(status_code=401, detail="Senha atual incorreta")
+
+    if len(dados.nova_senha) < 8:
+        raise HTTPException(
+            status_code=422, detail="Nova senha deve ter no mínimo 8 caracteres"
+        )
+
+    usuario.senha = bcrypt.hashpw(dados.nova_senha.encode(), bcrypt.gensalt()).decode()
+    db.commit()
+
+    return {"msg": "Senha alterada com sucesso"}
+
+
 @router.delete("/me")
 def excluir_usuario(
     db: Session = Depends(get_db), usuario_id: int = Depends(verificar_token)
@@ -67,36 +91,3 @@ def excluir_usuario(
     db.commit()
 
     return {"msg": "Usuário excluído com sucesso"}
-
-
-# @router.get("/exportar-dados")
-# def exportar_dados(db: Session = Depends(get_db)):
-#     emprestimos = db.query(Emprestimo).all()
-#     pessoas = db.query(Pessoa).all()
-
-#     def to_dict(obj):
-#         return {col.name: getattr(obj, col.name) for col in obj.__table__.columns}
-
-#     dados = {
-#         "pessoas": [to_dict(p) for p in pessoas],
-#         "emprestimos": [to_dict(e) for e in emprestimos],
-#     }
-
-#     json_data = json.dumps(dados, ensure_ascii=False, indent=2)
-#     return Response(content=json_data, media_type="application/json")
-
-# @router.post("/importar-dados")
-# async def importar_dados(file: UploadFile = File(...), db: Session = Depends(get_db)):
-#     contents = await file.read()
-#     dados = json.loads(contents)
-
-#     # Importar pessoas
-#     for pessoa in dados.get("pessoas", []):
-#         db.merge(Pessoa(**pessoa))  # merge = atualiza ou insere
-
-#     # Importar empréstimos
-#     for emp in dados.get("emprestimos", []):
-#         db.merge(Emprestimo(**emp))
-
-#     db.commit()
-#     return {"mensagem": "Dados importados com sucesso"}

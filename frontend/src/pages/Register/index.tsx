@@ -91,7 +91,7 @@ const Register = ({ onBack }: Props) => {
       </div>
 
       {/* Bloco do formulário com fundo escuro */}
-      <div className="bg-[#2348a1] w-full max-w-md rounded-t-3xl p-6 flex flex-col gap-4 flex-grow min-h-[calc(100vh-5.5rem)]">
+      <div className="bg-[#2348a1] w-full max-w-md rounded-t-3xl p-6 flex flex-col gap-4 grow min-h-[calc(100vh-5.5rem)]">
         {/* Cabeçalho */}
         <div className="flex items-center justify-center relative mb-8">
           <button

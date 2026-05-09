@@ -78,7 +78,9 @@ const Home = () => {
         return;
       }
       Object.values(prev).forEach((url) => URL.revokeObjectURL(url));
-      setImagemUrls(Object.fromEntries(results.map(({ id, url }) => [id, url])));
+      setImagemUrls(
+        Object.fromEntries(results.map(({ id, url }) => [id, url])),
+      );
     });
     return () => {
       cancelled = true;
@@ -111,7 +113,10 @@ const Home = () => {
     }
   };
 
-  const adicionarEmprestimo = async (novoEmprestimo: Emprestimo, foto: File | null) => {
+  const adicionarEmprestimo = async (
+    novoEmprestimo: Emprestimo,
+    foto: File | null,
+  ) => {
     try {
       const criado = await createEmprestimo({
         nome: novoEmprestimo.nome,

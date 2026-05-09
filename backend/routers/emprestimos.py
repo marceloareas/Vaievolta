@@ -152,11 +152,15 @@ def atualizar_emprestimo(
     if "pessoa_id" in update_data and update_data["pessoa_id"] is not None:
         pessoa = (
             db.query(Pessoa)
-            .filter(Pessoa.id == update_data["pessoa_id"], Pessoa.usuario_id == usuario_id)
+            .filter(
+                Pessoa.id == update_data["pessoa_id"], Pessoa.usuario_id == usuario_id
+            )
             .first()
         )
         if not pessoa:
-            raise HTTPException(status_code=403, detail="Pessoa não pertence ao usuário")
+            raise HTTPException(
+                status_code=403, detail="Pessoa não pertence ao usuário"
+            )
 
     try:
         for key, value in update_data.items():

@@ -179,11 +179,15 @@ const Profile = () => {
         icon: "success",
         confirmButtonText: "OK",
       });
-    } catch (error: any) {
-      const detail = error?.response?.data?.detail;
+    } catch (error) {
+      const detail = (error as { response?: { data?: { detail?: string } } })
+        ?.response?.data?.detail;
       await Swal.fire({
         title: "Erro ao alterar senha",
-        text: detail === "Senha atual incorreta" ? "Senha atual incorreta." : "Tente novamente mais tarde.",
+        text:
+          detail === "Senha atual incorreta"
+            ? "Senha atual incorreta."
+            : "Tente novamente mais tarde.",
         icon: "error",
         confirmButtonText: "OK",
       });
@@ -207,7 +211,8 @@ const Profile = () => {
 
         // Mostra no componente a nova imagem
         const objUrl = await fetchImageAsObjectUrl(apiBase, data.url);
-        if (profileImageRef.current) URL.revokeObjectURL(profileImageRef.current);
+        if (profileImageRef.current)
+          URL.revokeObjectURL(profileImageRef.current);
         profileImageRef.current = objUrl;
         setProfileImage(objUrl);
 
@@ -412,7 +417,9 @@ const Profile = () => {
             </button>
           ) : (
             <div className="space-y-3">
-              <h3 className="text-white font-bold text-center">Alterar senha</h3>
+              <h3 className="text-white font-bold text-center">
+                Alterar senha
+              </h3>
               <input
                 type="password"
                 className="w-full p-2 bg-[#2c64dd] border-2 border-white rounded-lg text-white placeholder-blue-200"

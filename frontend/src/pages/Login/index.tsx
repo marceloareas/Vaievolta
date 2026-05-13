@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import Swal from "../../services/swal";
 
 import { useUser } from "../../contexts/useUser";
 import FadeContent from "../../components/FadeContent";
@@ -10,10 +10,9 @@ import api from "../../services/api";
 
 interface Props {
   onShowRegister: () => void;
-  onShowForgotPassword: () => void;
 }
 
-const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
+const Login = ({ onShowRegister }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -35,8 +34,6 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
         title: "Erro no login",
         text: "Email ou senha inválidos",
         icon: "error",
-        width: "90%",
-        backdrop: true,
         showConfirmButton: true,
         confirmButtonText: "OK",
       });
@@ -61,26 +58,6 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
             Vai & Volta <FiRefreshCcw size={28} />
           </h1>
           <img src="/logo.png" alt="Logo" className="h-35 mb-8" />
-
-          {/* <AnimatedContent
-            distance={150}
-            direction="vertical"
-            reverse={true}
-            duration={1.2}
-            ease="power3.out"
-            initialOpacity={0.2}
-            animateOpacity
-            scale={1.1}
-            threshold={0.2}
-            delay={0.3}
-          > 
-            <div className="flex flex-col items-center">
-              <h1 className="text-white text-4xl font-bold mb-6 flex items-center gap-2">
-                Vai & Volta <FiRefreshCcw size={28} />
-              </h1>
-              <img src="/logo.png" alt="Logo" className="h-35 mb-8" />
-            </div>
-          </AnimatedContent> */}
 
           {/* Formulário */}
           <form
@@ -125,16 +102,7 @@ const Login = ({ onShowRegister, onShowForgotPassword }: Props) => {
               </button>
             </div>
 
-            {/* Esqueci a senha */}
-            <div className="w-full text-right mb-6">
-              <button
-                type="button"
-                onClick={onShowForgotPassword}
-                className="text-sm text-white/70 hover:underline cursor-pointer"
-              >
-                Esqueceu a senha?
-              </button>
-            </div>
+            <div className="mb-6" />
 
             {/* Botão de login */}
             <button

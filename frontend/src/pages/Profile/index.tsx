@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdModeEdit, MdCancel } from "react-icons/md";
 import { IoMdExit } from "react-icons/io";
-import Swal from "sweetalert2";
+import Swal from "../../services/swal";
 import { IMaskInput } from "react-imask";
 
 import Menu from "../../components/Menu";
@@ -49,15 +49,13 @@ const Profile = () => {
 
   const handleLogout = async () => {
     Swal.fire({
-      title: "Deseja mesmo sair da conta ?",
+      title: "Deseja mesmo sair da conta?",
       icon: "warning",
-      width: "90%",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#808080",
       confirmButtonText: "Sair",
       cancelButtonText: "Cancelar",
-      backdrop: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
         await Swal.fire({
@@ -75,16 +73,14 @@ const Profile = () => {
 
   const handleDeleteAccount = async () => {
     const result = await Swal.fire({
-      title: "Deseja mesmo excluir sua conta ?",
+      title: "Deseja mesmo excluir sua conta?",
       text: "Essa ação não poderá ser desfeita.",
       icon: "warning",
-      width: "90%",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#808080",
       confirmButtonText: "Excluir",
       cancelButtonText: "Cancelar",
-      backdrop: true,
     });
 
     if (result.isConfirmed) {
@@ -112,20 +108,6 @@ const Profile = () => {
       }
     }
   };
-
-  // const handleSaveChanges = async () => {
-  //   setPassword(newPassword);
-  //   setEditMode(false);
-
-  //   await Swal.fire({
-  //     title: "Alterações salvas!",
-  //     icon: "success",
-  //     width: "90%",
-  //     backdrop: true,
-  //     showConfirmButton: true,
-  //     confirmButtonText: "OK",
-  //   });
-  // };
 
   const handleSaveChanges = async () => {
     try {
@@ -255,7 +237,7 @@ const Profile = () => {
       <div className="flex flex-col items-center">
         <div className="relative w-32 h-32">
           <img
-            src={profileImage || "/loading.png"}
+            src={profileImage || "/icon.png"}
             alt="Foto de Perfil"
             className="w-32 h-32 rounded-full object-cover border-4 border-white"
           />

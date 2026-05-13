@@ -6,7 +6,7 @@ import {
   IoRefreshOutline,
 } from "react-icons/io5";
 import { FiMail, FiLock, FiUser } from "react-icons/fi";
-import Swal from "sweetalert2";
+import Swal from "../../services/swal";
 import { createUser } from "../../services/userService";
 
 interface Props {
@@ -34,8 +34,6 @@ const Register = ({ onBack }: Props) => {
         title: "E-mail inválido",
         text: "Por favor, insira um e-mail válido.",
         icon: "error",
-        width: "90%",
-        backdrop: true,
         showConfirmButton: true,
         confirmButtonText: "OK",
       });
@@ -47,8 +45,6 @@ const Register = ({ onBack }: Props) => {
         title: "As senhas não coincidem!",
         text: "Por favor, verifique e tente novamente.",
         icon: "error",
-        width: "90%",
-        backdrop: true,
         showConfirmButton: true,
         confirmButtonText: "OK",
       });
@@ -62,8 +58,6 @@ const Register = ({ onBack }: Props) => {
         title: "Usuário cadastrado com sucesso!",
         text: "Você pode fazer login agora.",
         icon: "success",
-        width: "90%",
-        backdrop: true,
         showConfirmButton: true,
         confirmButtonText: "OK",
       });
@@ -75,8 +69,6 @@ const Register = ({ onBack }: Props) => {
         title: "Erro ao cadastrar usuário",
         text: "Por favor, verifique os dados e tente novamente.",
         icon: "error",
-        width: "90%",
-        backdrop: true,
         showConfirmButton: true,
         confirmButtonText: "OK",
       });

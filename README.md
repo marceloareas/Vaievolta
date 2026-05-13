@@ -40,63 +40,61 @@ Link para o Figma: https://www.figma.com/design/CFKBBcsuK4RQOKu8qh9ajc/vai-volta
 
 ## 🐳 Estrutura Docker do Projeto `vaievolta`
 
-![image](https://github.com/user-attachments/assets/94499324-eeff-486b-aa5f-91c2ba39acc6)
-
-!! ESTÁ COM PROBLEMA PARA SUBIR O FRONTEND NO DOCKER
+<img width="1131" height="196" alt="image" src="https://github.com/user-attachments/assets/557ff9dc-0e55-4a1d-a2f4-359eca9fcd89" />
 
 ### 📦 Visão Geral
 
 Este projeto utiliza **Docker Compose** para orquestrar uma aplicação full-stack composta por:
 
 - **Backend**: FastAPI com SQLAlchemy
-- **Frontend**: React usando Vite
-- **Banco de dados**: PostgreSQL
-- **Adminer**: Interface web para acesso ao banco
+- **Frontend**: React + Vite, servido via Nginx
+- **Banco de dados**: PostgreSQL 17
 
 ---
 
 ### 🗂️ Containers e Serviços
 
-| Serviço    | Imagem Base        | Porta | Descrição                                                                 |
-|------------|--------------------|-------|--------------------------------------------------------------------------|
-| `db`       | `postgres:13`      | 5432  | Banco de dados utilizado pelo backend.                                   |
-| `backend`  | `vaievolta-backend`| 8000  | API construída com FastAPI.                                              |
-| `frontend` | `vaievolta-frontend`| 5173 | Interface React.                                                         |
-| `adminer`  | `adminer`          | 8080  | Ferramenta web para gerenciamento do banco PostgreSQL.                   |
+| Serviço     | Imagem Base           | Porta (host) | Descrição                                                                 |
+|-------------|-----------------------|--------------|---------------------------------------------------------------------------|
+| `database`  | `postgres:17-alpine`  | — (interno)  | Banco de dados utilizado pelo backend.                                    |
+| `backend`   | `vaievolta-backend`   | — (interno)  | API construída com FastAPI, acessada via proxy do frontend.               |
+| `frontend`  | `vaievolta-frontend`  | 80           | Interface React (Vite) servida por Nginx, com proxy reverso para o backend. |
 
 ---
 
 ### 🔗 Acesso aos Serviços
 
-- **Frontend**: http://localhost:5173
-- **Backend**: http://localhost:8000
-- **Adminer**: http://localhost:8080
-
-### 🎛️ Credenciais do Adminer
-
-- **Sistema**: PostgreSQL
-- **Servidor**: db
-- **Usuário**: postgres
-- **Senha**: postgres
-- **Banco de dados**: mydatabase
-
+- **Aplicação (frontend + API via proxy)**: http://localhost
+- O backend e o banco não são expostos diretamente ao host. O frontend (Nginx) faz o proxy das chamadas para `/api` até o backend.
 ### 🚀 Como subir o projeto
 
-No terminal, na raiz do projeto, execute:
+1. Copie `.env.example` para `.env` na raiz do projeto e preencha as variáveis:
 
-```bash
-docker compose up --build
-```
+    ```bash
+    cp .env.example .env
+    ```
+    
+    A `SECRET_KEY` pode ser gerada com:
+    
+    ```bash
+    python -c "import secrets; print(secrets.token_hex(32))"
+    ```
+
+2. No terminal, na raiz do projeto, execute:
+
+    ```bash
+    docker compose up --build
+    ```
 
 ### Comando para subir uma nova versão do banco de dados (migration)
 
 ```bash
-docker exec vaievolta-backend-1 alembic revision --autogenerate -m "initial migration"
+docker exec backend alembic revision --autogenerate -m "initial migration"
 ```
 
 ### Comando para aplicar a última versão do banco de dados (migration)
 
 ```bash
-docker exec vaievolta-backend-1 alembic upgrade head
+docker exec backend alembic upgrade head
 ```
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import Swal from "sweetalert2";
+import Swal from "../../services/swal";
 
 import Menu from "../../components/Menu";
 import ModalEmprestimo from "../../components/Modal/ModalCreateEmprestimo";

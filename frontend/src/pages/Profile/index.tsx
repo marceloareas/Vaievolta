@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdModeEdit, MdCancel } from "react-icons/md";
 import { IoMdExit } from "react-icons/io";
-import Swal from "sweetalert2";
+import Swal from "../../services/swal";
 import { IMaskInput } from "react-imask";
 
 import Menu from "../../components/Menu";
@@ -51,13 +51,11 @@ const Profile = () => {
     Swal.fire({
       title: "Deseja mesmo sair da conta?",
       icon: "warning",
-      width: "90%",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#808080",
       confirmButtonText: "Sair",
       cancelButtonText: "Cancelar",
-      backdrop: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
         await Swal.fire({
@@ -78,13 +76,11 @@ const Profile = () => {
       title: "Deseja mesmo excluir sua conta?",
       text: "Essa ação não poderá ser desfeita.",
       icon: "warning",
-      width: "90%",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#808080",
       confirmButtonText: "Excluir",
       cancelButtonText: "Cancelar",
-      backdrop: true,
     });
 
     if (result.isConfirmed) {

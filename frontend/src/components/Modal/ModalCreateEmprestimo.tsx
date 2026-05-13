@@ -4,7 +4,7 @@ import Emprestimo from "../../types/index"; // Importando o tipo Emprestimo
 import api from "../../services/api";
 
 import ModalPessoa from "../Modal/ModalAddPessoa"; // Importando o modal de criação de pessoa
-import Swal from "sweetalert2";
+import Swal from "../../services/swal";
 
 export interface Pessoa {
   id: number;
@@ -255,7 +255,6 @@ const ModalEmprestimo = ({
               title: "Erro ao criar pessoa",
               text: "Por favor, verifique os dados e tente novamente.",
               icon: "error",
-              width: "90%",
               showConfirmButton: true,
               confirmButtonText: "OK",
               timerProgressBar: true,

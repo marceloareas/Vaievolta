@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Emprestimo from "../../types/index";
-import Swal from "sweetalert2";
+import Swal from "../../services/swal";
 import { Pessoa } from "./ModalCreateEmprestimo";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import ModalPessoa from "./ModalAddPessoa";
@@ -86,15 +86,12 @@ const ModalViewEmprestimo = ({
         throw new Error("ID do empréstimo não definido.");
       }
 
-      const data = await updateEmprestimo(id, dadosAtualizados);
-      console.log("Empréstimo atualizado:", data);
+      await updateEmprestimo(id, dadosAtualizados);
 
       await Swal.fire({
         title: "Salvo!",
         text: "O empréstimo foi salvo com sucesso.",
         icon: "success",
-        width: "90%",
-        backdrop: true,
         showConfirmButton: true,
         confirmButtonText: "OK",
         timerProgressBar: true,
@@ -118,24 +115,13 @@ const ModalViewEmprestimo = ({
       title: "Excluir empréstimo?",
       text: "Essa ação não poderá ser desfeita.",
       icon: "warning",
-      width: "90%",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#808080",
       confirmButtonText: "Excluir",
       cancelButtonText: "Cancelar",
-      backdrop: true,
     }).then(async (result) => {
-      if (result.isConfirmed) {
-        console.log("Excluído:", {
-          nome,
-          item,
-          tomador,
-          dataDevolucao,
-          descricao,
-          foto,
-        });
-      }
+      if (!result.isConfirmed) return;
 
       try {
         await api.delete(`/emprestimos/${id}/`);
@@ -194,24 +180,13 @@ const ModalViewEmprestimo = ({
       title: "Marcar como devolvido?",
       text: "Essa ação não poderá ser desfeita.",
       icon: "warning",
-      width: "90%",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Sim, confirmar",
       cancelButtonText: "Cancelar",
-      backdrop: true,
     }).then(async (result) => {
-      if (result.isConfirmed) {
-        console.log("Devolvido:", {
-          nome,
-          item,
-          tomador,
-          dataDevolucao,
-          descricao,
-          foto,
-        });
-      }
+      if (!result.isConfirmed) return;
 
       try {
         await devolverEmprestimo(id);
@@ -355,7 +330,6 @@ const ModalViewEmprestimo = ({
                       title: "Erro ao criar pessoa",
                       text: "Por favor, verifique os dados e tente novamente.",
                       icon: "error",
-                      width: "90%",
                       showConfirmButton: true,
                       confirmButtonText: "OK",
                       timerProgressBar: true,

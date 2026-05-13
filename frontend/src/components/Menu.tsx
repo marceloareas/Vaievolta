@@ -6,7 +6,7 @@ import { FiDownload } from "react-icons/fi";
 import { SiGooglesheets } from "react-icons/si";
 import { TbLogout2 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import Swal from "../services/swal";
 
 const Menu = () => {
   const location = useLocation();
@@ -21,13 +21,11 @@ const Menu = () => {
     Swal.fire({
       title: "Deseja mesmo sair da conta?",
       icon: "warning",
-      width: "90%",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#808080",
       confirmButtonText: "Sair",
       cancelButtonText: "Cancelar",
-      backdrop: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
         await Swal.fire({

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { FiMail, FiLock, FiRefreshCcw } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import Swal from "../../services/swal";
 
 import { useUser } from "../../contexts/useUser";
 import FadeContent from "../../components/FadeContent";
@@ -34,8 +34,6 @@ const Login = ({ onShowRegister }: Props) => {
         title: "Erro no login",
         text: "Email ou senha inválidos",
         icon: "error",
-        width: "90%",
-        backdrop: true,
         showConfirmButton: true,
         confirmButtonText: "OK",
       });

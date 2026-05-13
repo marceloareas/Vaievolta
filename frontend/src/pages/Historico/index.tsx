@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Menu from "../../components/Menu";
-import Swal from "sweetalert2";
+import Swal from "../../services/swal";
 import { fetchHistorico } from "../../services/historicoService";
 
 interface Emprestimo {

@@ -115,7 +115,7 @@ const ModalViewEmprestimo = ({
 
   const handleExcluir = (id: number) => {
     Swal.fire({
-      title: "Excluir empréstimo ?",
+      title: "Excluir empréstimo?",
       text: "Essa ação não poderá ser desfeita.",
       icon: "warning",
       width: "90%",

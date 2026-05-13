@@ -49,7 +49,7 @@ const Profile = () => {
 
   const handleLogout = async () => {
     Swal.fire({
-      title: "Deseja mesmo sair da conta ?",
+      title: "Deseja mesmo sair da conta?",
       icon: "warning",
       width: "90%",
       showCancelButton: true,
@@ -75,7 +75,7 @@ const Profile = () => {
 
   const handleDeleteAccount = async () => {
     const result = await Swal.fire({
-      title: "Deseja mesmo excluir sua conta ?",
+      title: "Deseja mesmo excluir sua conta?",
       text: "Essa ação não poderá ser desfeita.",
       icon: "warning",
       width: "90%",
@@ -112,20 +112,6 @@ const Profile = () => {
       }
     }
   };
-
-  // const handleSaveChanges = async () => {
-  //   setPassword(newPassword);
-  //   setEditMode(false);
-
-  //   await Swal.fire({
-  //     title: "Alterações salvas!",
-  //     icon: "success",
-  //     width: "90%",
-  //     backdrop: true,
-  //     showConfirmButton: true,
-  //     confirmButtonText: "OK",
-  //   });
-  // };
 
   const handleSaveChanges = async () => {
     try {
@@ -255,7 +241,7 @@ const Profile = () => {
       <div className="flex flex-col items-center">
         <div className="relative w-32 h-32">
           <img
-            src={profileImage || "/loading.png"}
+            src={profileImage || "/icon.png"}
             alt="Foto de Perfil"
             className="w-32 h-32 rounded-full object-cover border-4 border-white"
           />

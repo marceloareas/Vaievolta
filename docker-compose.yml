@@ -9,8 +9,9 @@ services:
     expose:
       - "8000"
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-mydatabase}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:?POSTGRES_USER is required — see .env.example}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required — see .env.example}@database:5432/${POSTGRES_DB:?POSTGRES_DB is required — see .env.example}
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost}
+      - SECRET_KEY=${SECRET_KEY:?SECRET_KEY is required — see .env.example}
     depends_on:
       database:
         condition: service_healthy
@@ -36,16 +37,16 @@ services:
     container_name: database
     image: postgres:17-alpine
     environment:
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
-      - POSTGRES_DB=${POSTGRES_DB:-mydatabase}
+      - POSTGRES_USER=${POSTGRES_USER:?POSTGRES_USER is required — see .env.example}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required — see .env.example}
+      - POSTGRES_DB=${POSTGRES_DB:?POSTGRES_DB is required — see .env.example}
     volumes:
       - pgdata:/var/lib/postgresql/data
     expose:
       - "5432"
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-mydatabase}"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
